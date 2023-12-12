@@ -4,16 +4,16 @@ Hardening Hub for Ubuntu.
 
 - [Hardware](#hardware)
   - [Physical Ports](#physical-ports)
-    - [Software](#software)
     - [UI](#ui)
     - [Config File](#config-file)
     - [Backend](#backend)
+- [Software](#software)
+  - [SSH](#ssh)
+    - [Config File](#config-file-1)
 
 ## Hardware
 
 ### Physical Ports
-
-#### Software
 
 USBGuard: https://usbguard.github.io/documentation/rule-language.html
 
@@ -54,7 +54,7 @@ enable = true
 allow-all = false
 rules = [
     {allow = true, id = "1a2c:4c5e", name = "USB Keyboard", port = "1-2"}, # allow only at that port
-    {allow = true, id = "04f3:0c00", name = "ELAN:ARM-M4"}
+    {allow = true, id = "04f3:0c00", name = "ELAN:ARM-M4"},
     {allow = false, port = "1-3"} # block all devices at that port
 ]
 ```
@@ -73,3 +73,26 @@ rules = [
   - `sudo install -m 0600 -o root -g root rules.conf /etc/usbguard/rules.conf`
   - `sudo systemctl restart usbguard`
   - `sudo systemctl enable usbguard`
+
+
+## Software
+
+### SSH
+
+sshd_config: https://v.gd/b3j7GR
+
+#### Config File
+
+```toml
+[ssh]
+enable = true
+port = 22
+permit-empty-passwords = false
+password-authentication = false
+permit-root-login = false
+client-alive-interval = 300
+client-alive-count-max = 2
+allow-users = ["user1", "user2"]
+allow-groups = ["group1", "group2"]
+x11-forwarding = false
+```
