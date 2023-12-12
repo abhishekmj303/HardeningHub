@@ -13,4 +13,5 @@ jobs:
     - name: Configure USBGuard
       run: |
         pip install -r requirements.txt
+        python3 BackEnd/readtoml.py
         

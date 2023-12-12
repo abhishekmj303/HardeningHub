@@ -18,6 +18,7 @@ class TestConfigureUSBGuard(unittest.TestCase):
         self.assertTrue(os.path.exists(self.config_file), "Configuration file not found.")
 
     def test_disable_usbguard_if_not_enabled(self):
+        
         pass
 
     def test_generate_rules_conf_allow_all(self):
