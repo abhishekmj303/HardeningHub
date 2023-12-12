@@ -1,6 +1,8 @@
 #!/bin/bash
 # Read the configuration file
-config_file="sampleconfig.toml"  # Replace with the actual file path
+# Instead of an absolute path, use a relative path
+config_file="sampleconfig.toml"
+ # Replace with the actual file path
 
 # Check if the configuration file exists
 if [ ! -e "$config_file" ]; then
