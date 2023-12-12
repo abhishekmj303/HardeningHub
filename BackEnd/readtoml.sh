@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Read the configuration file
 config_file="git gsample.config.toml"  # Replace with the actual file path
 

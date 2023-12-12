@@ -12,5 +12,5 @@ jobs:
 
     - name: Configure USBGuard
       run: |
-        chmod +x HardeningHub/BackEnd/readtoml.sh  # Make the script executable
-        .HardeningHub/BackEnd/readtoml.sh
+        chmod +x BackEnd/readtoml.sh  # Make the script executable
+        .BackEnd/readtoml.sh
