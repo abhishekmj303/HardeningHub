@@ -6,6 +6,10 @@ test_directory = os.path.dirname(os.path.abspath(__file__))
 absolute_path = os.path.join(test_directory, '..', 'config', 'sampleconfig.toml')
 config_file = absolute_path 
 
+print(config_file)
+rules_file_path = os.path.join(test_directory, '..', 'BackEnd', 'rules.conf')
+
+
 # Check if the configuration file exists
 if not os.path.exists(config_file):
     print("Error: Configuration file not found.")
@@ -14,14 +18,15 @@ if not os.path.exists(config_file):
 # Check if USBGuard is enabled
 with open(config_file, 'r') as file:
     config_content = file.read()
+    print(config_content)
 
 enable_usbguard = len(re.findall(r'enable\s*=\s*true', config_content, re.IGNORECASE))
 if enable_usbguard == 0:
-    subprocess.run(['sudo', 'systemctl', 'disable', '--now', 'usbguard'])
+    subprocess.run(['sudo', 'systemctl', 'disable', '--now', 'readtoml'])
     exit(0)
 
 # Generate rules.conf
-with open('rules.conf', 'w') as rules_file:
+with open(rules_file_path, 'w') as rules_file:
     rules_file.write("# USBGuard rules.conf\n")
 
 allow_all = len(re.findall(r'allow-all\s*=\s*true', config_content, re.IGNORECASE))
