@@ -1,6 +1,6 @@
 #!/bin/bash
 # Read the configuration file
-config_file="git gsample.config.toml"  # Replace with the actual file path
+config_file="sample.config.toml"  # Replace with the actual file path
 
 # Check if the configuration file exists
 if [ ! -e "$config_file" ]; then
