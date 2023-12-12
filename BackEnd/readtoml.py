@@ -1,25 +1,44 @@
 import subprocess
-import re
+from tomlkit import parse
+from tomlkit import dumps
+from tomlkit import table
 import os
 # Read the configuration file
 test_directory = os.path.dirname(os.path.abspath(__file__))
 absolute_path = os.path.join(test_directory, '..', 'config', 'sampleconfig.toml')
-config_file = absolute_path 
+config_file_path = absolute_path 
 
-print(config_file)
 rules_file_path = os.path.join(test_directory, '..', 'BackEnd', 'rules.conf')
 
-
 # Check if the configuration file exists
-if not os.path.exists(config_file):
+if not os.path.exists(config_file_path):
     print("Error: Configuration file not found.")
     exit(1)
 
-# Check if USBGuard is enabled
-with open(config_file, 'r') as file:
-    config_content = file.read()
-    print(config_content)
 
+def parse_toml_file(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            toml_content = file.read()
+            print(toml_content)
+            parsed_data = tomlkit.loads(toml_content)
+            return parsed_data
+    except FileNotFoundError:
+        print(f"Error: File not found at {file_path}")
+        return None
+    except tomlkit.exceptions.ParseError as e:
+        print(f"Error parsing TOML file: {e}")
+        return None
+
+# Example usage
+toml_file_path = config_file_path  # Replace with the actual path to your TOML file
+
+parsed_data = parse_toml_file(toml_file_path)
+print(parsed_data)
+
+
+
+''' 
 enable_usbguard = len(re.findall(r'enable\s*=\s*true', config_content, re.IGNORECASE))
 if enable_usbguard == 0:
     subprocess.run(['sudo', 'systemctl', 'disable', '--now', 'readtoml'])
@@ -51,3 +70,4 @@ subprocess.run(['sudo', 'systemctl', 'restart', 'usbguard'])
 subprocess.run(['sudo', 'systemctl', 'enable', 'usbguard'])
 
 print("USBGuard configured successfully.")
+'''

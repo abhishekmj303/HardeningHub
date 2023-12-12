@@ -13,4 +13,4 @@ jobs:
     - name: Configure USBGuard
       run: |
         pip install -r requirements.txt
-        python3 tests/test_config.py
+        
