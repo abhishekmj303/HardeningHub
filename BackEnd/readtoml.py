@@ -1,15 +1,6 @@
-import subprocess
+# This File Reads the TOML File and Generates the Rules File
 from tomlkit import loads
 import os
-
-def run_command(command):
-    try:
-        result = subprocess.run(command, check=True, capture_output=True, text=True)
-        return result.stdout.strip()
-    except subprocess.CalledProcessError as error:
-        print(error)
-        exit(1)
-
 
 # Set file paths
 test_directory = os.path.dirname(os.path.abspath(__file__))
@@ -33,49 +24,51 @@ def parse_toml_file(file_path):
         print(f"Error: File not found at {file_path}")
         return None
 
+def ConfUtile(parsed_data,test_directory):
+    #print(parsed_data)
+    # Check if the 'enable' key is present and set to True
+    enable = parsed_data['physical-ports']['enable']
+    if not enable:
+        temp_disable_file = os.path.join(test_directory, 'disable_usbguard.tmp')
+        with open(temp_disable_file, 'w') as file:
+            file.write("disable")
+    # Generate rules based on parsed data
+    rules_content = ""
+    allow_all = parsed_data['physical-ports']['allow-all']
+    #print(allow_all)
+    if allow_all:
+        rules_content = "allow\n"
+    else:
+        for rule in parsed_data['physical-ports']['rules']:
+            for key in rule:
+                if key == 'allow':
+                    if rule[key]:
+                        rules_content += "allow "
+                        if 'id' in rule:
+                            rules_content += f"{rule['id']} "
+                        if 'name' in rule:
+                            rules_content += f"name  \"{rule['name']}\" "
+                        if 'port' in rule:
+                            rules_content += f"via-port \"{rule['port']}\"\n"
+                        else:
+                            rules_content += "\n"
+                    else:
+                        rules_content += "reject "
+                        if 'id' in rule:
+                            rules_content += f"reject {rule['id']} "
+                        if 'name' in rule:
+                            rules_content += f"name \"{rule['name']}\" "
+                        if 'port' in rule:
+                            rules_content += f"via-port {rule['port']}\n"
+                        else:
+                            rules_content += "\n"
+    return rules_content
+
+
+
 # Parse the TOML configuration file
 parsed_data = parse_toml_file(config_file_path)
-print(parsed_data)
-# Check if the 'enable' key is present and set to True
-enable = parsed_data['physical-ports']['enable']
-#print(enable)
-# Check if USBGuard should be disabled
-if not enable:
-    subprocess.run(["sudo", "systemctl", "disable", "--now", "usbguard"])
-    exit()
-
-# Generate rules based on parsed data
-rules_content = ""
-allow_all = parsed_data['physical-ports']['allow-all']
-#print(allow_all)
-if allow_all:
-    rules_content = "allow\n"
-else:
-    for rule in parsed_data['physical-ports']['rules']:
-        for key in rule:
-            if key == 'allow':
-                if rule[key]:
-                    if 'id' in rule:
-                        rules_content += f"allow id {rule['id']} "
-                    if 'name' in rule:
-                        rules_content += f"name {rule['name']} "
-                    if 'port' in rule:
-                        rules_content += f"via-port {rule['port']}\n"
-                    else:
-                        rules_content += "\n"
-                else:
-                    rules_content += "reject \n"
-
-# Write rules to rules.conf
+rules_content = ConfUtile(parsed_data,test_directory)
 print(rules_content)
-with open(rules_file_path, 'w') as rules_file:
-    rules_file.write(rules_content)
 
-# Install rules
-run_command(["sudo", "install", "-m", "0600", "-o", "root", "-g", "root", rules_file_path, "rules.conf"])
-
-# Restart and enable USBGuard
-#run_command(["sudo", "systemctl", "daemon-reload"])
-#run_command(["sudo", "systemctl", "restart", "usbguard"])
-#run_command(["sudo", "systemctl", "enable", "usbguard"])
 
