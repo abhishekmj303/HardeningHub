@@ -14,4 +14,5 @@ jobs:
       run: |
         pip install -r requirements.txt
         python BackEnd/readtoml.py
+        python tests/test_config.py
         

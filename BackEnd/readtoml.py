@@ -2,6 +2,15 @@ import subprocess
 from tomlkit import loads
 import os
 
+def run_command(command):
+    try:
+        result = subprocess.run(command, check=True, capture_output=True, text=True)
+        return result.stdout.strip()
+    except subprocess.CalledProcessError as error:
+        print(error)
+        exit(1)
+
+
 # Set file paths
 test_directory = os.path.dirname(os.path.abspath(__file__))
 absolute_path = os.path.join(test_directory, '..', 'config', 'sampleconfig.toml')
@@ -26,10 +35,10 @@ def parse_toml_file(file_path):
 
 # Parse the TOML configuration file
 parsed_data = parse_toml_file(config_file_path)
-
+print(parsed_data)
 # Check if the 'enable' key is present and set to True
-enable = parsed_data.get('enable', False)
-
+enable = parsed_data['physical-ports']['enable']
+#print(enable)
 # Check if USBGuard should be disabled
 if not enable:
     subprocess.run(["sudo", "systemctl", "disable", "--now", "usbguard"])
@@ -37,22 +46,31 @@ if not enable:
 
 # Generate rules based on parsed data
 rules_content = ""
-allow_all = parsed_data.get('allow-all', False)
-
+allow_all = parsed_data['physical-ports']['allow-all']
+#print(allow_all)
 if allow_all:
     rules_content = "allow-all:\n  allow\n"
 else:
-    for rule in parsed_data.get('rules', []):
-        rules_content += f"  allow {rule['id']} name \"{rule['name']}\" via-port \"{rule['port']}\"\n"
+    for rule in parsed_data['physical-ports']['rules']:
+        for key in rule:
+            if key == 'allow':
+                if rule[key]:
+                    rules_content += "allow: true\n"
+                else:
+                    rules_content += "allow: false\n"
+            else:
+                rules_content += f" {key}: {rule[key]}\n"
 
 # Write rules to rules.conf
+print(rules_content)
 with open(rules_file_path, 'w') as rules_file:
     rules_file.write(rules_content)
 
 # Install rules
-subprocess.run(["sudo", "install", "-m", "0600", "-o", "root", "-g", "root", rules_file_path, "/etc/usbguard/rules.conf"])
+run_command(["sudo", "install", "-m", "0600", "-o", "root", "-g", "root", rules_file_path, "rules.conf"])
 
 # Restart and enable USBGuard
-subprocess.run(["sudo", "systemctl", "restart", "usbguard"])
-subprocess.run(["sudo", "systemctl", "enable", "usbguard"])
+#run_command(["sudo", "systemctl", "daemon-reload"])
+#run_command(["sudo", "systemctl", "restart", "usbguard"])
+#run_command(["sudo", "systemctl", "enable", "usbguard"])
 
