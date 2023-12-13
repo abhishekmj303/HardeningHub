@@ -1,13 +1,13 @@
 [physical-ports]
-enable = true
-allow-all = false
+enable = false
+allow-all = true
 device-rules = [
     {allow = true, id = "1a2c:4c5e", name = "USB Keyboard", port = "1-2"}, # allow only at that port
-    {allow = true, id = "04f3:0c00", name = "ELAN:ARM-M4"},
-    {allow = true, id = "04f3:0c00", name = "ELAN:ARM-M4", port = "1-2"}, # allow only at that port
+    {allow = false, id = "04f3:0c00", name = "ELAN:ARM-M4"},
+    {allow = false, id = "04f3:0c00", name = "ELAN:ARM-M4", port = "1-2"}, # allow only at that port
 ]
 port-rules = [
-    {allow = false, port = "1-3"} # block all devices at that port
+    {allow = true, port = "1-3"} # block all devices at that port
 ]
 
 [ssh]
