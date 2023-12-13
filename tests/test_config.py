@@ -11,6 +11,7 @@ class TestScriptExecution(unittest.TestCase):
         try:
             # Execute the script
             result = subprocess.run(['python', self.script_path], check=True, capture_output=True)
+            print(result.stdout)
         except subprocess.CalledProcessError as error:
             # This will automatically fail the test if an error occurs
             self.fail(f"Script execution failed: {error}")
