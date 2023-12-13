@@ -1,66 +1,55 @@
-# This File Reads the TOML File and Generates the Rules File
-from tomlkit import loads
-import os
+import subprocess
+import config_file
 
-# Set file paths
-test_directory = os.path.dirname(os.path.abspath(__file__))
-absolute_path = os.path.join(test_directory, '..', 'config', 'sampleconfig.toml')
-config_file_path = absolute_path
-rules_file_path = os.path.join(test_directory, '..', 'BackEnd', 'rules.conf')
-
-# Check if the configuration file exists
-if not os.path.exists(config_file_path):
-    print("Error: Configuration file not found.")
-    exit(1)
-
-# Define the parse_toml_file function
-def parse_toml_file(file_path):
-    try:
-        with open(file_path, 'r') as file:
-            toml_content = file.read()
-            parsed_data = loads(toml_content)
-            return parsed_data
-    except FileNotFoundError:
-        print(f"Error: File not found at {file_path}")
-        return None
-
-def ConfUtile(parsed_data,test_directory):
-    #print(parsed_data)
-    # Check if the 'enable' key is present and set to True
-    enable = parsed_data['physical-ports']['enable']
-    if not enable:
-        temp_disable_file = os.path.join(test_directory, 'disable_usbguard.tmp')
-        with open(temp_disable_file, 'w') as file:
-            file.write("disable")
-    # Generate rules based on parsed data
-    rules_content = ""
-    allow_all = parsed_data['physical-ports']['allow-all']
-    #print(allow_all)
-    if allow_all:
-        rules_content = "allow\n"
-    else:
-        for rule in parsed_data['physical-ports']['rules']:
-            for key in rule:
-                if key == 'allow':
-                    if rule[key]:
-                        rules_content += "allow "
-                    else:
-                        rules_content += "reject "
-                    if 'id' in rule:
-                        rules_content += f"{rule['id']} "
-                    if 'name' in rule:
-                        rules_content += f"name  \"{rule['name']}\" "
-                    if 'port' in rule:
-                        rules_content += f"via-port \"{rule['port']}\"\n"
-                    else:
-                        rules_content += "\n"
-    return rules_content
+config = config_file.read()["physical-ports"]
 
 
+def _generate_policy():
+    return subprocess.check_output(
+        ["usbguard", "generate-policy"]
+    ).decode("utf-8")
 
-# Parse the TOML configuration file
-parsed_data = parse_toml_file(config_file_path)
-rules_content = ConfUtile(parsed_data,test_directory)
-print(rules_content)
+
+def get_devices():
+    config_rules = config["device-rules"]
+    devices = {device["id"]: device for device in config_rules}
+
+    policy = _generate_policy().splitlines()
+    rules = filter(lambda x: "via-port" in x, policy)
+    for rule in rules:
+        rule_split = rule.split()
+        device_id = rule_split[rule_split.index("id") + 1]
+        if device_id in devices:
+            continue
+        device_name = rule_split[rule_split.index("name") + 1].strip('"')
+        devices[device_id] = {"id": device_id, "name": device_name, "allow": True}
+    
+    return list(devices.values())
 
 
+def get_script(all_config):
+    config = all_config["physical-ports"]
+    script = ""
+    if not config["enable"]:
+        return "sudo systemctl disable --now usbguard\n"
+
+    script += "cat > rules.conf << EOF\n"
+
+    for device in config["device-rules"]:
+        if not device["allow"]:
+            continue
+        script += f"allow id {device['id']} name \"{device['name']}\"\n"
+    
+    for port in config["port-rules"]:
+        script += f"allow via-port \"{port['id']}\"\n"
+
+    script += "EOF\n"
+
+    script += "sudo install -m 0600 -o root -g root rules.conf /etc/usbguard/rules.conf\n"
+    script += "sudo systemctl restart usbguard\n"
+    script += "sudo systemctl enable usbguard\n"
+
+    return script
+
+if __name__ == "__main__":
+    print(get_script(config_file.read()))

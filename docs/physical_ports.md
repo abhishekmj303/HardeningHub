@@ -36,13 +36,12 @@ USBGuard: https://usbguard.github.io/documentation/rule-language.html
 ```toml
 [physical-ports]
 enable = true
-allow-all = false
 device-rules = [
-    {allow = true, id = "1a2c:4c5e", name = "USB Keyboard", port = "1-2"}, # allow only at that port
+    {allow = true, id = "1a2c:4c5e", name = "USB Keyboard"}, # allow only at that port
     {allow = true, id = "04f3:0c00", name = "ELAN:ARM-M4"}
 ]
 port-rules = [
-    {allow = false, port = "1-3"} # block all devices at that port
+    {allow = false, id = "1-3"} # block all devices at that port
 ]
 ```
 
