@@ -1,0 +1,21 @@
+[physical-ports]
+enable = true
+device-rules = [
+    {allow = true, id = "1a2c:4c5e", name = "USB Keyboard"}, # allow only at that port
+    {allow = true, id = "04f3:0c00", name = "ELAN:ARM-M4"}
+]
+port-rules = [
+    {allow = false, id = "1-3"} # block all devices at that port
+]
+
+[ssh]
+enable = true
+port = 22
+permit-empty-passwords = false
+password-authentication = false
+permit-root-login = false
+client-alive-interval = 300
+client-alive-count-max = 2
+allow-users = ["user1", "user2"]
+allow-groups = ["group1", "group2"]
+x11-forwarding = false
