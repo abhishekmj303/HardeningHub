@@ -1,3 +1,2 @@
 pyQt6
-toml
 tomlkit

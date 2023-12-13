@@ -44,24 +44,16 @@ def ConfUtile(parsed_data,test_directory):
                 if key == 'allow':
                     if rule[key]:
                         rules_content += "allow "
-                        if 'id' in rule:
-                            rules_content += f"{rule['id']} "
-                        if 'name' in rule:
-                            rules_content += f"name  \"{rule['name']}\" "
-                        if 'port' in rule:
-                            rules_content += f"via-port \"{rule['port']}\"\n"
-                        else:
-                            rules_content += "\n"
                     else:
                         rules_content += "reject "
-                        if 'id' in rule:
-                            rules_content += f"reject {rule['id']} "
-                        if 'name' in rule:
-                            rules_content += f"name \"{rule['name']}\" "
-                        if 'port' in rule:
-                            rules_content += f"via-port {rule['port']}\n"
-                        else:
-                            rules_content += "\n"
+                    if 'id' in rule:
+                        rules_content += f"{rule['id']} "
+                    if 'name' in rule:
+                        rules_content += f"name  \"{rule['name']}\" "
+                    if 'port' in rule:
+                        rules_content += f"via-port \"{rule['port']}\"\n"
+                    else:
+                        rules_content += "\n"
     return rules_content
 
 
