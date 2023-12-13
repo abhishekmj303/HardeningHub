@@ -30,7 +30,7 @@ if [ -f "$TEMP_DISABLE_FILE" ]; then
     run_command sudo systemctl disable --now usbguard
     rm "$TEMP_DISABLE_FILE"  # Clean up the temporary file
 else
-    run_command sudo install -m 0600 -o root -g root "$RULES_CONF_PATH" /etc/usbguard/rules.conf
+    run_command sudo install -m 0600 -o root -g root "$RULES_CONF_PATH" 
     # Restart and enable USBGuard
     run_command sudo systemctl daemon-reload
     run_command sudo systemctl restart usbguard
