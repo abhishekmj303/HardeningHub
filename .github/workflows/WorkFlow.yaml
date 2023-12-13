@@ -14,6 +14,6 @@ jobs:
       run: |
         pip install -r requirements.txt
         python tests/test_config.py
-        chmod +x BackEnd/runScripts.sh
-        ./BackEnd/runScripts.sh
+        chmod +x BackEnd/runScript.sh
+        ./BackEnd/runScript.sh
         
