@@ -3,7 +3,10 @@ import os
 import shutil
 from typing import Mapping
 
-file_path = os.path.join(os.path.dirname(__file__), "../config/sampleconfig.toml")
+file_path = os.path.join(os.path.dirname(__file__), "../../config/sampleconfig.toml")
+#print(file_path)
+
+
 temp_file_path = os.path.join(os.path.dirname(file_path), "sampleconfig_copy.toml")
 shutil.copyfile(file_path, temp_file_path)
 
