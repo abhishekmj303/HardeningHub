@@ -49,17 +49,22 @@ rules_content = ""
 allow_all = parsed_data['physical-ports']['allow-all']
 #print(allow_all)
 if allow_all:
-    rules_content = "allow-all:\n  allow\n"
+    rules_content = "allow\n"
 else:
     for rule in parsed_data['physical-ports']['rules']:
         for key in rule:
             if key == 'allow':
                 if rule[key]:
-                    rules_content += "allow: true\n"
+                    if 'id' in rule:
+                        rules_content += f"allow id {rule['id']} "
+                    if 'name' in rule:
+                        rules_content += f"name {rule['name']} "
+                    if 'port' in rule:
+                        rules_content += f"via-port {rule['port']}\n"
+                    else:
+                        rules_content += "\n"
                 else:
-                    rules_content += "allow: false\n"
-            else:
-                rules_content += f" {key}: {rule[key]}\n"
+                    rules_content += "reject \n"
 
 # Write rules to rules.conf
 print(rules_content)
