@@ -11,15 +11,10 @@ run_command() {
 
 # Set file paths
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-CONFIG_FILE_PATH="$SCRIPT_DIR/../config/sampleconfig.toml"
 RULES_CONF_PATH="$SCRIPT_DIR/../BackEnd/rules.conf"
 
-# Check if the configuration file exists
-if [ ! -f "$CONFIG_FILE_PATH" ]; then
-    echo "Error: Configuration file not found."
-    exit 1
-fi
 
+TEMP_DISABLE_FILE="$SCRIPT_DIR/disable_usbguard.tmp"
 # Check if rules.conf exists
 if [ ! -f "$RULES_CONF_PATH" ]; then
     echo "Error: rules.conf file not found."
