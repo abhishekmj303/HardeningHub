@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QStackedWidget
-from pages.hardware_page import Hardware
-from pages.software_page import Software
-from pages.networking_page import Networking
+from ui.pages.hardware_page import Hardware
+from ui.pages.software_page import Software
+from ui.pages.networking_page import Networking
 
 class Pages(QStackedWidget):
     def __init__(self):

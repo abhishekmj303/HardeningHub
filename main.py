@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, QDockWidget
 from PyQt6.QtCore import Qt
-from sidebar import Sidebar
-from page import Pages
+from ui.sidebar import Sidebar
+from ui.page import Pages
 import sys
 
 class MainWindow(QMainWindow):
