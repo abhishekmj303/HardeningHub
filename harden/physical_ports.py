@@ -1,7 +1,5 @@
 import subprocess
-import config_file
-
-config = config_file.read()["physical-ports"]
+from harden import config_file
 
 
 def _generate_policy():
@@ -10,21 +8,34 @@ def _generate_policy():
     ).decode("utf-8")
 
 
-def get_devices():
-    config_rules = config["device-rules"]
-    devices = {device["id"]: device for device in config_rules}
+def get_devices(config):
+    device_rules = config["device-rules"]
+    port_rules = config["port-rules"]
+    devices = {device["id"]: device for device in device_rules}
+    ports = {port["id"]: port for port in port_rules}
+    
+    for id in ports:
+        ports[id]["name"] = "No Device Connected"
 
     policy = _generate_policy().splitlines()
     rules = filter(lambda x: "via-port" in x, policy)
     for rule in rules:
         rule_split = rule.split()
+        
         device_id = rule_split[rule_split.index("id") + 1]
         if device_id in devices:
             continue
         device_name = rule_split[rule_split.index("name") + 1].strip('"')
         devices[device_id] = {"id": device_id, "name": device_name, "allow": True}
+
+        port_id = rule_split[rule_split.index("via-port") + 1].strip('"')
+        if port_id in ports:
+            ports[port_id]["name"] = device_name
+        else:
+            ports[port_id] = {"id": port_id, "name": device_name, "allow": True}
     
-    return list(devices.values())
+    config.update({"device-rules": list(devices.values()), "port-rules": list(ports.values())})
+    return config
 
 
 def get_script(all_config):
