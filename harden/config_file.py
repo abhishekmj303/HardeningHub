@@ -4,14 +4,16 @@ import shutil
 from typing import Mapping
 
 file_path = os.path.join(os.path.dirname(__file__), "../config/sampleconfig.toml")
-#print(file_path)
-
-
 temp_file_path = os.path.join(os.path.dirname(file_path), "sampleconfig_copy.toml")
-shutil.copyfile(file_path, temp_file_path)
+
+
+def create_copy():
+    shutil.copyfile(file_path, temp_file_path)
 
 
 def read():
+    if not os.path.exists(temp_file_path):  # Check if the copy does not exist
+        create_copy()  # Create the copy if it doesn't exist
     with open(temp_file_path, "r") as f:
         return tomlkit.load(f)
 
