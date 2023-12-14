@@ -4,6 +4,15 @@ from ui.sidebar import Sidebar
 from ui.page import Pages
 import sys
 
+toml_file_path = "config/sampleconfig.toml"
+toml_copy_path = "config/sampleconfig_copy.toml"
+
+def make_copy_config():
+    with open(toml_file_path, "r") as f:
+        data = f.read()
+    with open(toml_copy_path, "w") as f:
+        f.write(data)
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -29,6 +38,7 @@ class MainWindow(QMainWindow):
         self.pages.setCurrentIndex(index)
 
 def main():
+    make_copy_config()
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
