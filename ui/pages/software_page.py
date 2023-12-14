@@ -1,4 +1,7 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel
+from PyQt6.QtWidgets import QWidget, QVBoxLayout
+from ui.components.software.processes import Processes
+from ui.components.software.apparmor import AppArmor
+
 
 class Software(QWidget):
     def __init__(self):
@@ -6,8 +9,11 @@ class Software(QWidget):
         self.init_ui()
     
     def init_ui(self):
-        layout = QVBoxLayout()
-        self.setLayout(layout)
+        self.layout = QVBoxLayout()
+        self.setLayout(self.layout)
 
-        self.hardware_text = QLabel("Software page")
-        layout.addWidget(self.hardware_text)
+        self.process_hardening = Processes()
+        self.apparmor = AppArmor()
+
+        self.layout.addWidget(self.process_hardening)
+        self.layout.addWidget(self.apparmor)
