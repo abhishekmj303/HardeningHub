@@ -11,10 +11,13 @@ port-rules = [
 ]
 
 [file-systems]
-block = ["udf", "cramfs", "squashfs"]
-configure_fs = ["/tmp", "/dev/shm"]
+# Basic
+block = {udf = true, cramfs = true, squashfs = false}
+# Intermediate
+configure_fs = {tmp = true, dev_shm = true} # /tmp and /dev/shm
 tmp_size = 2 # in GB
 disable_automount = true
+# Advanced
 enable_aide = true # Advanced Intrusion Detection Environment
 
 [processes] # Process Hardening
