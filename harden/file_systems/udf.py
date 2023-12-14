@@ -1,5 +1,5 @@
 import subprocess
-import harden.config_file as config_file
+from harden import config_file
 def get_script(config):
     file_systems_config = config["file-systems"]
 
