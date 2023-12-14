@@ -10,6 +10,38 @@ port-rules = [
     {allow = true, id = "1-2", name = "USB Mouse"}
 ]
 
+[file-systems]
+block = ["udf", "cramfs", "squashfs"]
+configure_fs = ["/tmp", "/dev/shm"]
+tmp_size = 2 # in GB
+disable_automount = true
+enable_aide = true # Advanced Intrusion Detection Environment
+
+[processes] # Process Hardening
+enable_aslr = true # Address Space Layout Randomization
+remove_prelink = true
+disable_error_reporting = true
+restrict_core_dumps = true
+
+[apparmor] # Mandatory Access Control
+enable = true
+mode = "enforce" # enforce, complain
+
+[gdm] # GNOME Display Manager
+remove = false
+disable_user_list = true
+lock_on_idle = 100 # in seconds, 0 to disable
+no_override_lockscreen = true
+disable_automount = true
+lock_automonut = true
+disable_autorun = true
+no_override_autorun = true
+
+[time-sync] # Time synchronization
+enable_ntp = true
+ntp_servers = [ "time1.google.com", "time2.google.com", "time3.google.com"]
+enable_ntp_user = true
+
 [ssh]
 enable = true
 port = 22
@@ -21,6 +53,3 @@ client-alive-count-max = 2
 allow-users = ["user1", "user2"]
 allow-groups = ["group1", "group2"]
 x11-forwarding = false
-
-[file-systems]
-block = ["udf", "cramfs", "squashfs"]

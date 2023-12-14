@@ -1,19 +1,6 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QCheckBox, QPushButton \
     , QTableWidget, QTableWidgetItem
-from tomlkit import loads, dumps
-
-toml_copy_path = "./config/sampleconfig_copy.toml"
-
-def read_toml_copy():                            # Read toml copy file and return as a dict
-    with open(toml_copy_path, "r") as f:
-        toml_content = f.read()
-        toml_dict = loads(toml_content)
-        return toml_dict
-
-def save_toml_copy(toml_copy_dict):             # Save toml copy file
-    with open(toml_copy_path, "w") as f:
-        toml_content = dumps(toml_copy_dict)
-        f.write(toml_content)
+from harden import config_file
 
 class Hardware(QWidget):
     def __init__(self):
@@ -24,7 +11,7 @@ class Hardware(QWidget):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
 
-        self.copytoml_dict = read_toml_copy() 
+        self.copytoml_dict = config_file.read() 
         self.toml_physical_ports = self.copytoml_dict['physical-ports']
 
         self.main_label = QLabel("Physical Ports")
@@ -101,7 +88,7 @@ class Hardware(QWidget):
 
     def enable_checkbox_clicked(self, state):
         self.toml_physical_ports['enable'] = (state == 2)
-        save_toml_copy(self.copytoml_dict)
+        config_file.write(self.copytoml_dict)
         if state == 2:
             self.devices_table.setEnabled(True)
             self.ports_table.setEnabled(True)
@@ -111,4 +98,4 @@ class Hardware(QWidget):
     
     def save_checkbox_state(self, state, idx, rule):
         self.toml_physical_ports[rule][idx]['allow'] = (state == 2)
-        save_toml_copy(self.copytoml_dict)
+        config_file.write(self.copytoml_dict)
