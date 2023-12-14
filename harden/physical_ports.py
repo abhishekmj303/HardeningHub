@@ -11,7 +11,7 @@ def _generate_policy():
 
 
 def get_devices():
-    config_rules = config["device-rules"]
+    config_rules = config["device-rules"] 
     devices = {device["id"]: device for device in config_rules}
 
     policy = _generate_policy().splitlines()
