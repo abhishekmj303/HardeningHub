@@ -1,5 +1,5 @@
 import subprocess
-import config_file
+import HardeningHub.harden.config_file.config_file as config_file
 
 config = config_file.read()["physical-ports"]
 
