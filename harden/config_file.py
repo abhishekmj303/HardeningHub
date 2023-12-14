@@ -12,6 +12,8 @@ def create_copy():
 
 
 def read():
+    if not os.path.exists(temp_file_path):  # Check if the copy does not exist
+        create_copy()  # Create the copy if it doesn't exist
     with open(temp_file_path, "r") as f:
         return tomlkit.load(f)
 
