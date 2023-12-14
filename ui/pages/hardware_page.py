@@ -99,16 +99,16 @@ class Hardware(QWidget):
         
         add_port_rows()
 
-    def enable_checkbox_clicked(self):
-        if self.main_checkbox.isChecked():
-            self.toml_physical_ports['enable'] = True
-        else:
-            self.toml_physical_ports['enable'] = False
+    def enable_checkbox_clicked(self, state):
+        self.toml_physical_ports['enable'] = (state == 2)
         save_toml_copy(self.copytoml_dict)
+        if state == 2:
+            self.devices_table.setEnabled(True)
+            self.ports_table.setEnabled(True)
+        else:
+            self.devices_table.setEnabled(False)
+            self.ports_table.setEnabled(False)
     
     def save_checkbox_state(self, state, idx, rule):
-        if state == 2:
-            self.toml_physical_ports[rule][idx]['allow'] = True
-        else:
-            self.toml_physical_ports[rule][idx]['allow'] = False
+        self.toml_physical_ports[rule][idx]['allow'] = (state == 2)
         save_toml_copy(self.copytoml_dict)
