@@ -12,9 +12,13 @@ jobs:
 
     - name: Install dependencies
       run: pip install -r requirements.txt
+    
+    - name: Install USB Guard
+      run: sudo apt install usbguard
 
     - name: Run test scripts
       run: |
+        export PYTHONPATH="${PYTHONPATH}:/home/runner/work/HardeningHub/HardeningHub" 
         chmod +x tests/test_physical_ports_output.sh
         ./tests/test_physical_ports_output.sh
         chmod +x tests/test_cramfs_output.sh
