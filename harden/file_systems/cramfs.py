@@ -3,7 +3,6 @@ from harden import config_file
 
 def get_script(config):
     file_systems_config = config["file-systems"]
-    print(file_systems_config)
 
     # Start with an empty script and build it up
     script = ""
@@ -18,7 +17,7 @@ if ! modprobe -n -v "$l_mname" | grep -P --
 echo -e " - setting module: \"$l_mname\" to be not loadable"
 echo -e "install $l_mname /bin/false" >>
 /etc/modprobe.d/"$l_mname".conf
-fi
+fic
 if lsmod | grep "$l_mname" > /dev/null 2>&1; then
 echo -e " - unloading module \"$l_mname\""
 modprobe -r "$l_mname"
