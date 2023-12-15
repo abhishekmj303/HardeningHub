@@ -25,9 +25,12 @@ def run_bash_script(script):
 
 def test_bash_script():
     # Run the script and capture the output
-    audit = "dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' aide aide-common"
+    audit = "dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n'"
     result = subprocess.run(audit, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-    return result.stdout, result.stderr
+    if result.stdout.find("aide") != -1:
+        return "aide SuccessFully installed", "No Error"
+    else:
+        return "aide not installed", "Error"
 
 if __name__ == "__main__":
     config = config_file.read()
@@ -40,3 +43,5 @@ if __name__ == "__main__":
     stdout, stderr = test_bash_script()
     print("AUDIT:", stdout)
     print("AUDITERR:", stderr)
+    if stdout.find("aide") == -1:
+        exit(1)

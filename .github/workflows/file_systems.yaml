@@ -1,5 +1,4 @@
-name: USBGuard Configuration
-
+name: File System Tests
 on: [push, pull_request]
 
 jobs:
