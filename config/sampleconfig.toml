@@ -55,3 +55,4 @@ client-alive-interval = 300
 client-alive-count-max = 2
 allow-users = ["user1", "user2"]
 allow-groups = ["group1", "group2"]
+x11-forwarding = false
