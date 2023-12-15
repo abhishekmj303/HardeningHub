@@ -56,8 +56,3 @@ client-alive-count-max = 2
 allow-users = ["user1", "user2"]
 allow-groups = ["group1", "group2"]
 x11-forwarding = false
-<<<<<<< new-branch
-x11-forwarding = false
-=======
-x11-forwarding = false
->>>>>>> main
