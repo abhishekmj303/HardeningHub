@@ -17,7 +17,8 @@ jobs:
       run: sudo apt install usbguard
 
     - name: set python path
-      run:  export PYTHONPATH="${PYTHONPATH}:/home/runner/work/HardeningHub/HardeningHub"
+      run: |
+      export PYTHONPATH="${PYTHONPATH}:/home/runner/work/HardeningHub/HardeningHub"
 
     - name: Run test scripts
       run: python3 tests/test_aide.py
