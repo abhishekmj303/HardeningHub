@@ -7,7 +7,7 @@ def get_script(config):
     # Start with an empty script and build it up
     script = ""
 
-    if 'cramfs' in file_systems_config['block']:
+    if file_systems_config['block']['cramfs']:
         # Each file system gets its own set of commands
         script += f"""
 l_mname="cramfs" # set module name
@@ -17,7 +17,7 @@ if ! modprobe -n -v "$l_mname" | grep -P --
 echo -e " - setting module: \"$l_mname\" to be not loadable"
 echo -e "install $l_mname /bin/false" >>
 /etc/modprobe.d/"$l_mname".conf
-fi
+fic
 if lsmod | grep "$l_mname" > /dev/null 2>&1; then
 echo -e " - unloading module \"$l_mname\""
 modprobe -r "$l_mname"
