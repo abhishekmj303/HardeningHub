@@ -1,0 +1,26 @@
+#pageBg {	
+	background-color: rgb(40, 44, 52);
+	border: 1px solid rgb(44, 49, 58);
+	padding: 20px;
+}
+
+#sidebarBg {
+	background-color: rgb(33, 37, 43);
+}
+
+#sidebarBg QLabel {
+	background-color: rgb(33, 37, 43);
+	qproperty-alignment: AlignVCenter;
+	text-align: left;
+	padding-left: 15px;
+	color: rgb(221, 221, 221);
+	font: 15px;
+}
+
+#sidebarBg QLabel:hover {
+	background-color: rgb(40, 44, 52)
+}
+
+#sidebarBg QLabel:pressed {
+	background-color: rgb(44, 49, 58)
+}

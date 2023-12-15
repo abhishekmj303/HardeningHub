@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QCheckBox, QPushButton \
-    , QTableWidget, QTableWidgetItem
+    , QTableWidget, QTableWidgetItem, QHBoxLayout
 from harden import config_file
 
 class PhysicalPorts(QWidget):
@@ -10,16 +10,24 @@ class PhysicalPorts(QWidget):
     def init_ui(self):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
+        self.layout.setSpacing(0)
+        self.layout.setContentsMargins(0, 0, 0, 0)
 
         self.temp_toml_dict = config_file.read() 
         self.toml_physical_ports = self.temp_toml_dict['physical-ports']
 
+        hlayout = QHBoxLayout()
+        hlayout.setSpacing(0)
+        hlayout.setContentsMargins(0, 0, 0, 0)
+
         self.main_label = QLabel("Physical Ports")
-        self.layout.addWidget(self.main_label)
+        hlayout.addWidget(self.main_label)
 
         # refresh button
         self.refresh_button = QPushButton("Refresh")    # no connect function yet
-        self.layout.addWidget(self.refresh_button)
+        hlayout.addWidget(self.refresh_button)
+
+        self.layout.addLayout(hlayout)
         
         # enable checkbox
         self.main_checkbox = QCheckBox("Enable USB Blocking")
