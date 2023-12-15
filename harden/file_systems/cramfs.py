@@ -3,11 +3,12 @@ from harden import config_file
 
 def get_script(config):
     file_systems_config = config["file-systems"]
+    print(file_systems_config)
 
     # Start with an empty script and build it up
     script = ""
 
-    if 'cramfs' in file_systems_config['block']:
+    if file_systems_config['block']['cramfs']:
         # Each file system gets its own set of commands
         script += f"""
 l_mname="cramfs" # set module name
