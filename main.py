@@ -1,7 +1,9 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow, QDockWidget
+from PyQt6.QtWidgets import QApplication, QMainWindow, QDockWidget \
+    , QHBoxLayout, QWidget
 from PyQt6.QtCore import Qt
 from ui.sidebar import Sidebar
 from ui.page import Pages
+from harden import config_file
 import sys
 
 class MainWindow(QMainWindow):
@@ -15,21 +17,27 @@ class MainWindow(QMainWindow):
 
         self.pages = Pages()
         self.setCentralWidget(self.pages)
-        
-        self.sidebar = QDockWidget("Menu")
-        self.sidebar_widget = Sidebar()
-        self.sidebar.setWidget(self.sidebar_widget)
-        self.sidebar.setFixedWidth(250)
+        self.pages.setObjectName("pageBg")
 
-        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.sidebar)
-        self.sidebar.setFeatures(QDockWidget.DockWidgetFeature.NoDockWidgetFeatures)
-        self.sidebar_widget.change_page_signal.connect(self.change_page)
-    
-    def change_page(self, index):
-        self.pages.setCurrentIndex(index)
+        self.sidebar = Sidebar()
+        self.sidebar.setFixedWidth(200)
+        self.sidebar.setObjectName("sidebarBg")
+        self.sidebar.change_page_signal.connect(self.pages.setCurrentIndex)
+
+        self.main_layout = QHBoxLayout()
+        self.main_layout.setSpacing(0)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
+        self.main_layout.addWidget(self.sidebar)
+        self.main_layout.addWidget(self.pages)
+        
+        self.main_widget = QWidget()
+        self.main_widget.setLayout(self.main_layout)
+        self.setCentralWidget(self.main_widget)
 
 def main():
+    config_file.create_copy()
     app = QApplication(sys.argv)
+    app.setStyleSheet(open("ui/qss/style.qss", "r").read())
     window = MainWindow()
     window.show()
     app.exec()
