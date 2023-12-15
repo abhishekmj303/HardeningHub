@@ -45,6 +45,49 @@ enable_ntp = true
 ntp_servers = [ "time1.google.com", "time2.google.com", "time3.google.com"]
 enable_ntp_user = true
 
+[services] # Services
+remove_avahi = true
+remove_cups = true
+remove_dhcp = true
+remove_ldap = true
+remove_nfs = true
+remove_ftp = true
+remove_http = true
+remove_imap_pop3 = true
+remove_samba = true
+remove_http_proxy = true
+remove_snmp = true
+remove_nis = true
+remove_rsync = true
+
+[service_clients] # Service Clients
+remove_nis = true
+remove_rsh = true
+remove_talk = true
+remove_telnet = true
+remove_ldap = true
+remove_rpc = true
+
+[network] # Network
+disable_wireless = true # WiFi and other wireless interfaces
+disable_packet_redirects = true
+disable_ip_forwarding = true
+reject_source_routed_packets = true
+reject_icmp_redirects = true
+reject_secure_icmp_redirects = true
+log_suspicious_packets = true
+ingore_broadcasts = true
+ignore_bogus_icmp_errors = true
+enable_rp_filter = true # Reverse Path Filtering
+enable_syn_cookies = true # TCP SYN Cookie
+reject_ipv6_router_adv = true # IPv6 Router Advertisement
+disable_protocols = {dccp = true, sctp = true, rds = true, tipc = true}
+
+[firewall] # Firewall
+enable = true
+configure_loopback = true # Allow loopback traffic
+enable_default_deny = true # Deny all traffic by default
+
 [ssh]
 enable = true
 port = 22
