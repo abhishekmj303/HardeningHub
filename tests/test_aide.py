@@ -17,8 +17,8 @@ mv /var/lib/aide/aide.db.new /var/lib/aide/aide.db
 
 def run_bash_script(script):
     try:
-        # Run the script and capture the output
-        result = subprocess.run(script, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        # Attempt to run the script with elevated privileges
+        result = subprocess.run(f"sudo bash -c \"{script}\"", shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         return result.stdout, result.stderr
     except subprocess.CalledProcessError as e:
         return e.stdout, e.stderr
@@ -26,11 +26,12 @@ def run_bash_script(script):
 def test_bash_script():
     # Run the script and capture the output
     audit = "dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n'"
-    result = subprocess.run(audit, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    result = subprocess.run(f"sudo bash -c \"{audit}\"", shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     if result.stdout.find("aide") != -1:
         return "aide SuccessFully installed", "No Error"
     else:
-        return "aide not installed", "Error"
+        print("Error: aide not installed")
+        exit(1)
 
 if __name__ == "__main__":
     config = config_file.read()
@@ -43,5 +44,3 @@ if __name__ == "__main__":
     stdout, stderr = test_bash_script()
     print("AUDIT:", stdout)
     print("AUDITERR:", stderr)
-    if stdout.find("aide") == -1:
-        exit(1)
