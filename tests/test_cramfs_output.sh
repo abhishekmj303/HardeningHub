@@ -29,4 +29,16 @@ echo "$script_output"
 echo "Executing the generated Bash script..."
 bash -c "$script_output"
 
+# Execute dpkg-query command and check the output
+echo "Executing dpkg-query..."
+dpkg_output=$(dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n')
+
+# Check if dpkg-query output contains the specific line
+if echo "$dpkg_output" | grep -q ""; then
+    echo "pre-link is not installed."
+else
+    echo "pre-link may be installed."
+fi
+
+
 echo "Script executed successfully."

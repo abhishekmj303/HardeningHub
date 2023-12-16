@@ -6,7 +6,7 @@ def get_script(config):
     # Start with an empty script and build it up
     script = ""
 
-    if file_systems_config['config_fs']['dev_shm']:
+    if file_systems_config['configure_fs']['dev_shm']:
         # Each file system gets its own set of commands
         script += f"""
 

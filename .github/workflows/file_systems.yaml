@@ -1,5 +1,4 @@
-name: USBGuard Configuration
-
+name: File System Tests
 on: [push, pull_request]
 
 jobs:
@@ -16,10 +15,7 @@ jobs:
     - name: Install USB Guard
       run: sudo apt install usbguard
 
-    - name: Run test scripts
+    - name: set python path
       run: |
-        export PYTHONPATH="${PYTHONPATH}:/home/runner/work/HardeningHub/HardeningHub" 
-        for script in tests/*.sh; do
-          chmod +x "$script"
-          ./"$script"
-        done
+        export PYTHONPATH="${PYTHONPATH}:/home/runner/work/HardeningHub/HardeningHub"
+        python3 tests/test_aide.py
