@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QCheckBox, QPushButton \
     , QTableWidget, QTableWidgetItem, QHBoxLayout
 from harden import config_file
+from PyQt6.QtCore import Qt
 
 class PhysicalPorts(QWidget):
     def __init__(self):
@@ -19,19 +20,31 @@ class PhysicalPorts(QWidget):
         hlayout = QHBoxLayout()
         hlayout.setSpacing(0)
         hlayout.setContentsMargins(0, 0, 0, 0)
+        hlayout.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
         self.main_label = QLabel("Physical Ports")
         hlayout.addWidget(self.main_label)
+        self.main_label.setObjectName("component-title")
 
         # refresh button
         self.refresh_button = QPushButton("Refresh")    # no connect function yet
         hlayout.addWidget(self.refresh_button)
+        self.refresh_button.setObjectName("refresh-btn")
 
         self.layout.addLayout(hlayout)
         
+        # container widget
+        self.container_widget = QWidget()
+        self.container_layout = QVBoxLayout()
+        self.container_widget.setLayout(self.container_layout)
+        self.layout.addWidget(self.container_widget)
+        self.container_layout.setSpacing(0)
+        self.container_layout.setContentsMargins(30, 20, 30, 30)
+        self.container_widget.setObjectName("container-widget")
+
         # enable checkbox
         self.main_checkbox = QCheckBox("Enable USB Blocking")
-        self.layout.addWidget(self.main_checkbox)
+        self.container_layout.addWidget(self.main_checkbox)
         self.main_checkbox.setChecked(self.toml_physical_ports['enable'])
         self.main_checkbox.stateChanged.connect(self.enable_checkbox_clicked)
 
@@ -43,11 +56,12 @@ class PhysicalPorts(QWidget):
 
     def block_devices_table(self):
         self.block_devices_label = QLabel("Block Devices")
-        self.layout.addWidget(self.block_devices_label)
+        self.container_layout.addWidget(self.block_devices_label)
+        self.block_devices_label.setObjectName("sub-component-title")
 
         self.devices_table = QTableWidget()
         self.devices_table.setColumnCount(3)
-        self.layout.addWidget(self.devices_table)
+        self.container_layout.addWidget(self.devices_table)
 
         self.devices_table.setHorizontalHeaderLabels(["Device Name", "Device ID", "Allow"])
 
@@ -69,11 +83,12 @@ class PhysicalPorts(QWidget):
 
     def block_ports_table(self):
         self.block_ports_label = QLabel("Block Ports")
-        self.layout.addWidget(self.block_ports_label)
+        self.container_layout.addWidget(self.block_ports_label)
+        self.block_ports_label.setObjectName("sub-component-title")
 
         self.ports_table = QTableWidget()
         self.ports_table.setColumnCount(3)
-        self.layout.addWidget(self.ports_table)
+        self.container_layout.addWidget(self.ports_table)
 
         self.ports_table.setHorizontalHeaderLabels(["Port ID", "Device Name", "Allow"])
     

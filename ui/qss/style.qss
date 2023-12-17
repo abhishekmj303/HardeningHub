@@ -1,11 +1,11 @@
+QMainWindow {
+	background-color: rgb(33, 37, 43);
+}
+
 #pageBg {	
 	background-color: rgb(40, 44, 52);
 	border: 1px solid rgb(44, 49, 58);
 	padding: 20px;
-}
-
-QMainWindow {
-	background-color: rgb(33, 37, 43);
 }
 
 #sidebarBg {
@@ -18,13 +18,74 @@ QMainWindow {
 	text-align: left;
 	padding-left: 15px;
 	color: rgb(221, 221, 221);
-	font: 15px;
+	font: 17px;
+	font-weight: 400;
 }
-
 #sidebarBg QLabel:hover {
 	background-color: rgb(40, 44, 52)
 }
 
-#sidebarBg QLabel:pressed {
-	background-color: rgb(44, 49, 58)
+#component-title {
+	color: rgb(221, 221, 221);
+	font: 25px;
+	font-weight: 600;
+	padding: 5px;
+	margin-top: 10px;
+}
+
+#sub-component-title {
+	color: #B6BBC4;
+	font: 18px;
+	font-weight: 500;
+	margin-top: 10px;
+	margin-bottom: 5px;
+}
+
+#refresh-btn {
+	background-color: #7B66FF;
+	padding: 4px 13px;
+	border-radius: 5px;
+	color: rgb(221, 221, 221);
+	font: 15px;
+	font-weight: 500;
+	margin-left: 20px;
+	margin-top: 10px;
+}
+#refresh-btn:hover {
+	background-color: #6B56FF;
+}
+
+QCheckBox {
+    spacing: 10px;
+	margin-bottom: 10px;
+	font: 15px;
+	font-weight: 500;
+}
+QCheckBox::indicator {
+    width: 13px;
+    height: 13px;
+	border-radius: 6px;
+	border: 1.5px solid #B6BBC4;
+}
+QCheckBox::indicator:checked {
+    background-color: #6B56FF;
+}
+QCheckBox::indicator:unchecked {
+    background-color: #ddd;
+}
+QCheckBox::indicator:checked:hover {
+    background-color: #7B66FF;
+}
+QCheckBox::indicator:unchecked:hover {
+    background-color: #ccc;
+}
+
+#container-widget {
+	background-color: rgb(33, 37, 43);
+	border-radius: 15px;
+	margin-left: 15px;
+}
+
+.file-systems QCheckBox {
+	margin-left: 30px;
 }

@@ -16,6 +16,7 @@ class AppArmor(QWidget):
 
         self.main_label = QLabel("AppArmor")
         self.layout.addWidget(self.main_label)
+        self.main_label.setObjectName("component-title")
 
         # Enable Checkbox
         checkbox = QCheckBox('Enable')

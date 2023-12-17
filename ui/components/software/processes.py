@@ -15,6 +15,7 @@ class Processes(QWidget):
 
         self.main_label = QLabel("Process Hardening")
         self.layout.addWidget(self.main_label)
+        self.main_label.setObjectName("component-title")
 
         for name, state in self.toml_processes.items():
             checkbox = QCheckBox(name.replace('_', ' ').title().replace('Aslr', 'ASLR'))
