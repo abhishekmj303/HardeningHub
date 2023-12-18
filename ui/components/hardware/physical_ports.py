@@ -9,7 +9,7 @@ class PhysicalPorts(QWidget):
         self.config = config
         self.toml_physical_ports = self.config['physical-ports']
         self.init_ui()
-        self.refresh_config()
+        self.refresh_config(config)
     
     def init_ui(self):
         self.layout = QVBoxLayout()
@@ -105,10 +105,12 @@ class PhysicalPorts(QWidget):
 
             self.ports_table.setCellWidget(i, 2, checkbox)
 
-    def refresh_config(self):
+    def refresh_config(self, config):
+        self.config = config
+        self.toml_physical_ports = self.config['physical-ports']
         self.main_checkbox.setChecked(self.toml_physical_ports['enable'])
-        self.devices_table.clearContents()
-        self.ports_table.clearContents()
+        self.devices_table.setRowCount(0)
+        self.ports_table.setRowCount(0)
         self.add_device_rows()
         self.add_port_rows()
 

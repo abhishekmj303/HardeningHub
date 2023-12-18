@@ -23,6 +23,7 @@ class Software(QWidget):
         self.layout.addWidget(self.process_hardening)
         self.layout.addWidget(self.apparmor)
     
-    def refresh_config(self):
-        self.process_hardening.refresh_config()
-        self.apparmor.refresh_config()
+    def refresh_config(self, config):
+        self.config = config
+        self.process_hardening.refresh_config(config)
+        self.apparmor.refresh_config(config)

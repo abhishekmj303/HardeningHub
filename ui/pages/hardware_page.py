@@ -22,6 +22,7 @@ class Hardware(QWidget):
         self.layout.addWidget(self.physical_ports)
         self.layout.addWidget(self.file_systems)
     
-    def refresh_config(self):
-        self.physical_ports.refresh_config()
-        self.file_systems.refresh_config()
+    def refresh_config(self, config):
+        self.config = config
+        self.physical_ports.refresh_config(config)
+        self.file_systems.refresh_config(config)

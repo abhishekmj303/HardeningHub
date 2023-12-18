@@ -7,7 +7,7 @@ class Processes(QWidget):
         self.config = config
         self.toml_processes = self.config['processes']
         self.init_ui()
-        self.refresh_config()
+        self.refresh_config(config)
     
     def init_ui(self):
         self.layout = QVBoxLayout()
@@ -25,7 +25,9 @@ class Processes(QWidget):
             self.layout.addWidget(checkbox)
             self.checkboxes[name] = checkbox
     
-    def refresh_config(self):
+    def refresh_config(self, config):
+        self.config = config
+        self.toml_processes = self.config['processes']
         for name, state in self.toml_processes.items():
             self.checkboxes[name].setChecked(state)
         

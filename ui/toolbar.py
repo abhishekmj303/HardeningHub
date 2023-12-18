@@ -1,9 +1,10 @@
 from PyQt6.QtWidgets import QToolBar, QPushButton, QFileDialog
 from PyQt6.QtCore import pyqtSignal
+from tomlkit import TOMLDocument
 from harden import config_file
 
 class ToolBar(QToolBar):
-    import_signal = pyqtSignal()
+    import_signal = pyqtSignal(TOMLDocument)
 
     def __init__(self, config):
         super().__init__()
@@ -31,13 +32,11 @@ class ToolBar(QToolBar):
     
     def import_button_clicked(self):
         import_dialog = QFileDialog.getOpenFileName(self, "Select Config File", filter = "Config File (*.toml)")
-
         if not import_dialog[0]:
             return
         
         selected_file = import_dialog[0]
         print("selected file: ", selected_file)
-        config_file.set_config_file(selected_file)
-        self.config.update(config_file.read())
 
-        self.import_signal.emit()
+        self.config = config_file.init(selected_file)
+        self.import_signal.emit(self.config)
