@@ -4,8 +4,9 @@ from harden import config_file
 from PyQt6.QtCore import Qt
 
 class PhysicalPorts(QWidget):
-    def __init__(self):
+    def __init__(self, config):
         super().__init__()
+        self.config = config
         self.init_ui()
     
     def init_ui(self):
@@ -14,8 +15,7 @@ class PhysicalPorts(QWidget):
         self.layout.setSpacing(0)
         self.layout.setContentsMargins(0, 0, 0, 0)
 
-        self.temp_toml_dict = config_file.read() 
-        self.toml_physical_ports = self.temp_toml_dict['physical-ports']
+        self.toml_physical_ports = self.config['physical-ports']
 
         hlayout = QHBoxLayout()
         hlayout.setSpacing(0)
@@ -113,8 +113,8 @@ class PhysicalPorts(QWidget):
         self.toml_physical_ports['enable'] = (state == 2)
         self.devices_table.setEnabled((state == 2))
         self.ports_table.setEnabled((state == 2))
-        config_file.write(self.temp_toml_dict)
+        config_file.write(self.config)
     
     def save_checkbox_state(self, state, idx, rule):
         self.toml_physical_ports[rule][idx]['allow'] = (state == 2)
-        config_file.write(self.temp_toml_dict)
+        config_file.write(self.config)

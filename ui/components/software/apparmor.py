@@ -3,16 +3,16 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QCheckBox \
 from harden import config_file
 
 class AppArmor(QWidget):
-    def __init__(self):
+    def __init__(self, config):
         super().__init__()
+        self.config = config
         self.init_ui()
     
     def init_ui(self):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
 
-        self.temp_toml_dict = config_file.read()
-        self.toml_apparmor = self.temp_toml_dict['apparmor']
+        self.toml_apparmor = self.config['apparmor']
 
         self.main_label = QLabel("AppArmor")
         self.layout.addWidget(self.main_label)
@@ -40,8 +40,8 @@ class AppArmor(QWidget):
     def save_checkbox_state(self, state):
         self.toml_apparmor['enable'] = (state == 2)
         self.mode_list.setEnabled((state == 2))
-        config_file.write(self.temp_toml_dict)
+        config_file.write(self.config)
     
     def new_item_selected(self, mode):
         self.toml_apparmor['mode'] = mode
-        config_file.write(self.temp_toml_dict)
+        config_file.write(self.config)

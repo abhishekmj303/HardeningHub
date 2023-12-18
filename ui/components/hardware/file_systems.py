@@ -5,8 +5,9 @@ from PyQt6.QtCore import Qt
 from harden import config_file
 
 class FileSystems(QWidget):
-    def __init__(self):
+    def __init__(self, config):
         super().__init__()
+        self.config = config
         self.init_ui()
     
     def init_ui(self):
@@ -15,8 +16,7 @@ class FileSystems(QWidget):
         self.layout.setSpacing(0)
         self.layout.setContentsMargins(0, 0, 0, 0)
 
-        self.temp_toml_dict = config_file.read()
-        self.toml_file_systems = self.temp_toml_dict['file-systems']
+        self.toml_file_systems = self.config['file-systems']
 
         self.main_label = QLabel("File Systems")
         self.layout.addWidget(self.main_label)
@@ -92,11 +92,11 @@ class FileSystems(QWidget):
             self.toml_file_systems[type][name] = (state == 2)
         else:
             self.toml_file_systems[type] = (state == 2)
-        config_file.write(self.temp_toml_dict)
+        config_file.write(self.config)
     
     def size_changed(self, new_size):
         if new_size:
             self.toml_file_systems['tmp_size'] = int(new_size)
         else:
             self.size_input.setText('0')
-        config_file.write(self.temp_toml_dict)
+        config_file.write(self.config)

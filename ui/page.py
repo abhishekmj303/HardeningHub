@@ -5,15 +5,16 @@ from ui.pages.networking_page import Networking
 from ui.pages.welcome_page import Welcome
 
 class Pages(QStackedWidget):
-    def __init__(self):
+    def __init__(self, config):
         super().__init__()
+        self.config = config
         self.init_ui()
     
     def init_ui(self):
         self.welcome = Welcome()
-        self.hardware = Hardware()
-        self.software = Software()
-        self.networking = Networking()
+        self.hardware = Hardware(self.config)
+        self.software = Software(self.config)
+        self.networking = Networking(self.config)
 
         self.addWidget(self.welcome)
         self.addWidget(self.hardware)

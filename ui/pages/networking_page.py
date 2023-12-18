@@ -1,8 +1,9 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel
 
 class Networking(QWidget):
-    def __init__(self):
+    def __init__(self, config):
         super().__init__()
+        self.config = config
         self.init_ui()
     
     def init_ui(self):

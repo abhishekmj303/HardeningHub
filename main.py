@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, QDockWidget \
-    , QHBoxLayout, QWidget
+    , QHBoxLayout, QWidget, QScrollArea
 from PyQt6.QtCore import Qt
 from ui.sidebar import Sidebar
 from ui.page import Pages
@@ -15,7 +15,9 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("HardeningHub")
         self.setGeometry(0, 0, 1920, 1000)
 
-        self.pages = Pages()
+        self.config = config_file.read()
+
+        self.pages = Pages(self.config)
         self.setCentralWidget(self.pages)
         self.pages.setObjectName("pageBg")
 

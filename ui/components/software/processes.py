@@ -2,16 +2,16 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QCheckBox
 from harden import config_file
 
 class Processes(QWidget):
-    def __init__(self):
+    def __init__(self, config):
         super().__init__()
+        self.config = config
         self.init_ui()
     
     def init_ui(self):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
 
-        self.temp_toml_dict = config_file.read()
-        self.toml_processes = self.temp_toml_dict['processes']
+        self.toml_processes = self.config['processes']
 
         self.main_label = QLabel("Process Hardening")
         self.layout.addWidget(self.main_label)
@@ -25,4 +25,4 @@ class Processes(QWidget):
         
     def save_checkbox_state(self, state, name):
         self.toml_processes[name] = (state == 2)
-        config_file.write(self.temp_toml_dict)
+        config_file.write(self.config)

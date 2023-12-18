@@ -4,16 +4,17 @@ from ui.components.software.apparmor import AppArmor
 
 
 class Software(QWidget):
-    def __init__(self):
+    def __init__(self, config):
         super().__init__()
+        self.config = config
         self.init_ui()
     
     def init_ui(self):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
 
-        self.process_hardening = Processes()
-        self.apparmor = AppArmor()
+        self.process_hardening = Processes(self.config)
+        self.apparmor = AppArmor(self.config)
 
         self.layout.addWidget(self.process_hardening)
         self.layout.addWidget(self.apparmor)
