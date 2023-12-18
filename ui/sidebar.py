@@ -41,4 +41,4 @@ class Sidebar(QWidget):
         self.change_page_signal.emit(index)
         for i in range(self.layout.count()):
             self.layout.itemAt(i).widget().setStyleSheet("")
-        self.layout.itemAt(index - 1).widget().setStyleSheet("background-color: rgb(44, 49, 58); border-left: 5px solid #7B66FF;")
+        self.layout.itemAt(index - 1).widget().setStyleSheet("background-color: rgb(44, 49, 58); border-left: 5px solid rgb(189, 147, 249);")
