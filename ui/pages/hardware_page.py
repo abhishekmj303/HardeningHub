@@ -21,9 +21,7 @@ class Hardware(QWidget):
 
         self.layout.addWidget(self.physical_ports)
         self.layout.addWidget(self.file_systems)
-
-        # self.scroll = QScrollArea()
-        # self.scroll.setWidgetResizable(True)
-        # self.scroll.setWidget(self)
-        # self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
-        # self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+    
+    def refresh_config(self):
+        self.physical_ports.refresh_config()
+        self.file_systems.refresh_config()

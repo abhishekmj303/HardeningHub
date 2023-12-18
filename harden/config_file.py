@@ -3,8 +3,13 @@ import os
 import shutil
 from typing import Mapping
 
-file_path = os.path.join(os.path.dirname(__file__), "../config/sampleconfig.toml")
-temp_file_path = os.path.join(os.path.dirname(file_path), "sampleconfig_copy.toml")
+file_path = ""
+temp_file_path = ""
+
+def set_config_file(path):
+    global file_path, temp_file_path
+    file_path = path
+    temp_file_path = file_path + ".tmp"
 
 
 def create_copy():
@@ -25,3 +30,6 @@ def write(config: Mapping):
 
 def save():
     os.replace(temp_file_path, file_path)
+
+
+set_config_file(os.path.join(os.path.dirname(__file__), "../config/sampleconfig.toml"))

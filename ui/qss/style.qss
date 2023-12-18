@@ -41,7 +41,7 @@ QMainWindow {
 	margin-bottom: 5px;
 }
 
-#refresh-btn {
+.btn {
 	background-color: #7B66FF;
 	padding: 4px 13px;
 	border-radius: 5px;
@@ -51,7 +51,7 @@ QMainWindow {
 	margin-left: 20px;
 	margin-top: 10px;
 }
-#refresh-btn:hover {
+.btn:hover {
 	background-color: #6B56FF;
 }
 
@@ -88,4 +88,12 @@ QCheckBox::indicator:unchecked:hover {
 
 .file-systems QCheckBox {
 	margin-left: 30px;
+}
+
+.checkbox {
+	margin-left: 20px;
+}
+
+.toolbar-btn {
+	margin-bottom: 10px;
 }

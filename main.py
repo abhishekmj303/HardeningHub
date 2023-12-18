@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, QDockWidget \
 from PyQt6.QtCore import Qt
 from ui.sidebar import Sidebar
 from ui.page import Pages
+from ui.toolbar import ToolBar
 from harden import config_file
 import sys
 
@@ -17,9 +18,13 @@ class MainWindow(QMainWindow):
 
         self.config = config_file.read()
 
+        self.toolbar = ToolBar(self.config)
+        self.addToolBar(self.toolbar)
+
         self.pages = Pages(self.config)
         self.setCentralWidget(self.pages)
         self.pages.setObjectName("pageBg")
+        self.toolbar.import_signal.connect(self.pages.refresh_config)
 
         self.sidebar = Sidebar()
         self.sidebar.setFixedWidth(200)

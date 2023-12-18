@@ -22,3 +22,8 @@ class Pages(QStackedWidget):
         self.addWidget(self.networking)
 
         self.setCurrentIndex(0)
+    
+    def refresh_config(self):
+        self.hardware.refresh_config()
+        self.software.refresh_config()
+        self.networking.refresh_config()

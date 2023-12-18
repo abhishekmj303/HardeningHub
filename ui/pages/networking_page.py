@@ -12,3 +12,6 @@ class Networking(QWidget):
 
         self.hardware_text = QLabel("Networking page")
         layout.addWidget(self.hardware_text)
+    
+    def refresh_config(self):
+        pass

@@ -8,15 +8,15 @@ class FileSystems(QWidget):
     def __init__(self, config):
         super().__init__()
         self.config = config
+        self.toml_file_systems = self.config['file-systems']
         self.init_ui()
+        self.refresh_config()
     
     def init_ui(self):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.layout.setSpacing(0)
         self.layout.setContentsMargins(0, 0, 0, 0)
-
-        self.toml_file_systems = self.config['file-systems']
 
         self.main_label = QLabel("File Systems")
         self.layout.addWidget(self.main_label)
@@ -38,11 +38,12 @@ class FileSystems(QWidget):
         self.label_basic.setObjectName("sub-component-title")
 
         # block items
+        self.block_checkboxes = {}
         for name, state in self.toml_file_systems['block'].items():
             checkbox = QCheckBox(f'Block {name}')
-            checkbox.setChecked(state)
             checkbox.stateChanged.connect(lambda state, name=name: self.save_checkbox_state(state, 'block', name))
             self.container_layout.addWidget(checkbox)
+            self.block_checkboxes[name] = checkbox
 
         # Intermediate Hardening
         self.label_intermediate = QLabel("Intermediate Hardening")
@@ -50,18 +51,18 @@ class FileSystems(QWidget):
         self.label_intermediate.setObjectName("sub-component-title")
         
         # configure_fs items
+        self.configure_fs_checkboxes = {}
         for name, state in self.toml_file_systems['configure_fs'].items():
             checkbox = QCheckBox(f"Configure /{name.replace('_', '/')}")
-            checkbox.setChecked(state)
             checkbox.stateChanged.connect(lambda state, name=name: self.save_checkbox_state(state, 'configure_fs', name))
             self.container_layout.addWidget(checkbox)
+            self.configure_fs_checkboxes[name] = checkbox
         
         # configure /tmp size
         hlayout = QHBoxLayout()
 
         self.configure_label = QLabel('Configure /tmp size (in GB):')
         self.size_input = QLineEdit()
-        self.size_input.setText(str(self.toml_file_systems['tmp_size']))
         validator = QIntValidator()
         self.size_input.setValidator(validator)
         self.size_input.textChanged.connect(self.size_changed)
@@ -72,7 +73,6 @@ class FileSystems(QWidget):
 
         # disable_automount
         self.disable_auto_mount = QCheckBox('Disable Auto-Mount')
-        self.disable_auto_mount.setChecked(self.toml_file_systems['disable_automount'])
         self.disable_auto_mount.stateChanged.connect(lambda state: self.save_checkbox_state(state, 'disable_automount', None))
         self.container_layout.addWidget(self.disable_auto_mount)
 
@@ -83,9 +83,19 @@ class FileSystems(QWidget):
 
 
         self.enable_aide = QCheckBox('Enable AIDE (Advanced Intrusion Detection Environment)')
-        self.enable_aide.setChecked(self.toml_file_systems['enable_aide'])
         self.enable_aide.stateChanged.connect(lambda state: self.save_checkbox_state(state, 'enable_aide', None))
         self.container_layout.addWidget(self.enable_aide)
+
+    def refresh_config(self):
+        for name, state in self.toml_file_systems['block'].items():
+            self.block_checkboxes[name].setChecked(state)
+        
+        for name, state in self.toml_file_systems['configure_fs'].items():
+            self.configure_fs_checkboxes[name].setChecked(state)
+        
+        self.disable_auto_mount.setChecked(self.toml_file_systems['disable_automount'])
+        self.enable_aide.setChecked(self.toml_file_systems['enable_aide'])
+        self.size_input.setText(str(self.toml_file_systems['tmp_size']))
         
     def save_checkbox_state(self, state, type, name):
         if name:

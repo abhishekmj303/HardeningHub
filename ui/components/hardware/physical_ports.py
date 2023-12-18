@@ -7,15 +7,15 @@ class PhysicalPorts(QWidget):
     def __init__(self, config):
         super().__init__()
         self.config = config
+        self.toml_physical_ports = self.config['physical-ports']
         self.init_ui()
+        self.refresh_config()
     
     def init_ui(self):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
         self.layout.setSpacing(0)
         self.layout.setContentsMargins(0, 0, 0, 0)
-
-        self.toml_physical_ports = self.config['physical-ports']
 
         hlayout = QHBoxLayout()
         hlayout.setSpacing(0)
@@ -29,7 +29,7 @@ class PhysicalPorts(QWidget):
         # refresh button
         self.refresh_button = QPushButton("Refresh")    # no connect function yet
         hlayout.addWidget(self.refresh_button)
-        self.refresh_button.setObjectName("refresh-btn")
+        self.refresh_button.setProperty('class', 'btn')
 
         self.layout.addLayout(hlayout)
         
@@ -45,7 +45,6 @@ class PhysicalPorts(QWidget):
         # enable checkbox
         self.main_checkbox = QCheckBox("Enable USB Blocking")
         self.container_layout.addWidget(self.main_checkbox)
-        self.main_checkbox.setChecked(self.toml_physical_ports['enable'])
         self.main_checkbox.stateChanged.connect(self.enable_checkbox_clicked)
 
         # table to block devices
@@ -65,21 +64,20 @@ class PhysicalPorts(QWidget):
 
         self.devices_table.setHorizontalHeaderLabels(["Device Name", "Device ID", "Allow"])
 
-        def add_device_rows():
-            rows = self.toml_physical_ports['device-rules']
-            
-            for i in range(len(rows)):
-                self.devices_table.insertRow(i)
-                self.devices_table.setItem(i, 0, QTableWidgetItem(rows[i]['name']))
-                self.devices_table.setItem(i, 1, QTableWidgetItem(rows[i]['id']))
+    def add_device_rows(self):
+        rows = self.toml_physical_ports['device-rules']
+        
+        for i in range(len(rows)):
+            self.devices_table.insertRow(i)
+            self.devices_table.setItem(i, 0, QTableWidgetItem(rows[i]['name']))
+            self.devices_table.setItem(i, 1, QTableWidgetItem(rows[i]['id']))
 
-                checkbox = QCheckBox()
-                checkbox.setChecked(rows[i]['allow'])
-                checkbox.stateChanged.connect(lambda state, i=i: self.save_checkbox_state(state, i, 'device-rules'))
+            checkbox = QCheckBox()
+            checkbox.setChecked(rows[i]['allow'])
+            checkbox.stateChanged.connect(lambda state, i=i: self.save_checkbox_state(state, i, 'device-rules'))
 
-                self.devices_table.setCellWidget(i, 2, checkbox)
+            self.devices_table.setCellWidget(i, 2, checkbox)
 
-        add_device_rows()
 
     def block_ports_table(self):
         self.block_ports_label = QLabel("Block Ports")
@@ -92,22 +90,27 @@ class PhysicalPorts(QWidget):
 
         self.ports_table.setHorizontalHeaderLabels(["Port ID", "Device Name", "Allow"])
     
-        def add_port_rows():
-            rows = self.toml_physical_ports['port-rules']
-            
-            for i in range(len(rows)):
-                self.ports_table.insertRow(i)
-                self.ports_table.setItem(i, 0, QTableWidgetItem(rows[i]['id']))
-
-                self.ports_table.setItem(i, 1, QTableWidgetItem(rows[i]['name']))
-
-                checkbox = QCheckBox()
-                checkbox.setChecked(rows[i]['allow'])
-                checkbox.stateChanged.connect(lambda state, i=i: self.save_checkbox_state(state, i, 'port-rules'))
-
-                self.ports_table.setCellWidget(i, 2, checkbox)
+    def add_port_rows(self):
+        rows = self.toml_physical_ports['port-rules']
         
-        add_port_rows()
+        for i in range(len(rows)):
+            self.ports_table.insertRow(i)
+            self.ports_table.setItem(i, 0, QTableWidgetItem(rows[i]['id']))
+
+            self.ports_table.setItem(i, 1, QTableWidgetItem(rows[i]['name']))
+
+            checkbox = QCheckBox()
+            checkbox.setChecked(rows[i]['allow'])
+            checkbox.stateChanged.connect(lambda state, i=i: self.save_checkbox_state(state, i, 'port-rules'))
+
+            self.ports_table.setCellWidget(i, 2, checkbox)
+
+    def refresh_config(self):
+        self.main_checkbox.setChecked(self.toml_physical_ports['enable'])
+        self.devices_table.clearContents()
+        self.ports_table.clearContents()
+        self.add_device_rows()
+        self.add_port_rows()
 
     def enable_checkbox_clicked(self, state):
         self.toml_physical_ports['enable'] = (state == 2)
