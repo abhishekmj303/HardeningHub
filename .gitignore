@@ -5,3 +5,4 @@ venv
 .venv
 /*.sh
 temp.qss
+*.pdf
