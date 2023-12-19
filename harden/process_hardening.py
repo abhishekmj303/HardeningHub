@@ -1,4 +1,3 @@
-import subprocess
 import config_file
 
 def get_script(config):
