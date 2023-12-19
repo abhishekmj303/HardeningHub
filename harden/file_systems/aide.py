@@ -9,7 +9,7 @@ def get_script(config):
     if file_systems_config['enable_aide']:
         # Each file system gets its own set of commands
         script += f"""
-sudo apt install aide aide-common
+sudo apt install aide 
 """
     return script
 
