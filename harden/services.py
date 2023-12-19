@@ -19,7 +19,7 @@ def get_script(config):
     file_systems_config = config["services"]
     # Start with an empty script and build it up
 
-    script = """"""
+    script = ""
     if file_systems_config['remove_avahi']:
         script += """
 systemctl stop avahi-daaemon.service
@@ -74,8 +74,8 @@ sudo apt purge nis
         script += """   
 sudo apt purge rsync
 """
-
+    return script
 
 if __name__ == "__main__":
-    config = config_file.read()
+    config = config_file.init()
     print(get_script(config))
