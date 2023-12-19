@@ -1,32 +1,51 @@
 #!/bin/bash
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-PYTHON_SCRIPT="$SCRIPT_DIR/../harden/file_systems/squashfs.py"
-echo "Python script path: $PYTHON_SCRIPT"
 
-# Check if the Python script exists
-if [ ! -f "$PYTHON_SCRIPT" ]; then
-    echo "Error: Python script not found."
-    exit 1
-fi
+# Function to check if module is set to not load
+check_module_not_loadable() {
+    local module="$1"
+    local conf_file="/etc/modprobe.d/$module.conf"
 
-# Run the Python script and capture its output
-echo "Running the Python script..."
-script_output=$(python3 "$PYTHON_SCRIPT")
+    if grep -Pq "^\s*install $module /bin/false" "$conf_file"; then
+        echo "Module $module is set to not load in $conf_file."
+    else
+        echo "Module $module is NOT set to not load in $conf_file."
+        return 1
+    fi
+}
 
-# Check the exit status of the Python script
-if [ $? -ne 0 ]; then
-    echo "Python script execution failed."
-    exit 1
-fi
+# Function to check if module is unloaded
+check_module_unloaded() {
+    local module="$1"
 
-# Optionally, print the output for verification
-echo "Python script output:"
-echo "$script_output"
+    if lsmod | grep -q "$module"; then
+        echo "Module $module is still loaded."
+        return 1
+    else
+        echo "Module $module is unloaded."
+    fi
+}
 
-# Execute the output as a Bash script
-# WARNING: Executing scripts directly can be risky, especially with sudo commands.
-# Ensure you thoroughly understand and trust the script before executing.
-echo "Executing the generated Bash script..."
-bash -c "$script_output"
+# Function to check if module is blacklisted
+check_module_blacklisted() {
+    local module="$1"
+    local blacklist_files="/etc/modprobe.d/*.conf"
 
-echo "Script executed successfully."
+    if grep -Pq "^\s*blacklist $module" $blacklist_files; then
+        echo "Module $module is blacklisted."
+    else
+        echo "Module $module is NOT blacklisted."
+        return 1
+    fi
+}
+
+# Main testing logic
+main() {
+    local module_name="squashfs"
+    check_module_not_loadable "$module_name" || return 1
+    check_module_unloaded "$module_name" || return 1
+    check_module_blacklisted "$module_name" || return 1
+
+    echo "All tests passed."
+}
+
+main
