@@ -22,12 +22,20 @@ class GDM(QWidget):
         self.layout.addWidget(self.main_label)
         self.main_label.setObjectName("component-title")
 
-        self.toml_gdm_checkboxes = {}
+        # container widget
+        self.container_widget = QWidget()
+        self.container_layout = QVBoxLayout()
+        self.container_widget.setLayout(self.container_layout)
+        self.layout.addWidget(self.container_widget)
+        self.container_layout.setSpacing(0)
+        self.container_layout.setContentsMargins(30, 10, 30, 30)
+        self.container_widget.setObjectName("container-widget")
 
+        self.toml_gdm_checkboxes = {}
         remove_checkbox = QCheckBox('Remove')
         remove_checkbox.stateChanged.connect(lambda state, name = 'remove': self.save_checkbox_state(name, state))
         self.toml_gdm_checkboxes['remove'] = remove_checkbox
-        self.layout.addWidget(remove_checkbox)
+        self.container_layout.addWidget(remove_checkbox)
 
         hlayout = QHBoxLayout()
 
@@ -41,7 +49,7 @@ class GDM(QWidget):
         hlayout.addWidget(self.lockon_lable)
         hlayout.addWidget(self.time_input)
 
-        self.layout.addLayout(hlayout)
+        self.container_layout.addLayout(hlayout)
         for name in self.toml_gdm:
             if name == 'lock_on_idle' or name == 'remove':
                 continue
@@ -49,7 +57,7 @@ class GDM(QWidget):
             checkbox = QCheckBox(f"{name.replace('_',' ').title()}")
             checkbox.stateChanged.connect(lambda state, name = name: self.save_checkbox_state(name, state))
             self.toml_gdm_checkboxes[name] = checkbox
-            self.layout.addWidget(checkbox)
+            self.container_layout.addWidget(checkbox)
 
     def refresh_config(self, config):
         self.config = config

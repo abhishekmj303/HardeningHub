@@ -22,19 +22,28 @@ class TimeSync(QWidget):
         self.layout.addWidget(self.main_label)
         self.main_label.setObjectName("component-title")
 
+        # container widget
+        self.container_widget = QWidget()
+        self.container_layout = QVBoxLayout()
+        self.container_widget.setLayout(self.container_layout)
+        self.layout.addWidget(self.container_widget)
+        self.container_layout.setSpacing(0)
+        self.container_layout.setContentsMargins(30, 10, 30, 30)
+        self.container_widget.setObjectName("container-widget")
+
         #enable ntp checkbox
         self.enable_ntp = QCheckBox('Enable NTP')
         self.enable_ntp.stateChanged.connect(lambda state, name = 'enable_ntp': self.save_checkbox_state(name, state))
-        self.layout.addWidget(self.enable_ntp)
+        self.container_layout.addWidget(self.enable_ntp)
 
         
 
         self.enable_user = QCheckBox('Enable NTP user')
         self.enable_user.stateChanged.connect(lambda state, name = 'enable_ntp_user': self.save_checkbox_state(name, state))
-        self.layout.addWidget(self.enable_user)
+        self.container_layout.addWidget(self.enable_user)
 
         ntp_server_lable = QLabel('NTP Servers')
-        self.layout.addWidget(ntp_server_lable)
+        self.container_layout.addWidget(ntp_server_lable)
 
         hlayout = QHBoxLayout()
 
@@ -45,14 +54,14 @@ class TimeSync(QWidget):
         hlayout.addWidget(self.new_server)
         hlayout.addWidget(self.add_button)
 
-        self.layout.addLayout(hlayout)
+        self.container_layout.addLayout(hlayout)
     
         self.server_table()
 
     def server_table(self):
         self.servers_table = QTableWidget()
         self.servers_table.setColumnCount(2)
-        self.layout.addWidget(self.servers_table)
+        self.container_layout.addWidget(self.servers_table)
 
         self.servers_table.setHorizontalHeaderLabels(["Server", "Remove"])
 
