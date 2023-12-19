@@ -3,7 +3,7 @@ QMainWindow {
 }
 
 #page {	
-	background-color: #1e1e2e;
+	background-color: rgb(40, 40, 56);
 	padding: 0px 0px 0px 20px;
 }
 
@@ -44,6 +44,7 @@ QMainWindow {
 	background-color: #181825;
 	border-radius: 15px;
 	margin-left: 15px;
+	border: none;
 }
 
 .btn {
@@ -89,6 +90,7 @@ QCheckBox {
 	margin-bottom: 10px;
 	font: 15px;
 	font-weight: 500;
+	color: rgb(221, 221, 221);
 }
 QCheckBox::indicator {
     width: 13px;
@@ -152,7 +154,7 @@ QLineEdit:focus {
 
 QScrollArea QStackedWidget {
 	border: none;
-	background-color: #1e1e2e;
+	background-color: rgb(40, 40, 56);
 }
 
 .in-checkbox {
@@ -160,10 +162,23 @@ QScrollArea QStackedWidget {
 }
 
 QToolTip {
-	background-color: transparent;
-	color: white;
-	border: 1px solid #45475a;
+	background-color: #6c7086;
+	color: rgb(221, 221, 221);
+	border: 1.5px solid #45475a;
 	border-radius: 10px;
 	font: 15px;
 	padding: 2px 5px;
+}
+
+QComboBox {
+	border-radius: 4px;
+	padding: 2px 5px;
+	color: rgb(221, 221, 221);
+	background-color: rgb(39, 40, 58);
+	margin: 0px 15px 5px 0px;
+	selection-background-color: #BFDFFF;
+}
+
+.theme-btn {
+	margin-right: 20px;
 }

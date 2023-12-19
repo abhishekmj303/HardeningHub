@@ -34,6 +34,7 @@ class ToolBar(QToolBar):
         self.theme_checkbox = QCheckBox("Dark Mode")
         self.theme_checkbox.setChecked(False)
         self.theme_checkbox.stateChanged.connect(self.theme_checkbox_clicked)
+        self.theme_checkbox.setProperty('class', 'theme-btn')
         self.addWidget(self.theme_checkbox)
 
 
