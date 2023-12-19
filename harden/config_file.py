@@ -23,8 +23,8 @@ def write(config: Mapping):
         tomlkit.dump(config, f)
 
 
-def save():
-    os.replace(TEMP_FILE_PATH, FILE_PATH)
+def save(file_path: str = FILE_PATH):
+    shutil.copyfile(TEMP_FILE_PATH, file_path)
 
 
 def update_toml_obj(toml_obj: tomlkit.items.Item, config: dict):

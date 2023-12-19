@@ -29,6 +29,7 @@ class ToolBar(QToolBar):
         self.script_button.setProperty('class', ['btn', 'toolbar-btn'])
 
         self.import_button.clicked.connect(self.import_button_clicked)
+        self.export_button.clicked.connect(self.export_button_clicked)
     
     def import_button_clicked(self):
         import_dialog = QFileDialog.getOpenFileName(self, "Select Config File", filter = "Config File (*.toml)")
@@ -37,6 +38,16 @@ class ToolBar(QToolBar):
         
         selected_file = import_dialog[0]
         print("selected file: ", selected_file)
-
+    
         self.config = config_file.init(selected_file)
         self.import_signal.emit(self.config)
+
+    def export_button_clicked(self):
+        export_dialog = QFileDialog.getSaveFileName(self, "Export Config File", filter = "Config File (*.toml)")
+        if not export_dialog[0]:
+            return
+
+        save_config_path = export_dialog[0]
+        print("save config path: ", save_config_path)
+
+        config_file.save(save_config_path)

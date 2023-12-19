@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow, QDockWidget \
+from PyQt6.QtWidgets import QApplication, QMainWindow \
     , QHBoxLayout, QWidget, QScrollArea
 from PyQt6.QtCore import Qt
 from ui.sidebar import Sidebar
@@ -21,14 +21,13 @@ class MainWindow(QMainWindow):
         self.addToolBar(self.toolbar)
 
         self.pages = Pages(self.config)
-        self.setCentralWidget(self.pages)
-        self.pages.setObjectName("pageBg")
+        self.pages.setObjectName("page")
         self.toolbar.import_signal.connect(self.pages.refresh_config)
 
         self.sidebar = Sidebar()
         self.sidebar.setFixedWidth(200)
         self.sidebar.setObjectName("sidebarBg")
-        self.sidebar.change_page_signal.connect(self.pages.setCurrentIndex)
+        self.sidebar.change_page_signal.connect(self.pages.StackedWidget.setCurrentIndex)
 
         self.main_layout = QHBoxLayout()
         self.main_layout.setSpacing(0)

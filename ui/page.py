@@ -1,27 +1,35 @@
-from PyQt6.QtWidgets import QStackedWidget
+from PyQt6.QtWidgets import QStackedWidget, QScrollArea
+from PyQt6.QtCore import Qt
 from ui.pages.hardware_page import Hardware
 from ui.pages.software_page import Software
-from ui.pages.networking_page import Networking
+from ui.pages.network_page import Network
 from ui.pages.welcome_page import Welcome
 
-class Pages(QStackedWidget):
+class Pages(QScrollArea):
     def __init__(self, config):
         super().__init__()
         self.config = config
+        self.setWidgetResizable(True)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        # self.setProperty("class", "scroll-area")
         self.init_ui()
     
     def init_ui(self):
+        self.StackedWidget = QStackedWidget()
+        self.setWidget(self.StackedWidget)
+
         self.welcome = Welcome()
         self.hardware = Hardware(self.config)
         self.software = Software(self.config)
-        self.networking = Networking(self.config)
+        self.network = Network(self.config)
 
-        self.addWidget(self.welcome)
-        self.addWidget(self.hardware)
-        self.addWidget(self.software)
-        self.addWidget(self.networking)
+        self.StackedWidget.addWidget(self.welcome)
+        self.StackedWidget.addWidget(self.hardware)
+        self.StackedWidget.addWidget(self.software)
+        self.StackedWidget.addWidget(self.network)
 
-        self.setCurrentIndex(0)
+        self.StackedWidget.setCurrentIndex(0)
     
     def refresh_config(self, config):
         self.config = config

@@ -85,7 +85,7 @@ disable_protocols = {dccp = true, sctp = true, rds = true, tipc = true}
 
 [firewall] # Firewall
 enable = true
-configure_loopback = true # Allow loopback traffic
+configure_loopback_traffic = true # Allow loopback traffic
 enable_default_deny = true # Deny all traffic by default
 
 [ssh]
