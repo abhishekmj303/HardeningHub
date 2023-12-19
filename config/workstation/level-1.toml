@@ -81,7 +81,7 @@ ignore_bogus_icmp_errors = true
 enable_rp_filter = true # Reverse Path Filtering
 enable_syn_cookies = true # TCP SYN Cookie
 reject_ipv6_router_adv = true # IPv6 Router Advertisement
-disable_protocols = {dccp = false, sctp = false, rds = false, tipc = false}
+disable_protocols = {dccp = true, sctp = true, rds = true, tipc = true}
 
 [firewall] # Firewall
 enable = true

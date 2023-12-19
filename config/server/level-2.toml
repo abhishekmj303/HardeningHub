@@ -1,0 +1,17 @@
+[physical-ports]
+enable = true
+
+[file-systems]
+block = {udf = true, cramfs = true, squashfs = true}
+disable_automount = true
+
+[apparmor] # Mandatory Access Control
+mode = "enforce" # enforce, complain
+
+[gdm] # GNOME Display Manager
+remove = true
+disable_automount = true
+lock_automount = true
+
+[network] # Network
+disable_protocols = {dccp = true, sctp = true, rds = true, tipc = true}

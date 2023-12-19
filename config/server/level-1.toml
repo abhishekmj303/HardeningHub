@@ -1,0 +1,10 @@
+[physical-ports]
+enable = true
+
+[file-systems]
+disable_automount = true
+
+[gdm] # GNOME Display Manager
+disable_automount = true
+lock_automount = true
+

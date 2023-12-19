@@ -1,0 +1,19 @@
+[physical-ports]
+enable = true
+
+[file-systems]
+block = { udf = true, squashfs = true }
+disable_automount = true
+mode = "enforce" # enforce, complain
+
+[gdm] # GNOME Display Manager
+disable_automount = false
+lock_automount = false
+
+[services] # Services
+remove_cups = false
+
+[network] # Network
+disable_wireless = false # WiFi and other wireless interfaces
+disable_protocols = {dccp = true, sctp = true, rds = true, tipc = true}
+
