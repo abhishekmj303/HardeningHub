@@ -69,7 +69,7 @@ remove_ldap = true
 remove_rpc = true
 
 [network] # Network
-disable_wireless = true # WiFi and other wireless interfaces
+disable_wireless = false # WiFi and other wireless interfaces
 disable_packet_redirects = true
 disable_ip_forwarding = true
 reject_source_routed_packets = true
@@ -81,7 +81,7 @@ ignore_bogus_icmp_errors = true
 enable_rp_filter = true # Reverse Path Filtering
 enable_syn_cookies = true # TCP SYN Cookie
 reject_ipv6_router_adv = true # IPv6 Router Advertisement
-disable_protocols = {dccp = true, sctp = true, rds = true, tipc = true}
+disable_protocols = {dccp = false, sctp = false, rds = false, tipc = false}
 
 [firewall] # Firewall
 enable = true

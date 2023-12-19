@@ -34,6 +34,7 @@ def save(file_path: str = None):
 
 def update_toml_obj(toml_obj: tomlkit.items.Item, config: dict):
     # Recursively update the toml object with the config dict
+    print(config)
     for key, value in config.items():
         if isinstance(value, dict):
             update_toml_obj(value, toml_obj[key])
@@ -61,9 +62,8 @@ def init(file_path: str = None):
     return physical_ports.get_devices(read())
 
 def import_level(level: str = "w1"):
-    config = init()
     if level == "w1":
-        return config
+        file_path = os.path.join(os.path.dirname(__file__), "../config/workstation/level-1.toml")
     elif level == "w2":
         file_path = os.path.join(os.path.dirname(__file__), "../config/workstation/level-2.toml")
     elif level == "s1":
@@ -71,5 +71,4 @@ def import_level(level: str = "w1"):
     elif level == "s2":
         file_path = os.path.join(os.path.dirname(__file__), "../config/server/level-2.toml")
     
-    update_toml_obj(config, read(file_path))
-    return config
+    return init(file_path)

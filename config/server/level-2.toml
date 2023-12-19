@@ -1,17 +1,100 @@
 [physical-ports]
 enable = true
+device-rules = [
+    {allow = true, id = "1a2c:4c5e", name = "USB Keyboard"}, # allow only at that port
+    {allow = true, id = "04f3:0c00", name = "ELAN:ARM-M4"},
+    {allow = false, id = "1a3d:5b4e", name = "USB Mouse"}
+]
+port-rules = [
+    {allow = false, id = "1-3", name = "USB Keyboard"}, # block all devices at that port
+    {allow = true, id = "1-2", name = "USB Mouse"}
+]
 
 [file-systems]
 block = {udf = true, cramfs = true, squashfs = true}
+# Intermediate
+configure_fs = {tmp = true, dev_shm = true} # /tmp and /dev/shm
+tmp_size = 2 # in GB
 disable_automount = true
+# Advanced
+enable_aide = true # Advanced Intrusion Detection Environment
+
+[processes] # Process Hardening
+enable_aslr = true # Address Space Layout Randomization
+remove_prelink = true
+disable_error_reporting = true
+restrict_core_dumps = true
 
 [apparmor] # Mandatory Access Control
+enable = true
 mode = "enforce" # enforce, complain
 
 [gdm] # GNOME Display Manager
 remove = true
+disable_user_list = true
+lock_on_idle = 100 # in seconds, 0 to disable
+no_override_lockscreen = true
 disable_automount = true
 lock_automount = true
+disable_autorun = true
+no_override_autorun = true
+
+[time-sync] # Time synchronization
+enable_ntp = true
+ntp_servers = [ "http://time-a-g.nist.gov/", "132.163.97.3", "http://time-d-b.nist.gov/"]
+enable_ntp_user = true
+
+[services] # Services
+remove_avahi = true
+remove_cups = true
+remove_dhcp = true
+remove_ldap = true
+remove_nfs = true
+remove_ftp = true
+remove_http = true
+remove_imap_pop3 = true
+remove_samba = true
+remove_http_proxy = true
+remove_snmp = true
+remove_nis = true
+remove_rsync = true
+
+[service_clients] # Service Clients
+remove_nis = true
+remove_rsh = true
+remove_talk = true
+remove_telnet = true
+remove_ldap = true
+remove_rpc = true
 
 [network] # Network
+disable_wireless = false # WiFi and other wireless interfaces
+disable_packet_redirects = true
+disable_ip_forwarding = true
+reject_source_routed_packets = true
+reject_icmp_redirects = true
+reject_secure_icmp_redirects = true
+log_suspicious_packets = true
+ingore_broadcasts = true
+ignore_bogus_icmp_errors = true
+enable_rp_filter = true # Reverse Path Filtering
+enable_syn_cookies = true # TCP SYN Cookie
+reject_ipv6_router_adv = true # IPv6 Router Advertisement
 disable_protocols = {dccp = true, sctp = true, rds = true, tipc = true}
+
+[firewall] # Firewall
+enable = true
+configure_loopback_traffic = true # Allow loopback traffic
+enable_default_deny = true # Deny all traffic by default
+
+[ssh]
+enable = true
+port = 22
+permit-empty-passwords = false
+password-authentication = false
+permit-root-login = false
+client-alive-interval = 300
+client-alive-count-max = 2
+allow-users = ["user1", "user2"]
+allow-groups = ["group1", "group2"]
+x11-forwarding = false
