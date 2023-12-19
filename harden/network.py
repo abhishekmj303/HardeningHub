@@ -348,7 +348,7 @@ done
 }
 '''
 
-    if network_config['log_suspicous_packets']:
+    if network_config['log_suspicious_packets']:
         script += '''
 {
 l_output="" l_output2=""
