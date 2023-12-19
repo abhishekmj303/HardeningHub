@@ -44,8 +44,7 @@ class TimeSync(QWidget):
 
         self.enable_user = QCheckBox('Enable NTP user')
         self.enable_user.stateChanged.connect(lambda state, name = 'enable_ntp_user': self.save_checkbox_state(name, state))
-        
-
+        self.layout.addWidget(self.enable_user)
 
     def add_new_server(self):
         server = self.new_server.text()
@@ -55,30 +54,25 @@ class TimeSync(QWidget):
         self.new_server.setText('')
 
     def add_server(self, server):
-        print(server)
+        if server == '':
+            return
+        
         hlayout = QHBoxLayout()
         self.layout.addLayout(hlayout)
 
-        self.server_label = QLabel(server)
-        hlayout.addWidget(self.server_label)
+        server_label = QLabel(server)
+        hlayout.addWidget(server_label)
 
-        self.remove_button = QPushButton('remove')
-        self.remove_button.clicked.connect(lambda : self.remove_server(server, hlayout))
-        hlayout.addWidget(self.remove_button)
+        remove_button = QPushButton('remove')
+        remove_button.clicked.connect(lambda : self.remove_server(server, hlayout, server_label, remove_button))
+        hlayout.addWidget(remove_button)
 
-    def remove_server(self, server, hlayout):
-        # print(server)
-        # index = 0
-        # for i in self.toml_time_sync['ntp_servers']:
-        #     if i == server:
-        #         break
-        #     index += 1
-        # print(index)
-        # del self.toml_time_sync['ntp_servers'][index]
+    def remove_server(self, server, hlayout: QHBoxLayout, server_label: QLabel, remove_button: QPushButton):
         self.toml_time_sync['ntp_servers'].remove(server)
         config_file.write(self.config)
+        server_label.deleteLater()
+        remove_button.deleteLater()
         hlayout.deleteLater()
-        
 
     def save_checkbox_state(self, name, state):
         self.toml_gdm[name] = (state == 2)
