@@ -1,34 +1,43 @@
-import subprocess
 from harden import config_file
+
 def get_script(config):
     file_systems_config = config["file-systems"]
 
-    # Start with an empty script and build it up
-    script = ""
+    script = "#!/bin/bash\n\n"  # Start with a bash shebang and a newline
 
-    if 'udf' in file_systems_config['block']:
-        # Each file system gets its own set of commands
-        script += f"""
-l_mname="udf" # set module name
-if ! modprobe -n -v "$l_mname" | grep -P --
-'^\h*install
-\/bin\/(true|false)'; then
-echo -e " - setting module: \"$l_mname\" to be not loadable"
-echo -e "install $l_mname /bin/false" >>
-/etc/modprobe.d/"$l_mname".conf
+    # Check if 'udf' is to be blocked
+    if 'udf' in file_systems_config['block'] and file_systems_config['block']['udf']:
+        script += """
+echo "Processing module: udf..."
+
+# Check if module 'udf' is set to be not loadable
+if ! modprobe -n -v udf | grep -q 'install /bin/true'; then
+    echo "Setting module 'udf' to be not loadable"
+    echo "install udf /bin/false" | sudo tee /etc/modprobe.d/udf.conf
 fi
-if lsmod | grep "$l_mname" > /dev/null 2>&1; then
-echo -e " - unloading module \"$l_mname\""
-modprobe -r "$l_mname"
+
+# Unload module 'udf' if it is currently loaded
+if lsmod | grep -q "udf"; then
+    echo "Unloading module 'udf'"
+    sudo modprobe -r udf
 fi
-if ! grep -Pq --
-"^\h*blacklist\h+$l_mname\b" /etc/modprobe.d/*; then
-echo -e " - deny listing \"$l_mname\""
-echo -e "blacklist $l_mname" >> /etc/modprobe.d/"$l_mname".conf
+
+# Blacklist module 'udf' if not already blacklisted
+if ! grep -q "blacklist udf" /etc/modprobe.d/*; then
+    echo "Blacklisting module 'udf'"
+    echo "blacklist udf" | sudo tee -a /etc/modprobe.d/udf.conf
 fi
 """
     return script
 
 if __name__ == "__main__":
-    config = config_file.read()
-    print(get_script(config))
+    # Example configuration for demonstration
+    config = {
+        "file-systems": {
+            "block": {
+                "udf": True
+            }
+        }
+    }
+    generated_script = get_script(config)
+    print(generated_script)
