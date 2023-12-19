@@ -30,14 +30,18 @@ class AppArmor(QWidget):
         self.container_widget.setObjectName("container-widget")
 
         # Enable Checkbox
-        checkbox = QCheckBox('Enable')
-        checkbox.stateChanged.connect(self.save_checkbox_state)
-        self.container_layout.addWidget(checkbox)
+        self.enable_checkbox = QCheckBox('Enable')
+        self.enable_checkbox.stateChanged.connect(self.save_checkbox_state)
+        self.container_layout.addWidget(self.enable_checkbox)
 
         # Mode Dropdown
         hlayout = QHBoxLayout()
 
+        # Select Mode Label
         self.mode_label = QLabel('Select mode:')
+        self.mode_label.setProperty('class', 'normal-label-for')
+
+        # Mode Dropdown
         self.mode_list = QComboBox()
         self.mode_list.addItems(['enforce', 'complain'])
         self.mode_list.currentTextChanged.connect(self.new_item_selected)
@@ -49,8 +53,10 @@ class AppArmor(QWidget):
     def refresh_config(self, config):
         self.config = config
         self.toml_apparmor = self.config['apparmor']
+        self.enable_checkbox.setChecked(self.toml_apparmor['enable'])
         self.mode_list.setCurrentText(self.toml_apparmor['mode'])
-        self.mode_list.setEnabled(self.toml_apparmor['enable'])
+        if not self.toml_apparmor['enable']:
+            self.mode_list.setEnabled(False)
         
     def save_checkbox_state(self, state):
         self.toml_apparmor['enable'] = (state == 2)

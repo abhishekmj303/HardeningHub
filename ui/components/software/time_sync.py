@@ -22,51 +22,63 @@ class TimeSync(QWidget):
         self.layout.addWidget(self.main_label)
         self.main_label.setObjectName("component-title")
 
+        # container widget
+        self.container_widget = QWidget()
+        self.container_layout = QVBoxLayout()
+        self.container_widget.setLayout(self.container_layout)
+        self.layout.addWidget(self.container_widget)
+        self.container_layout.setSpacing(0)
+        self.container_layout.setContentsMargins(30, 10, 30, 30)
+        self.container_widget.setObjectName("container-widget")
+
         #enable ntp checkbox
         self.enable_ntp = QCheckBox('Enable NTP')
         self.enable_ntp.stateChanged.connect(lambda state, name = 'enable_ntp': self.save_checkbox_state(name, state))
-        self.layout.addWidget(self.enable_ntp)
-
-        
+        self.container_layout.addWidget(self.enable_ntp)
 
         self.enable_user = QCheckBox('Enable NTP user')
         self.enable_user.stateChanged.connect(lambda state, name = 'enable_ntp_user': self.save_checkbox_state(name, state))
-        self.layout.addWidget(self.enable_user)
+        self.container_layout.addWidget(self.enable_user)
 
         ntp_server_lable = QLabel('NTP Servers')
-        self.layout.addWidget(ntp_server_lable)
+        ntp_server_lable.setProperty('class', 'normal-label-for')
+        self.container_layout.addWidget(ntp_server_lable)
 
         hlayout = QHBoxLayout()
 
         self.new_server = QLineEdit()
-        self.add_button = QPushButton('add')
+        self.add_button = QPushButton('Add')
         self.add_button.clicked.connect(self.add_new_server)
+        self.add_button.setProperty('class', 'add-btn')
 
         hlayout.addWidget(self.new_server)
         hlayout.addWidget(self.add_button)
 
-        self.layout.addLayout(hlayout)
+        self.container_layout.addLayout(hlayout)
     
         self.server_table()
 
     def server_table(self):
         self.servers_table = QTableWidget()
         self.servers_table.setColumnCount(2)
-        self.layout.addWidget(self.servers_table)
+        self.container_layout.addWidget(self.servers_table)
 
         self.servers_table.setHorizontalHeaderLabels(["Server", "Remove"])
 
         
     def add_new_server(self):
         server = self.new_server.text()
+        if server == '' or server is None:
+            return
         self.toml_time_sync['ntp_servers'].append(server)
         config_file.write(self.config)
         self.servers_table.insertRow(self.servers_table.rowCount())
         self.servers_table.setItem(self.servers_table.rowCount() - 1, 0, QTableWidgetItem(server))
-        remove_button = QPushButton('remove')
+        remove_button = QPushButton('Remove')
+        remove_button.setProperty('class', 'remove-btn')
         remove_button.clicked.connect(lambda state,n = server : self.remove_server(n))
-        self.servers_table.setCellWidget(self.servers_table.rowCount() - 1, 1, remove_button)
 
+        self.servers_table.setCellWidget(self.servers_table.rowCount() - 1, 1, remove_button)
         self.new_server.setText('')
 
     def add_servers(self):
@@ -76,7 +88,8 @@ class TimeSync(QWidget):
             name = rows[i]
             self.servers_table.setItem(i, 0, QTableWidgetItem(rows[i]))
             
-            remove_button = QPushButton('remove')
+            remove_button = QPushButton('Remove')
+            remove_button.setProperty('class', 'remove-btn')
             remove_button.clicked.connect(lambda state,n = name : self.remove_server(n))
             self.servers_table.setCellWidget(i, 1, remove_button)
 
@@ -95,6 +108,14 @@ class TimeSync(QWidget):
         self.toml_time_sync = self.config['time-sync']
         self.enable_ntp.setChecked(self.toml_time_sync['enable_ntp'])
         self.enable_user.setChecked(self.toml_time_sync['enable_ntp_user'])
+
+        if not self.toml_time_sync['enable_ntp']:
+            self.enable_user.setEnabled(False)
+            self.servers_table.setEnabled(False)
+            self.new_server.setEnabled(False)
+            self.add_button.setEnabled(False)
+            for i in range(self.servers_table.rowCount()):
+                self.servers_table.cellWidget(i, 1).setEnabled(False)
 
         self.servers_table.setRowCount(0)
         self.add_servers()
