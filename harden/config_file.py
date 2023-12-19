@@ -2,6 +2,7 @@ import tomlkit
 import os
 import shutil
 from typing import Mapping
+from harden import physical_ports
 
 FILE_PATH = ""
 TEMP_FILE_PATH = ""
@@ -23,8 +24,10 @@ def write(config: Mapping):
         tomlkit.dump(config, f)
 
 
-def save():
-    os.replace(TEMP_FILE_PATH, FILE_PATH)
+def save(file_path: str = None):
+    if file_path is None:
+        file_path = FILE_PATH
+    shutil.copyfile(TEMP_FILE_PATH, file_path)
 
 
 def update_toml_obj(toml_obj: tomlkit.items.Item, config: dict):
@@ -53,4 +56,4 @@ def init(file_path: str = None):
     FILE_PATH = file_path
     TEMP_FILE_PATH = FILE_PATH + ".tmp"
     create_copy()
-    return read()
+    return physical_ports.get_devices(read())

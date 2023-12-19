@@ -2,9 +2,9 @@ QMainWindow {
 	background-color: #181825;
 }
 
-#pageBg {	
+#page {	
 	background-color: #1e1e2e;
-	padding: 20px;
+	padding: 0px 0px 0px 20px;
 }
 
 #sidebarBg {
@@ -118,4 +118,9 @@ QLineEdit {
 }
 QLineEdit:focus {
    border: 1px solid #7B66FF;
+}
+
+QScrollArea QStackedWidget {
+	border: none;
+	background-color: #1e1e2e;
 }

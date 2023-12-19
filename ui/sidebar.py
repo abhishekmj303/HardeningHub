@@ -33,7 +33,7 @@ class Sidebar(QWidget):
         self.software_label.clicked.connect(lambda: self.set_active(2))
         self.layout.addWidget(self.software_label)
 
-        self.networking_label = ClickableLabel("Networking")
+        self.networking_label = ClickableLabel("Network")
         self.networking_label.clicked.connect(lambda: self.set_active(3))
         self.layout.addWidget(self.networking_label)
     
