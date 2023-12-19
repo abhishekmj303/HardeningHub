@@ -2,7 +2,7 @@ import subprocess
 from harden import config_file
 
 def get_script(config):
-    file_systems_config = config["file-systems"]
+    file_systems_config = config["apparmor"]
     # Start with an empty script and build it up
     script = ""
 
