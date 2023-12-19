@@ -60,6 +60,30 @@ QMainWindow {
 	background-color: #6B56FF;
 }
 
+.add-btn {
+	background-color: #7B66FF;
+	padding: 2.5px 10px;
+	border-radius: 5px;
+	color: rgb(221, 221, 221);
+	font: 15px;
+	font-weight: 500;
+}
+.add-btn:hover {
+	background-color: #6B56FF;
+}
+
+.remove-btn {
+	background-color: #7B66FF;
+	padding: 1.5px 5px;
+	border-radius: 5px;
+	color: rgb(221, 221, 221);
+	font: 15px;
+	font-weight: 500;
+}
+.remove-btn:hover {
+	background-color: #6B56FF;
+}
+
 QCheckBox {
     spacing: 10px;
 	margin-bottom: 10px;
@@ -90,6 +114,12 @@ QCheckBox::indicator:unchecked:hover {
 }
 .label-for {
 	margin: 5px 5px 15px 30px;
+	font: 15px;
+	font-weight: 500;
+	color: rgb(221, 221, 221);
+}
+.normal-label-for {
+	margin: 5px 5px 10px 0px;
 	font: 15px;
 	font-weight: 500;
 	color: rgb(221, 221, 221);

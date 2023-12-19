@@ -39,7 +39,10 @@ class GDM(QWidget):
 
         hlayout = QHBoxLayout()
 
+        # Lock on Idle Label
         self.lockon_lable = QLabel('Lock on Idle(seconds)')
+        self.lockon_lable.setProperty('class', 'normal-label-for')
+
         self.time_input = QLineEdit()
         self.time_input.setText(str(self.toml_gdm['lock_on_idle']))
         validator = QIntValidator()

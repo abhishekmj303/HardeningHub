@@ -36,20 +36,20 @@ class TimeSync(QWidget):
         self.enable_ntp.stateChanged.connect(lambda state, name = 'enable_ntp': self.save_checkbox_state(name, state))
         self.container_layout.addWidget(self.enable_ntp)
 
-        
-
         self.enable_user = QCheckBox('Enable NTP user')
         self.enable_user.stateChanged.connect(lambda state, name = 'enable_ntp_user': self.save_checkbox_state(name, state))
         self.container_layout.addWidget(self.enable_user)
 
         ntp_server_lable = QLabel('NTP Servers')
+        ntp_server_lable.setProperty('class', 'normal-label-for')
         self.container_layout.addWidget(ntp_server_lable)
 
         hlayout = QHBoxLayout()
 
         self.new_server = QLineEdit()
-        self.add_button = QPushButton('add')
+        self.add_button = QPushButton('Add')
         self.add_button.clicked.connect(self.add_new_server)
+        self.add_button.setProperty('class', 'add-btn')
 
         hlayout.addWidget(self.new_server)
         hlayout.addWidget(self.add_button)
@@ -68,14 +68,17 @@ class TimeSync(QWidget):
         
     def add_new_server(self):
         server = self.new_server.text()
+        if server == '' or server is None:
+            return
         self.toml_time_sync['ntp_servers'].append(server)
         config_file.write(self.config)
         self.servers_table.insertRow(self.servers_table.rowCount())
         self.servers_table.setItem(self.servers_table.rowCount() - 1, 0, QTableWidgetItem(server))
-        remove_button = QPushButton('remove')
+        remove_button = QPushButton('Remove')
+        remove_button.setProperty('class', 'remove-btn')
         remove_button.clicked.connect(lambda state,n = server : self.remove_server(n))
-        self.servers_table.setCellWidget(self.servers_table.rowCount() - 1, 1, remove_button)
 
+        self.servers_table.setCellWidget(self.servers_table.rowCount() - 1, 1, remove_button)
         self.new_server.setText('')
 
     def add_servers(self):
@@ -85,7 +88,8 @@ class TimeSync(QWidget):
             name = rows[i]
             self.servers_table.setItem(i, 0, QTableWidgetItem(rows[i]))
             
-            remove_button = QPushButton('remove')
+            remove_button = QPushButton('Remove')
+            remove_button.setProperty('class', 'remove-btn')
             remove_button.clicked.connect(lambda state,n = name : self.remove_server(n))
             self.servers_table.setCellWidget(i, 1, remove_button)
 

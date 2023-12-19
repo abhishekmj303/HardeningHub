@@ -37,7 +37,11 @@ class AppArmor(QWidget):
         # Mode Dropdown
         hlayout = QHBoxLayout()
 
+        # Select Mode Label
         self.mode_label = QLabel('Select mode:')
+        self.mode_label.setProperty('class', 'normal-label-for')
+
+        # Mode Dropdown
         self.mode_list = QComboBox()
         self.mode_list.addItems(['enforce', 'complain'])
         self.mode_list.currentTextChanged.connect(self.new_item_selected)
