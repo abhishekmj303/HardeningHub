@@ -1,0 +1,97 @@
+[physical-ports]
+enable = "defines a point of entry for communication "
+device-rules = "dynamically creates and removes nodes for hardware devices."
+    
+port-rules ="lets administrators manage network services on Ubuntu systems by opening and closing ports."
+
+[file-systems]
+# Basic
+block = {udf = "storing information on the DVD (Digital Versatile Disc or Digital Video Disc) optical media", cramfs = "designed to be simple and small, and to compress things well", squashfs = "Squashfs is a compressed read-only filesystem for Linux"}
+# Intermediate
+configure_fs = {tmp = "used for programs that require temporary files ", dev_shm = "allows Linux programs to efficiently pass data between each other"} # /tmp and /dev/shm
+tmp_size = "how much space is available in tmp in your system  "
+disable_automount = "prevents Windows from automatically mounting or assigning drive letters to any new basic volumes that are visible to the system"
+# Advanced
+enable_aide = "To verify the integrity of the files"
+
+[processes] # Process Hardening
+enable_aslr = "technique that is used to increase the difficulty of performing a buffer overflow attack that requires the attacker to know the location of an executable in memory."
+remove_prelink = "time needed for the dynamic linker to perform relocations at startup significantly decreases."
+disable_error_reporting = "counts, analyzes, and aggregates the crashes in your running cloud services."
+restrict_core_dumps = "he system provides the ability to set a soft limit for core dumps, but this can be overridden by the user."
+
+[apparmor] # Mandatory Access Control
+enable = "a Linux Security Module implementation of name-based mandatory access controls"
+mode = "enforces the SELinux policy and denies access based on SELinux policy rules" 
+
+[gdm] # GNOME Display Manager
+remove = "Uninstalls the desktop environment "
+disable_user_list = "controls if a list of users is displayed on the login screen."
+lock_on_idle = "screen inactivity idle time interval"
+no_override_lockscreen = "override the static lock screen image with a snapshot of your current live wallpaper."
+disable_automount = "prevents Windows from automatically mounting or assigning drive letters to any new basic volumes that are visible to the system"
+lock_automonut = "Installs autofs mount points and associates the information in the automaster"
+disable_autorun = "Windows will no longer open these devices automatically."
+no_override_autorun = "The NoDriveAutoRun value disables AutoRun for specified drive letters"
+
+[time-sync] # Time synchronization
+enable_ntp = "your device contacts an NTP server to synchronize the time."
+ntp_servers = "allows the synchronization of system clocks (from desktops to servers)."
+enable_ntp_user = "to automatically get the correct time from NTP servers on the Internet to set the system clock."
+
+[services] # Services
+remove_avahi = "used for name resolution and service discovery within the local network."
+remove_cups = "allows a computer to act as a print server."
+remove_dhcp = "deletes the specified Dynamic Host Configuration Protocol (DHCP) server service from the list of authorized DHCP server services"
+remove_ldap = "helps users find data about organizations, persons, and more."
+remove_nfs = "a mechanism for storing files on a network."
+remove_ftp = "transfer of files from one host to another over a TCP-based network, such as the Internet"
+remove_http = "used to load webpages using hypertext links"
+remove_imap_pop3 = "email protocols used to access and manage emails on remote servers"
+remove_samba = "enables Linux / Unix machines to communicate with Windows machines in a network."
+remove_http_proxy = "help businesses detect and block suspicious traffic, protecting web servers from external cyberattacks."
+remove_snmp = "monitor and manage network devices connected over an IP."
+remove_nis = "allows you to maintain consistent configuration files throughout your network."
+remove_rsync = "transferring and synchronizing files between local and remote devices."
+
+[service_clients] # Service Clients
+remove_nis = "allows you to maintain consistent configuration files throughout your network."
+remove_rsh = "enables you to execute a command on a remote host and receive the results on your local host."
+remove_talk = "allows two users on the same host or on different hosts to have an interactive conversation."
+remove_telnet = "create a remote connection with a system over a TCP/IP network."
+remove_ldap = "helps users find data about organizations, persons, and more"
+remove_rpc = "to call other processes on the remote systems like a local system."
+
+
+[network] # Network
+disable_wireless = "support and facilitate the configuration of device drivers of wireless network interface controllers and some related aspects of networking"
+disable_packet_redirects = "to send routing information to other hosts"
+disable_ip_forwarding = "having more efficient routing of network packets."
+reject_source_routed_packets = "allows an IP packet to carry information, a list of addresses, that tells a router the path the packet must take"
+reject_icmp_redirects = "for having more efficient routing of network packets."
+reject_secure_icmp_redirects = "the same as ICMP redirects, except they come from gateways listed on the default gateway list."
+log_suspicious_packets = "monitoring and detecting security issues."
+ingore_broadcasts = "a network address used to transmit to all devices connected to a multiple-access communications network"
+ignore_bogus_icmp_errors = "prevents the kernel from logging bogus responses (RFC-1122 non-compliant) from broadcast reframes"
+enable_rp_filter = "protects against spoofed source addresses by causing the system to discard packets"
+enable_syn_cookies = " a technique used to resist SYN flood attacks"
+reject_ipv6_router_adv =  "allows devices to use a much larger number of unique IP addresses"
+disable_protocols ="a standardized set of rules for formatting and processing data."
+
+
+[firewall] # Firewall
+enable = "a way to protect machines from any unwanted traffic from outside."
+configure_loopback = "a virtual network interface that doesn't represent any physical or hardware device."
+enable_default_deny = " Deny all traffic by default "
+
+[ssh]
+enable = "a network protocol that gives users, particularly system administrators, a secure way to access a computer over an unsecured network."
+port = "port number 22"
+permit-empty-passwords = "anybody may log in as that user without providing a password."
+password-authentication = "user to enter their credentials — username and password — in order to confirm their identity."
+permit-root-login = "user account for administrative purposes, and typically has the highest access rights on the system."
+client-alive-interval = "a time out interval specified in seconds "
+client-alive-count-max = "sets the number of client alive messages which may be sent without sshd receiving any messages back from the client."
+allow-users = "allow SSH access for a user "
+allow-groups = "allow SSH access for an entire group,"
+x11-forwarding = "a mechanism that allows a user to start up remote applications, and then forward the application display to their local Windows machine"
