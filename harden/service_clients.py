@@ -1,47 +1,43 @@
 from harden import config_file
 
-"""
-[service_clients] # Service Clients
-remove_nis = true
-remove_rsh = true
-remove_talk = true
-remove_telnet = true
-remove_ldap = true
-remove_rpc = true
-"""
 def get_script(config):
     file_systems_config = config["service_clients"]
-    # Start with an empty script and build it up
+    script = "#!/bin/bash\n\n"
 
-    script = ""
-    if file_systems_config['remove_nis']:
-        script += """
-sudo apt purge nis
+    services = {
+        'remove_nis': 'nis',
+        'remove_rsh': 'rsh-client',
+        'remove_talk': 'talk',
+        'remove_telnet': 'telnet',
+        'remove_ldap': 'ldap-utils',
+        'remove_rpc': 'rpcbind'
+    }
+
+    for key, package in services.items():
+        if file_systems_config.get(key, False):
+            script += f"""
+# Check and remove {package} if installed
+if dpkg-query -W -f='{{Status}}' {package} 2>/dev/null | grep -q "ok installed"; then
+    echo "Removing {package}..."
+    sudo apt purge {package} -y
+else
+    echo "{package} is not already installed or has been removed."
+fi
 """
-    if file_systems_config['remove_rsh']:
-        script += """
-sudo apt purge rsh-client
-"""
-    if file_systems_config['remove_talk']:
-        script += """
-sudo apt purge talk
-"""
-    if file_systems_config['remove_telnet']:
-        script += """
-sudo apt purge telnet
-"""
-    if file_systems_config['remove_ldap']:
-        script += """
-apt purge ldap-utils
-"""
-    if file_systems_config['remove_rpc']:
-        script += """
-apt purge rpcbind
-""" 
 
     return script
 
-
 if __name__ == "__main__":
-    config = config_file.init()
-    print(get_script(config))
+    # Sample configuration for demonstration
+    config = {
+        "service_clients": {
+            "remove_nis": True,
+            "remove_rsh": True,
+            "remove_talk": True,
+            "remove_telnet": True,
+            "remove_ldap": True,
+            "remove_rpc": True
+        }
+    }
+    generated_script = get_script(config)
+    print(generated_script)

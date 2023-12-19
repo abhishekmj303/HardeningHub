@@ -377,5 +377,5 @@ fi
     return script
 
 if __name__ == "__main__":
-    config = config_file.read()
+    config = config_file.init()
     print(get_script(config))

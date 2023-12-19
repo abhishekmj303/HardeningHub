@@ -17,12 +17,11 @@ def get_script(config):
         script += "echo 'RUNASUSER=ntp' | sudo tee -a /etc/init.d/ntp\n"
     
 
-
     # Restart NTP service
     script += "sudo systemctl restart ntp.service\n"
     
     return script
 
 if __name__ == "__main__":
-    config = config_file.read()
+    config = config_file.init()
     print(get_script(config))
