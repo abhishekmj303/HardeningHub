@@ -1,6 +1,6 @@
 from harden import config_file, physical_ports, file_systems\
     , process_hardening, apparmor, gdm, time_sync, firewall\
-    , network
+    , network, ssh
 
 def generate():
     config = config_file.read()
@@ -13,6 +13,7 @@ def generate():
     script += time_sync.get_script(config)
     script += firewall.get_script(config)
     script += network.get_script(config)
+    script += ssh.get_script(config)
     return script
 
 def save(file_path: str):
