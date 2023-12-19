@@ -10,8 +10,6 @@ def get_script(config):
         # Each file system gets its own set of commands
         script += """
 apt install aide aide-common
-aideinit
-mv /var/lib/aide/aide.db.new /var/lib/aide/aide.db
 """
     return script
 
@@ -25,9 +23,9 @@ def run_bash_script(script):
 
 def test_bash_script():
     # Run the script and capture the output
-    audit = "dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n'"
+    audit = "dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' aide aide-common"
     result = subprocess.run(f"sudo bash -c \"{audit}\"", shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-    if result.stdout.find("aide") != -1:
+    if result.stdout.find("aide") != -1 and result.stdout.find("installed") != -1:
         return "aide SuccessFully installed", "No Error"
     else:
         print("Error: aide not installed")

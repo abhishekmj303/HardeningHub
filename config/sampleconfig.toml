@@ -36,13 +36,13 @@ disable_user_list = true
 lock_on_idle = 100 # in seconds, 0 to disable
 no_override_lockscreen = true
 disable_automount = true
-lock_automonut = true
+lock_automount = true
 disable_autorun = true
 no_override_autorun = true
 
 [time-sync] # Time synchronization
 enable_ntp = true
-ntp_servers = [ "time1.google.com", "time2.google.com", "time3.google.com"]
+ntp_servers = [ "http://time-a-g.nist.gov/", "132.163.97.3", "http://time-d-b.nist.gov/"]
 enable_ntp_user = true
 
 [services] # Services
