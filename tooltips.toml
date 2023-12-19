@@ -1,0 +1,42 @@
+["devshm"]
+name="dev"
+description="allows Linux programs to efficiently pass data between each other"
+["udf"]
+name="universal disk format"
+description="storing information on the DVD (Digital Versatile Disc or Digital Video Disc) optical media."
+["tmp"]
+name="themed partition"
+description="used for temporary storage by all users"
+["cramfs"]
+name="cramfs"
+description="designed to be simple and small, and to compress things well"
+["squashfs"]
+name="squashfs"
+description="Squashfs is a compressed read-only filesystem for Linux"
+["aide"]
+name="aide"
+description="to verify the integrity of the files."
+["apparmor"]
+name="apparmor"
+description="a Linux Security Module implementation of name-based mandatory access controls"
+["enforce"]
+name="enforce"
+description="enforces the SELinux policy and denies access based on SELinux policy rules."
+["gnome displaymanager"]
+name="gnome displaymanager"
+description="The GNOME Display Manager (GDM) is a program that manages graphical display servers and handles graphical user logins"
+["timesync"]
+name="timesync"
+description="the capability to quickly update the latest changes by a central system, often from multiple channels."
+["services"]
+name="services"
+description="The service command starts, stop and restart a daemon or services by calling the script."
+["service clients"]
+name="service clients"
+description="programs or processes that run on your server at all times, usually from the time a server boots up"
+["firewall"]
+name="firewall"
+description="a way to protect machines from any unwanted traffic from outside."
+["ssh"]
+name="ssh"
+description="a network protocol that gives users, particularly system administrators, a secure way to access a computer over an unsecured network."
