@@ -17,7 +17,7 @@ QMainWindow {
 	text-align: left;
 	padding-left: 15px;
 	color: #382F27;
-	font: 17px;
+	font: 21px;
 	font-weight: 400;
 }
 #sidebarBg QLabel:hover {
@@ -34,7 +34,7 @@ QMainWindow {
 
 #sub-component-title {
 	color: #55473A;
-	font: 18px;
+	font: 21px;
 	font-weight: 500;
 	margin-top: 10px;
 	margin-bottom: 5px;
@@ -54,7 +54,7 @@ QMainWindow {
 	border-radius: 5px;
 	border: 1px solid #382F27;
 	color: #382F27;
-	font: 15px;
+	font: 18px;
 	font-weight: 500;
 	margin-left: 20px;
 	margin-top: 10px;
@@ -68,7 +68,7 @@ QMainWindow {
 	padding: 2.5px 10px;
 	border-radius: 5px;
 	color: #382F27;
-	font: 15px;
+	font: 18px;
 	font-weight: 500;
 }
 .add-btn:hover {
@@ -90,7 +90,7 @@ QMainWindow {
 QCheckBox {
     spacing: 10px;
 	margin-bottom: 10px;
-	font: 15px;
+	font: 18px;
 	font-weight: 500;
 	color: #382F27;
 }
@@ -110,7 +110,7 @@ QCheckBox::indicator:checked:hover {
     background-color: #AA8F75;
 }
 QCheckBox::indicator:unchecked:hover {
-    background-color: #E2BF9C;
+    background-color: #FFF1E4;
 }
 
 .file-systems QCheckBox {
@@ -118,13 +118,13 @@ QCheckBox::indicator:unchecked:hover {
 }
 .label-for {
 	margin: 5px 5px 15px 30px;
-	font: 15px;
+	font: 18px;
 	font-weight: 500;
 	color: #382F27;
 }
 .normal-label-for {
 	margin: 5px 5px 10px 0px;
-	font: 15px;
+	font: 18px;
 	font-weight: 500;
 	color: #382F27;
 }
@@ -164,11 +164,11 @@ QScrollArea QStackedWidget {
 }
 
 QToolTip {
-	background-color: transparent;
-	color: #382F27;
+	background-color: #6c7086;
+	color: rgb(221, 221, 221);
 	border: 1px solid #45475a;
 	font: 15px;
-	padding: 2px 5px;
+	padding: 0px 5px;
 }
 
 QComboBox {
@@ -182,4 +182,8 @@ QComboBox {
 
 .theme-btn {
 	margin-right: 20px;
+}
+
+QTableWidget QCheckBox {
+	margin-left: 40px;
 }

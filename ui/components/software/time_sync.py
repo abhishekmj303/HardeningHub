@@ -66,12 +66,18 @@ class TimeSync(QWidget):
         self.servers_table.setColumnCount(2)
         self.container_layout.addWidget(self.servers_table)
 
+        for i in range(2):
+            self.servers_table.setColumnWidth(i, 200)
+        
+        self.servers_table.setFixedWidth(420)
+
         self.servers_table.setHorizontalHeaderLabels(["Server", "Remove"])
 
         
     def add_new_server(self):
         server = self.new_server.text()
-        if server == '' or server is None:
+        rows = self.toml_time_sync['ntp_servers']
+        if server == '' or server is None or server in rows:
             return
         self.toml_time_sync['ntp_servers'].append(server)
         config_file.write(self.config)
@@ -83,6 +89,7 @@ class TimeSync(QWidget):
 
         self.servers_table.setCellWidget(self.servers_table.rowCount() - 1, 1, remove_button)
         self.new_server.setText('')
+        self.servers_table.setFixedHeight((len(rows) + 1) * 37)
 
     def add_servers(self):
         rows = self.toml_time_sync['ntp_servers']
@@ -95,15 +102,18 @@ class TimeSync(QWidget):
             remove_button.setProperty('class', 'remove-btn')
             remove_button.clicked.connect(lambda state,n = name : self.remove_server(n))
             self.servers_table.setCellWidget(i, 1, remove_button)
+        self.servers_table.setFixedHeight(len(rows) * 39)
 
             
     def remove_server(self, name):
+        rows = self.toml_time_sync['ntp_servers']
         self.toml_time_sync['ntp_servers'].remove(name)
         config_file.write(self.config)
         for i in range(self.servers_table.rowCount()):
             if self.servers_table.item(i, 0).text() == name:
                 self.servers_table.removeRow(i)
                 break
+        self.servers_table.setFixedHeight((len(rows) + 1) * 37)
 
 
     def refresh_config(self, config):
