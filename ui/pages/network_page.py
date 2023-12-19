@@ -4,9 +4,10 @@ from ui.components.network.firewall import Firewall
 from ui.components.network.network import Net
 
 class Network(QWidget):
-    def __init__(self, config):
+    def __init__(self, config, tooltip):
         super().__init__()
         self.config = config
+        self.tooltip = tooltip
         self.init_ui()
     
     def init_ui(self):
@@ -16,8 +17,8 @@ class Network(QWidget):
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
 
-        self.firewall = Firewall(self.config)
-        self.net = Net(self.config)
+        self.firewall = Firewall(self.config, self.tooltip)
+        self.net = Net(self.config, self.tooltip)
 
         self.layout.addWidget(self.firewall)
         self.layout.addWidget(self.net)

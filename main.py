@@ -4,13 +4,14 @@ from PyQt6.QtCore import Qt
 from ui.sidebar import Sidebar
 from ui.page import Pages
 from ui.toolbar import ToolBar
-from harden import config_file
+from harden import config_file, tooltip_file
 import sys
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.config = config_file.init()
+        self.tooltip = tooltip_file.read()
         self.init_ui()
 
     def init_ui(self):
@@ -20,9 +21,11 @@ class MainWindow(QMainWindow):
         self.toolbar = ToolBar(self.config)
         self.addToolBar(self.toolbar)
 
-        self.pages = Pages(self.config)
+        self.pages = Pages(self.config, self.tooltip)
         self.pages.setObjectName("page")
         self.toolbar.import_signal.connect(self.pages.refresh_config)
+        self.toolbar.theme_changed_signal.connect(self.change_theme)
+
 
         self.sidebar = Sidebar()
         self.sidebar.setFixedWidth(200)
@@ -39,9 +42,15 @@ class MainWindow(QMainWindow):
         self.main_widget.setLayout(self.main_layout)
         self.setCentralWidget(self.main_widget)
 
+    def change_theme(self, theme):
+        self.setStyleSheet(open(f"ui/qss/{theme}.qss", "r").read())
+
+
+
+
 def main():
     app = QApplication(sys.argv)
-    app.setStyleSheet(open("ui/qss/style.qss", "r").read())
+    app.setStyleSheet(open("ui/qss/light.qss", "r").read())
     window = MainWindow()
     window.show()
     app.exec()

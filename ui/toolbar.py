@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QToolBar, QPushButton, QFileDialog \
-    , QMessageBox
+    , QMessageBox, QCheckBox, QWidget, QSizePolicy, QMenu
+from PyQt6.QtGui import QAction
 from PyQt6.QtCore import pyqtSignal
 from tomlkit import TOMLDocument
 from harden import config_file
@@ -7,6 +8,8 @@ from harden import script
 
 class ToolBar(QToolBar):
     import_signal = pyqtSignal(TOMLDocument)
+    theme_changed_signal = pyqtSignal(str)
+
 
     def __init__(self, config):
         super().__init__()
@@ -15,6 +18,23 @@ class ToolBar(QToolBar):
     
     def init_ui(self):
         self.setMovable(False)  
+
+        self.levels_button = QPushButton("Levels")
+        self.levels_button.setProperty('class', ['btn', 'toolbar-btn'])
+        self.levels_menu = QMenu(self.levels_button)
+        workstation_level1_action = QAction("Level 1 - Workstation", self.levels_menu)
+        server_level1_action = QAction("Level 1 - Server", self.levels_menu)
+        workstation_level2_action = QAction("Level 2 - Workstation", self.levels_menu)
+        server_level2_action = QAction("Level 2 - Server", self.levels_menu)
+        self.levels_menu.addAction(workstation_level1_action)
+        self.levels_menu.addAction(server_level1_action)
+        self.levels_menu.addAction(workstation_level2_action)
+        self.levels_menu.addAction(server_level2_action)
+        self.levels_button.setMenu(self.levels_menu)
+        self.addWidget(self.levels_button)
+
+
+
         self.import_button = QPushButton("Import")
         self.export_button = QPushButton("Export")
         self.save_button = QPushButton("Save")
@@ -24,6 +44,16 @@ class ToolBar(QToolBar):
         self.addWidget(self.export_button)
         self.addWidget(self.save_button)
         self.addWidget(self.script_button)
+
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self.addWidget(spacer)
+
+        self.theme_checkbox = QCheckBox("Dark Mode")
+        self.theme_checkbox.setChecked(False)
+        self.theme_checkbox.stateChanged.connect(self.theme_checkbox_clicked)
+        self.addWidget(self.theme_checkbox)
+
 
         self.import_button.setProperty('class', ['btn', 'toolbar-btn'])
         self.export_button.setProperty('class', ['btn', 'toolbar-btn'])
@@ -69,6 +99,12 @@ class ToolBar(QToolBar):
         if self.message_box.exec() == QMessageBox.StandardButton.Yes:
             config_file.save()
             print("saved")
+
+    def theme_checkbox_clicked(self, state):
+        if state == 2:
+            self.theme_changed_signal.emit("dark")
+        else:
+            self.theme_changed_signal.emit("light")
     
     def generate_script_button_clicked(self):
         generate_dialog = QFileDialog.getSaveFileName(self, "Generate Script File", filter = "Bash Script (*.sh)")

@@ -6,13 +6,13 @@ from ui.pages.network_page import Network
 from ui.pages.welcome_page import Welcome
 
 class Pages(QScrollArea):
-    def __init__(self, config):
+    def __init__(self, config, tooltip):
         super().__init__()
         self.config = config
+        self.tooltip = tooltip
         self.setWidgetResizable(True)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        # self.setProperty("class", "scroll-area")
         self.init_ui()
     
     def init_ui(self):
@@ -20,9 +20,9 @@ class Pages(QScrollArea):
         self.setWidget(self.StackedWidget)
 
         self.welcome = Welcome()
-        self.hardware = Hardware(self.config)
-        self.software = Software(self.config)
-        self.network = Network(self.config)
+        self.hardware = Hardware(self.config, self.tooltip)
+        self.software = Software(self.config, self.tooltip)
+        self.network = Network(self.config, self.tooltip)
 
         self.StackedWidget.addWidget(self.welcome)
         self.StackedWidget.addWidget(self.hardware)

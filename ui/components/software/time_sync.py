@@ -3,10 +3,12 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QCheckBox \
 from harden import config_file
 
 class TimeSync(QWidget):
-    def __init__(self, config):
+    def __init__(self, config, tooltip):
         super().__init__()
         self.config = config
+        self.tooltip = tooltip
         self.toml_time_sync = self.config['time-sync']
+        self.time_sync_tooltip = self.tooltip['time-sync']
         self.init_ui()
         self.refresh_config(config)
     
@@ -31,14 +33,17 @@ class TimeSync(QWidget):
 
         #enable ntp checkbox
         self.enable_ntp = QCheckBox('Enable NTP')
+        self.enable_ntp.setToolTip(self.time_sync_tooltip['enable_ntp'])
         self.enable_ntp.stateChanged.connect(lambda state, name = 'enable_ntp': self.save_checkbox_state(name, state))
         self.container_layout.addWidget(self.enable_ntp)
 
         self.enable_user = QCheckBox('Enable NTP user')
+        self.enable_user.setToolTip(self.time_sync_tooltip['enable_ntp_user'])
         self.enable_user.stateChanged.connect(lambda state, name = 'enable_ntp_user': self.save_checkbox_state(name, state))
         self.container_layout.addWidget(self.enable_user)
 
         ntp_server_lable = QLabel('NTP Servers')
+        ntp_server_lable.setToolTip(self.time_sync_tooltip['ntp_servers'])
         ntp_server_lable.setProperty('class', 'normal-label-for')
         self.container_layout.addWidget(ntp_server_lable)
 
