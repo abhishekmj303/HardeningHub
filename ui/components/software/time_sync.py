@@ -1,6 +1,5 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QCheckBox \
-    , QHBoxLayout, QComboBox, QLineEdit, QPushButton, QTableWidget, QTableWidgetItem
-from PyQt6.QtGui import QIntValidator
+    , QHBoxLayout, QLineEdit, QPushButton, QTableWidget, QTableWidgetItem
 from harden import config_file
 
 class TimeSync(QWidget):
@@ -16,7 +15,6 @@ class TimeSync(QWidget):
         self.setLayout(self.layout)
         self.layout.setSpacing(0)
         self.layout.setContentsMargins(0, 0, 0, 0)
-
 
         self.main_label = QLabel("Time Synchronization")
         self.layout.addWidget(self.main_label)

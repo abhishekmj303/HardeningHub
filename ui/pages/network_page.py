@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel
 from PyQt6.QtCore import Qt
 from ui.components.network.firewall import Firewall
+from ui.components.network.network import Net
 
 class Network(QWidget):
     def __init__(self, config):
@@ -16,8 +17,12 @@ class Network(QWidget):
         self.layout.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
 
         self.firewall = Firewall(self.config)
+        self.net = Net(self.config)
+
         self.layout.addWidget(self.firewall)
+        self.layout.addWidget(self.net)
     
     def refresh_config(self, config):
         self.config = config
         self.firewall.refresh_config(config)
+        self.net.refresh_config(config)

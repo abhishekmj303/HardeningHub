@@ -154,3 +154,7 @@ QScrollArea QStackedWidget {
 	border: none;
 	background-color: #1e1e2e;
 }
+
+.in-checkbox {
+	margin-left: 30px;
+}
