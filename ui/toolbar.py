@@ -8,7 +8,7 @@ from harden import script
 
 class ToolBar(QToolBar):
     import_signal = pyqtSignal(TOMLDocument)
-    theme_changed_signal = pyqtSignal(str)
+    theme_changed_signal = pyqtSignal(bool)
 
 
     def __init__(self, config):
@@ -103,9 +103,9 @@ class ToolBar(QToolBar):
 
     def theme_checkbox_clicked(self, state):
         if state == 2:
-            self.theme_changed_signal.emit("dark")
+            self.theme_changed_signal.emit(True)
         else:
-            self.theme_changed_signal.emit("light")
+            self.theme_changed_signal.emit(False)
     
     def generate_script_button_clicked(self):
         generate_dialog = QFileDialog.getSaveFileName(self, "Generate Script File", filter = "Bash Script (*.sh)")

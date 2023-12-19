@@ -44,13 +44,12 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.main_widget)
 
     def change_theme(self, theme):
-        self.setStyleSheet(open(f"ui/qss/{theme}.qss", "r").read())
         if theme:
-            self.sidebar.bg = "#E6C7A9"
-            self.sidebar.active = "#382F27"
+            name = "dark"
         else:
-            self.sidebar.bg = "#E6C7A9"
-            self.sidebar.active = "#382F27"
+            name = "light"
+        self.setStyleSheet(open(f"ui/qss/{name}.qss", "r").read())
+        self.sidebar.set_theme(theme)
 
 def main():
     app = QApplication(sys.argv)

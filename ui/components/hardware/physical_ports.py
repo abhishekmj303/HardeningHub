@@ -66,6 +66,11 @@ class PhysicalPorts(QWidget):
         self.devices_table.setColumnCount(3)
         self.container_layout.addWidget(self.devices_table)
 
+        self.devices_table.setColumnWidth(0, 200)
+        self.devices_table.setColumnWidth(1, 200)
+        
+        self.devices_table.setFixedWidth(520)
+
         self.devices_table.setHorizontalHeaderLabels(["Device Name", "Device ID", "Allow"])
 
     def add_device_rows(self):
@@ -92,6 +97,11 @@ class PhysicalPorts(QWidget):
         self.ports_table = QTableWidget()
         self.ports_table.setColumnCount(3)
         self.container_layout.addWidget(self.ports_table)
+
+        self.ports_table.setColumnWidth(0, 200)
+        self.ports_table.setColumnWidth(1, 200)
+
+        self.ports_table.setFixedWidth(520)
 
         self.ports_table.setHorizontalHeaderLabels(["Port ID", "Device Name", "Allow"])
     
