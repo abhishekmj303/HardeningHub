@@ -15,6 +15,9 @@ class Sidebar(QWidget):
 
     def __init__(self):
         super().__init__()
+        self.bg = "#E6C7A9"
+        self.active = "#382F27"
+        self.index = None
         self.init_ui()
 
     def init_ui(self):
@@ -38,7 +41,9 @@ class Sidebar(QWidget):
         self.layout.addWidget(self.networking_label)
     
     def set_active(self, index):
+        self.index = index
         self.change_page_signal.emit(index)
         for i in range(self.layout.count()):
             self.layout.itemAt(i).widget().setStyleSheet("")
-        self.layout.itemAt(index - 1).widget().setStyleSheet("background-color: #313244; border-left: 4px solid #cba6f7;")
+        print(f'bg: {self.bg}, active: {self.active}')
+        self.layout.itemAt(index - 1).widget().setStyleSheet(f"background-color: {self.bg}; border-left: 4px solid {self.active};")

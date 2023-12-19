@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow \
     , QHBoxLayout, QWidget, QScrollArea
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, pyqtSignal
 from ui.sidebar import Sidebar
 from ui.page import Pages
 from ui.toolbar import ToolBar
@@ -8,6 +8,7 @@ from harden import config_file, tooltip_file
 import sys
 
 class MainWindow(QMainWindow):
+    theme_signal = pyqtSignal(bool)
     def __init__(self):
         super().__init__()
         self.config = config_file.init()
@@ -44,9 +45,12 @@ class MainWindow(QMainWindow):
 
     def change_theme(self, theme):
         self.setStyleSheet(open(f"ui/qss/{theme}.qss", "r").read())
-
-
-
+        if theme:
+            self.sidebar.bg = "#E6C7A9"
+            self.sidebar.active = "#382F27"
+        else:
+            self.sidebar.bg = "#E6C7A9"
+            self.sidebar.active = "#382F27"
 
 def main():
     app = QApplication(sys.argv)
