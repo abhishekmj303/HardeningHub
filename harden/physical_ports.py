@@ -8,7 +8,8 @@ def _generate_policy():
     ).decode("utf-8")
 
 
-def get_devices(config):
+def get_devices(all_config):
+    config = all_config["physical-ports"]
     device_rules = config["device-rules"]
     port_rules = config["port-rules"]
     devices = {device["id"]: device for device in device_rules}
@@ -17,7 +18,11 @@ def get_devices(config):
     for id in ports:
         ports[id]["name"] = "No Device Connected"
 
-    policy = _generate_policy().splitlines()
+    try:
+        policy = _generate_policy().splitlines()
+    except:
+        return all_config
+    
     rules = filter(lambda x: "via-port" in x, policy)
     for rule in rules:
         rule_split = rule.split()
@@ -35,7 +40,7 @@ def get_devices(config):
             ports[port_id] = {"id": port_id, "name": device_name, "allow": True}
     
     config.update({"device-rules": list(devices.values()), "port-rules": list(ports.values())})
-    return config
+    return all_config
 
 
 def get_script(all_config):
@@ -63,4 +68,4 @@ def get_script(all_config):
     return script
 
 if __name__ == "__main__":
-    print(get_script(config_file.read()))
+    print(get_script(config_file.init()))

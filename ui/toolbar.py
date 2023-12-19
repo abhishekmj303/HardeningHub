@@ -1,4 +1,5 @@
-from PyQt6.QtWidgets import QToolBar, QPushButton, QFileDialog
+from PyQt6.QtWidgets import QToolBar, QPushButton, QFileDialog \
+    , QMessageBox
 from PyQt6.QtCore import pyqtSignal
 from tomlkit import TOMLDocument
 from harden import config_file
@@ -30,6 +31,7 @@ class ToolBar(QToolBar):
 
         self.import_button.clicked.connect(self.import_button_clicked)
         self.export_button.clicked.connect(self.export_button_clicked)
+        self.save_button.clicked.connect(self.save_button_clicked)
     
     def import_button_clicked(self):
         import_dialog = QFileDialog.getOpenFileName(self, "Select Config File", filter = "Config File (*.toml)")
@@ -51,3 +53,15 @@ class ToolBar(QToolBar):
         print("save config path: ", save_config_path)
 
         config_file.save(save_config_path)
+    
+    def save_button_clicked(self):
+        self.message_box = QMessageBox()
+        self.message_box.setWindowTitle("Save Configurations")
+        self.message_box.setText("Are you sure you want to save?")
+        self.message_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        self.message_box.setDefaultButton(QMessageBox.StandardButton.No)
+        self.message_box.setIcon(QMessageBox.Icon.Question)
+
+        if self.message_box.exec() == QMessageBox.StandardButton.Yes:
+            config_file.save()
+            print("saved")
