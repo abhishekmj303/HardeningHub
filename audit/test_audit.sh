@@ -1,18 +1,3 @@
-#!/bin/bash
-
-echo "Checking installation status of prelink and apparmor..."
-
-# Check installation status of prelink
-echo -e "\nPrelink status:"
-dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' prelink
-
-# Check installation status of apparmor
-echo -e "\nAppArmor status:"
-dpkg-query -W -f='${binary:Package}\t${Status}\t${db:Status-Status}\n' apparmor
-
-# Check Address Space Layout Randomization (ASLR) status
-echo -e "\nAddress Space Layout Randomization (ASLR) status:"
-sysctl kernel.randomize_va_space
 
 
 # Check if Apport Error Reporting Service is enabled

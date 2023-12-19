@@ -8,7 +8,7 @@ def get_script(config):
     # Loop through each filesystem module in the configuration
     for fs_module in file_systems_config['block']:
         if file_systems_config['block'][fs_module]:
-            script += f"""
+            script += """
 echo "Processing module: {fs_module}..."
 
 # Check if module '{fs_module}' is set to be not loadable
