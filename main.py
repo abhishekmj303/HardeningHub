@@ -23,6 +23,8 @@ class MainWindow(QMainWindow):
         self.pages = Pages(self.config)
         self.pages.setObjectName("page")
         self.toolbar.import_signal.connect(self.pages.refresh_config)
+        self.toolbar.theme_changed_signal.connect(self.change_theme)
+
 
         self.sidebar = Sidebar()
         self.sidebar.setFixedWidth(200)
@@ -39,9 +41,15 @@ class MainWindow(QMainWindow):
         self.main_widget.setLayout(self.main_layout)
         self.setCentralWidget(self.main_widget)
 
+    def change_theme(self, theme):
+        self.setStyleSheet(open(f"ui/qss/{theme}.qss", "r").read())
+
+
+
+
 def main():
     app = QApplication(sys.argv)
-    app.setStyleSheet(open("ui/qss/style.qss", "r").read())
+    app.setStyleSheet(open("ui/qss/light.qss", "r").read())
     window = MainWindow()
     window.show()
     app.exec()

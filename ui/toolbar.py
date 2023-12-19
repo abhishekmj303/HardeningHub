@@ -1,11 +1,13 @@
 from PyQt6.QtWidgets import QToolBar, QPushButton, QFileDialog \
-    , QMessageBox
+    , QMessageBox, QCheckBox, QWidget, QSizePolicy
 from PyQt6.QtCore import pyqtSignal
 from tomlkit import TOMLDocument
 from harden import config_file
 
 class ToolBar(QToolBar):
     import_signal = pyqtSignal(TOMLDocument)
+    theme_changed_signal = pyqtSignal(str)
+
 
     def __init__(self, config):
         super().__init__()
@@ -23,6 +25,16 @@ class ToolBar(QToolBar):
         self.addWidget(self.export_button)
         self.addWidget(self.save_button)
         self.addWidget(self.script_button)
+
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self.addWidget(spacer)
+
+        self.theme_checkbox = QCheckBox("Dark Mode")
+        self.theme_checkbox.setChecked(False)
+        self.theme_checkbox.stateChanged.connect(self.theme_checkbox_clicked)
+        self.addWidget(self.theme_checkbox)
+
 
         self.import_button.setProperty('class', ['btn', 'toolbar-btn'])
         self.export_button.setProperty('class', ['btn', 'toolbar-btn'])
@@ -65,3 +77,9 @@ class ToolBar(QToolBar):
         if self.message_box.exec() == QMessageBox.StandardButton.Yes:
             config_file.save()
             print("saved")
+
+    def theme_checkbox_clicked(self, state):
+        if state == 2:
+            self.theme_changed_signal.emit("dark")
+        else:
+            self.theme_changed_signal.emit("light")
