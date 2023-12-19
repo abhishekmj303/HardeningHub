@@ -1,5 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QCheckBox \
-    , QHBoxLayout, QComboBox, QLineEdit
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QCheckBox
 from harden import config_file
 
 class Net(QWidget):
@@ -46,6 +45,7 @@ class Net(QWidget):
         for name, state in self.toml_net['disable_protocols'].items():
             checkbox = QCheckBox(f"{name.replace('_',' ').title()}")
             checkbox.stateChanged.connect(lambda state, name=name: self.save_checkbox_state_protocols(state, 'disable_protocols', name))
+            checkbox.setProperty('class', 'in-checkbox')
             self.container_layout.addWidget(checkbox)
             self.protocols_checkboxes[name] = checkbox
 
