@@ -95,3 +95,11 @@ client-alive-count-max = "sets the number of client alive messages which may be 
 allow-users = "allow SSH access for a user "
 allow-groups = "allow SSH access for an entire group,"
 x11-forwarding = "a mechanism that allows a user to start up remote applications, and then forward the application display to their local Windows machine"
+
+[privilege_escalation] # Privilege Escalation
+use_pty = "true"
+enable_logfile = "true"
+disable_nopassword = "false"
+enable_reauthentication = "true"
+authentication_timeout = "15" # in minutes
+restrict_su = "true"
