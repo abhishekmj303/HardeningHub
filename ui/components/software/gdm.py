@@ -7,8 +7,9 @@ class GDM(QWidget):
     def __init__(self, config):
         super().__init__()
         self.config = config
+        self.toml_gdm = self.config['gdm']
         self.init_ui()
-        self.refresh_config()
+        self.refresh_config(config)
     
     def init_ui(self):
         self.layout = QVBoxLayout()
@@ -16,7 +17,6 @@ class GDM(QWidget):
         self.layout.setSpacing(0)
         self.layout.setContentsMargins(0, 0, 0, 0)
 
-        self.toml_gdm = self.config['gdm']
 
         self.main_label = QLabel("GDM")
         self.layout.addWidget(self.main_label)
@@ -57,7 +57,9 @@ class GDM(QWidget):
             self.toml_gdm_checkboxes[name] = checkbox
             self.layout.addWidget(checkbox)
 
-    def refresh_config(self):
+    def refresh_config(self, config):
+        self.config = config
+        self.toml_gdm = self.config['gdm']
         for name, state in self.toml_gdm.items():
             if name == 'lock_on_idle':
                 continue

@@ -33,3 +33,5 @@ class Software(QWidget):
         self.config = config
         self.process_hardening.refresh_config(config)
         self.apparmor.refresh_config(config)
+        self.gdm.refresh_config(config)
+        self.time_sync.refresh_config(config)
