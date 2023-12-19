@@ -46,8 +46,7 @@ class TimeSync(QWidget):
         hlayout.addWidget(self.add_button)
 
         self.layout.addLayout(hlayout)
-
-        
+    
         self.server_table()
 
     def server_table(self):
@@ -81,26 +80,15 @@ class TimeSync(QWidget):
             remove_button.clicked.connect(lambda state,n = name : self.remove_server(n))
             self.servers_table.setCellWidget(i, 1, remove_button)
 
-    # def remove_server(self, server, hlayout: QHBoxLayout, server_label: QLabel, remove_button: QPushButton):
-    #     self.toml_time_sync['ntp_servers'].remove(server)
-    #     config_file.write(self.config)
-    #     self.remove_buttons.remove(remove_button)
-    #     server_label.deleteLater()
-    #     remove_button.deleteLater()
-    #     hlayout.deleteLater()
             
     def remove_server(self, name):
         self.toml_time_sync['ntp_servers'].remove(name)
         config_file.write(self.config)
-        # find name in table
         for i in range(self.servers_table.rowCount()):
             if self.servers_table.item(i, 0).text() == name:
                 self.servers_table.removeRow(i)
                 break
 
-        
-
-    
 
     def refresh_config(self, config):
         self.config = config
@@ -108,13 +96,17 @@ class TimeSync(QWidget):
         self.enable_ntp.setChecked(self.toml_time_sync['enable_ntp'])
         self.enable_user.setChecked(self.toml_time_sync['enable_ntp_user'])
 
-        # remove all servers from table
         self.servers_table.setRowCount(0)
         self.add_servers()
 
 
-
-
     def save_checkbox_state(self, name, state):
         self.toml_time_sync[name] = (state == 2)
+        if name == 'enable_ntp':
+            self.enable_user.setEnabled(state == 2)
+            self.servers_table.setEnabled(state == 2)
+            self.new_server.setEnabled(state == 2)
+            self.add_button.setEnabled(state == 2)
+            for i in range(self.servers_table.rowCount()):
+                self.servers_table.cellWidget(i, 1).setEnabled(state == 2)
         config_file.write(self.config)

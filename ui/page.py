@@ -35,4 +35,4 @@ class Pages(QScrollArea):
         self.config = config
         self.hardware.refresh_config(config)
         self.software.refresh_config(config)
-        self.networking.refresh_config(config)
+        self.network.refresh_config(config)

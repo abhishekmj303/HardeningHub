@@ -22,21 +22,16 @@ class GDM(QWidget):
         self.layout.addWidget(self.main_label)
         self.main_label.setObjectName("component-title")
 
-        # remove Checkbox
-        # checkbox = QCheckBox('Remove')
-        # checkbox.stateChanged.connect(self.save_checkbox_state)
-        # self.layout.addWidget(checkbox)
+        self.toml_gdm_checkboxes = {}
 
-        # # disable user list checkbox
-        # checkbox = QCheckBox('Disable user list')
-        # checkbox.setChecked(self.toml_gdm['disable_user_list'])
-        # checkbox.stateChanged.connect(self.save_checkbox_state)
-        # self.layout.addWidget(checkbox)
-        # lockonidle Qlineedit
+        remove_checkbox = QCheckBox('Remove')
+        remove_checkbox.stateChanged.connect(lambda state, name = 'remove': self.save_checkbox_state(name, state))
+        self.toml_gdm_checkboxes['remove'] = remove_checkbox
+        self.layout.addWidget(remove_checkbox)
 
         hlayout = QHBoxLayout()
 
-        self.lockon_lable = QLabel('Lock on Idle')
+        self.lockon_lable = QLabel('Lock on Idle(seconds)')
         self.time_input = QLineEdit()
         self.time_input.setText(str(self.toml_gdm['lock_on_idle']))
         validator = QIntValidator()
@@ -47,12 +42,11 @@ class GDM(QWidget):
         hlayout.addWidget(self.time_input)
 
         self.layout.addLayout(hlayout)
-        self.toml_gdm_checkboxes = {}
         for name in self.toml_gdm:
-            if name == 'lock_on_idle':
+            if name == 'lock_on_idle' or name == 'remove':
                 continue
             state = self.toml_gdm[name]
-            checkbox = QCheckBox(f"{name.replace('_',' ')}")
+            checkbox = QCheckBox(f"{name.replace('_',' ').title()}")
             checkbox.stateChanged.connect(lambda state, name = name: self.save_checkbox_state(name, state))
             self.toml_gdm_checkboxes[name] = checkbox
             self.layout.addWidget(checkbox)
@@ -67,6 +61,15 @@ class GDM(QWidget):
 
     def save_checkbox_state(self, name, state):
         self.toml_gdm[name] = (state == 2)
+        if name == 'remove':
+            # setEnable(state == 2) for all other checkboxes
+            for name, checkbox in self.toml_gdm_checkboxes.items():
+                if name == 'remove':
+                    continue
+                checkbox.setEnabled(state == 0)
+            self.lockon_lable.setEnabled(state == 0)
+            self.time_input.setEnabled(state == 0)
+
         config_file.write(self.config)
 
     def time_changed(self, new_size):
