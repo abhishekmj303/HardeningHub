@@ -3,10 +3,12 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QCheckBox \
 from harden import config_file
 
 class AppArmor(QWidget):
-    def __init__(self, config):
+    def __init__(self, config, tooltip):
         super().__init__()
         self.config = config
+        self.tooltip = tooltip
         self.toml_apparmor = self.config['apparmor']
+        self.apparmor_tooltip = self.tooltip['apparmor']
         self.init_ui()
         self.refresh_config(config)
     
@@ -31,6 +33,7 @@ class AppArmor(QWidget):
 
         # Enable Checkbox
         self.enable_checkbox = QCheckBox('Enable')
+        self.enable_checkbox.setToolTip(self.apparmor_tooltip['enable'])
         self.enable_checkbox.stateChanged.connect(self.save_checkbox_state)
         self.container_layout.addWidget(self.enable_checkbox)
 
@@ -39,6 +42,7 @@ class AppArmor(QWidget):
 
         # Select Mode Label
         self.mode_label = QLabel('Select mode:')
+        self.mode_label.setToolTip(self.apparmor_tooltip['mode'])
         self.mode_label.setProperty('class', 'normal-label-for')
 
         # Mode Dropdown

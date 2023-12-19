@@ -9,9 +9,10 @@ from PyQt6.QtCore import Qt
 
 
 class Software(QWidget):
-    def __init__(self, config):
+    def __init__(self, config, tooltip):
         super().__init__()
         self.config = config
+        self.tooltip = tooltip
         self.init_ui()
     
     def init_ui(self):
@@ -21,12 +22,12 @@ class Software(QWidget):
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
 
-        self.process_hardening = Processes(self.config)
-        self.apparmor = AppArmor(self.config)
-        self.gdm = GDM(self.config)
-        self.time_sync =TimeSync(self.config)
-        self.services = Services(self.config)
-        self.service_clients = ServiceClients(self.config)
+        self.process_hardening = Processes(self.config, self.tooltip)
+        self.apparmor = AppArmor(self.config, self.tooltip)
+        self.gdm = GDM(self.config, self.tooltip)
+        self.time_sync =TimeSync(self.config, self.tooltip)
+        self.services = Services(self.config, self.tooltip)
+        self.service_clients = ServiceClients(self.config, self.tooltip)
 
         self.layout.addWidget(self.process_hardening)
         self.layout.addWidget(self.apparmor)

@@ -1,6 +1,6 @@
 [physical-ports]
 enable = "defines a point of entry for communication "
-device-rules = "dynamically creates and removes nodes for hardware devices."
+device-rules = "dynamically creates and removes nodes for hardware devices."
     
 port-rules ="lets administrators manage network services on Ubuntu systems by opening and closing ports."
 
@@ -21,7 +21,7 @@ disable_error_reporting = "counts, analyzes, and aggregates the crashes in your 
 restrict_core_dumps = "he system provides the ability to set a soft limit for core dumps, but this can be overridden by the user."
 
 [apparmor] # Mandatory Access Control
-enable = "a Linux Security Module implementation of name-based mandatory access controls"
+enable = "a Linux Security Module implementation of name-based mandatory access controls"   
 mode = "enforces the SELinux policy and denies access based on SELinux policy rules" 
 
 [gdm] # GNOME Display Manager
@@ -30,7 +30,7 @@ disable_user_list = "controls if a list of users is displayed on the login scree
 lock_on_idle = "screen inactivity idle time interval"
 no_override_lockscreen = "override the static lock screen image with a snapshot of your current live wallpaper."
 disable_automount = "prevents Windows from automatically mounting or assigning drive letters to any new basic volumes that are visible to the system"
-lock_automonut = "Installs autofs mount points and associates the information in the automaster"
+lock_automount = "Installs autofs mount points and associates the information in the automaster"
 disable_autorun = "Windows will no longer open these devices automatically."
 no_override_autorun = "The NoDriveAutoRun value disables AutoRun for specified drive letters"
 
@@ -76,12 +76,12 @@ ignore_bogus_icmp_errors = "prevents the kernel from logging bogus responses (RF
 enable_rp_filter = "protects against spoofed source addresses by causing the system to discard packets"
 enable_syn_cookies = " a technique used to resist SYN flood attacks"
 reject_ipv6_router_adv =  "allows devices to use a much larger number of unique IP addresses"
-disable_protocols ="a standardized set of rules for formatting and processing data."
+disable_protocols = {dccp = "true", sctp = "true", rds = "true", tipc = "true"}
 
 
 [firewall] # Firewall
 enable = "a way to protect machines from any unwanted traffic from outside."
-configure_loopback = "a virtual network interface that doesn't represent any physical or hardware device."
+configure_loopback_traffic = "a virtual network interface that doesn't represent any physical or hardware device."
 enable_default_deny = " Deny all traffic by default "
 
 [ssh]

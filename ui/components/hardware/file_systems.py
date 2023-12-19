@@ -5,10 +5,12 @@ from PyQt6.QtCore import Qt
 from harden import config_file
 
 class FileSystems(QWidget):
-    def __init__(self, config):
+    def __init__(self, config, tooltip):
         super().__init__()
         self.config = config
+        self.tooltip = tooltip
         self.toml_file_systems = self.config['file-systems']
+        self.file_systems_tooltip = self.tooltip['file-systems']
         self.init_ui()
         self.refresh_config(config)
     
@@ -41,6 +43,7 @@ class FileSystems(QWidget):
         self.block_checkboxes = {}
         for name, state in self.toml_file_systems['block'].items():
             checkbox = QCheckBox(f'Block {name}')
+            checkbox.setToolTip(self.file_systems_tooltip['block'][name])
             checkbox.stateChanged.connect(lambda state, name=name: self.save_checkbox_state(state, 'block', name))
             self.container_layout.addWidget(checkbox)
             self.block_checkboxes[name] = checkbox
@@ -54,6 +57,7 @@ class FileSystems(QWidget):
         self.configure_fs_checkboxes = {}
         for name, state in self.toml_file_systems['configure_fs'].items():
             checkbox = QCheckBox(f"Configure /{name.replace('_', '/')}")
+            checkbox.setToolTip(self.file_systems_tooltip['configure_fs'][name])
             checkbox.stateChanged.connect(lambda state, name=name: self.save_checkbox_state(state, 'configure_fs', name))
             self.container_layout.addWidget(checkbox)
             self.configure_fs_checkboxes[name] = checkbox
@@ -64,6 +68,7 @@ class FileSystems(QWidget):
         hlayout.setContentsMargins(0, 0, 0, 0)
         hlayout.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.configure_label = QLabel('Configure /tmp size (in GB):')
+        self.configure_label.setToolTip(self.file_systems_tooltip['tmp_size'])
         self.size_input = QLineEdit()
         # self.size_input.setFixedWidth(100)
         validator = QIntValidator()
@@ -77,6 +82,7 @@ class FileSystems(QWidget):
 
         # disable_automount
         self.disable_auto_mount = QCheckBox('Disable Auto-Mount')
+        self.disable_auto_mount.setToolTip(self.file_systems_tooltip['disable_automount'])
         self.disable_auto_mount.stateChanged.connect(lambda state: self.save_checkbox_state(state, 'disable_automount', None))
         self.container_layout.addWidget(self.disable_auto_mount)
 
@@ -87,6 +93,7 @@ class FileSystems(QWidget):
 
 
         self.enable_aide = QCheckBox('Enable AIDE (Advanced Intrusion Detection Environment)')
+        self.enable_aide.setToolTip(self.file_systems_tooltip['enable_aide'])
         self.enable_aide.stateChanged.connect(lambda state: self.save_checkbox_state(state, 'enable_aide', None))
         self.container_layout.addWidget(self.enable_aide)
 

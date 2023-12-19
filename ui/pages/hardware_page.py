@@ -4,9 +4,10 @@ from ui.components.hardware.file_systems import FileSystems
 from PyQt6.QtCore import Qt
 
 class Hardware(QWidget):
-    def __init__(self, config):
+    def __init__(self, config, tooltip):
         super().__init__()
         self.config = config
+        self.tooltip = tooltip
         self.init_ui()
     
     def init_ui(self):
@@ -16,8 +17,8 @@ class Hardware(QWidget):
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
 
-        self.physical_ports = PhysicalPorts(self.config)
-        self.file_systems = FileSystems(self.config)
+        self.physical_ports = PhysicalPorts(self.config, self.tooltip)
+        self.file_systems = FileSystems(self.config, self.tooltip)
 
         self.layout.addWidget(self.physical_ports)
         self.layout.addWidget(self.file_systems)

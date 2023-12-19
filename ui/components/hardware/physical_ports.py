@@ -4,10 +4,12 @@ from harden import config_file
 from PyQt6.QtCore import Qt
 
 class PhysicalPorts(QWidget):
-    def __init__(self, config):
+    def __init__(self, config, tooltip):
         super().__init__()
         self.config = config
+        self.tooltip = tooltip
         self.toml_physical_ports = self.config['physical-ports']
+        self.physical_ports_tooltip = self.tooltip['physical-ports']
         self.init_ui()
         self.refresh_config(config)
     
@@ -44,6 +46,7 @@ class PhysicalPorts(QWidget):
 
         # enable checkbox
         self.main_checkbox = QCheckBox("Enable USB Blocking")
+        self.main_checkbox.setToolTip(self.physical_ports_tooltip['enable'])
         self.container_layout.addWidget(self.main_checkbox)
         self.main_checkbox.stateChanged.connect(self.enable_checkbox_clicked)
 
@@ -55,6 +58,7 @@ class PhysicalPorts(QWidget):
 
     def block_devices_table(self):
         self.block_devices_label = QLabel("Block Devices")
+        self.block_devices_label.setToolTip(self.physical_ports_tooltip['device-rules'])
         self.container_layout.addWidget(self.block_devices_label)
         self.block_devices_label.setObjectName("sub-component-title")
 
@@ -81,6 +85,7 @@ class PhysicalPorts(QWidget):
 
     def block_ports_table(self):
         self.block_ports_label = QLabel("Block Ports")
+        self.block_ports_label.setToolTip(self.physical_ports_tooltip['port-rules'])
         self.container_layout.addWidget(self.block_ports_label)
         self.block_ports_label.setObjectName("sub-component-title")
 

@@ -2,10 +2,12 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QCheckBox
 from harden import config_file
 
 class Processes(QWidget):
-    def __init__(self, config):
+    def __init__(self, config, tooltip):
         super().__init__()
         self.config = config
+        self.tooltip = tooltip
         self.toml_processes = self.config['processes']
+        self.processes_tooltip = self.tooltip['processes']
         self.init_ui()
         self.refresh_config(config)
     
@@ -31,6 +33,7 @@ class Processes(QWidget):
         self.checkboxes = {}
         for name, state in self.toml_processes.items():
             checkbox = QCheckBox(name.replace('_', ' ').title().replace('Aslr', 'ASLR'))
+            checkbox.setToolTip(self.processes_tooltip[name])
             checkbox.stateChanged.connect(lambda state, name=name: self.save_checkbox_state(state, name))
             self.container_layout.addWidget(checkbox)
             self.checkboxes[name] = checkbox

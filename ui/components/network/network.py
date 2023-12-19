@@ -2,10 +2,12 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QCheckBox
 from harden import config_file
 
 class Net(QWidget):
-    def __init__(self, config):
+    def __init__(self, config, tooltip):
         super().__init__()
         self.config = config
+        self.tooltip = tooltip
         self.toml_net = self.config['network']
+        self.net_tooltip = self.tooltip['network']
         self.init_ui()
         self.refresh_config(config)
 
@@ -33,6 +35,7 @@ class Net(QWidget):
             if name == "disable_protocols":
                 continue
             checkbox = QCheckBox(f"{name.replace('_',' ').title()}")
+            checkbox.setToolTip(self.net_tooltip[name])
             checkbox.stateChanged.connect(lambda state, name = name: self.save_checkbox_state(name, state))
             self.toml_net_checkboxes[name] = checkbox
             self.container_layout.addWidget(checkbox)
@@ -44,6 +47,7 @@ class Net(QWidget):
         self.protocols_checkboxes = {}
         for name, state in self.toml_net['disable_protocols'].items():
             checkbox = QCheckBox(f"{name.replace('_',' ').title()}")
+            checkbox.setToolTip(self.net_tooltip['disable_protocols'][name])
             checkbox.stateChanged.connect(lambda state, name=name: self.save_checkbox_state_protocols(state, 'disable_protocols', name))
             checkbox.setProperty('class', 'in-checkbox')
             self.container_layout.addWidget(checkbox)
