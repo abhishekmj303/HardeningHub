@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QToolBar, QPushButton, QFileDialog \
-    , QMessageBox, QCheckBox, QWidget, QSizePolicy
+    , QMessageBox, QCheckBox, QWidget, QSizePolicy, QMenu
+from PyQt6.QtGui import QAction
 from PyQt6.QtCore import pyqtSignal
 from tomlkit import TOMLDocument
 from harden import config_file
@@ -17,6 +18,23 @@ class ToolBar(QToolBar):
     
     def init_ui(self):
         self.setMovable(False)  
+
+        self.levels_button = QPushButton("Levels")
+        self.levels_button.setProperty('class', ['btn', 'toolbar-btn'])
+        self.levels_menu = QMenu(self.levels_button)
+        workstation_level1_action = QAction("Level 1 - Workstation", self.levels_menu)
+        server_level1_action = QAction("Level 1 - Server", self.levels_menu)
+        workstation_level2_action = QAction("Level 2 - Workstation", self.levels_menu)
+        server_level2_action = QAction("Level 2 - Server", self.levels_menu)
+        self.levels_menu.addAction(workstation_level1_action)
+        self.levels_menu.addAction(server_level1_action)
+        self.levels_menu.addAction(workstation_level2_action)
+        self.levels_menu.addAction(server_level2_action)
+        self.levels_button.setMenu(self.levels_menu)
+        self.addWidget(self.levels_button)
+
+
+
         self.import_button = QPushButton("Import")
         self.export_button = QPushButton("Export")
         self.save_button = QPushButton("Save")
