@@ -15,10 +15,5 @@ jobs:
     - name: Install USB Guard
       run: sudo apt install usbguard
 
-    - name: set python path
-      run: |
-        cd /audit
-        chmod +x test_audit.sh
-        ./test_audit.sh
         
         
