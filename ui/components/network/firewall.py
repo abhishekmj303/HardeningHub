@@ -2,10 +2,12 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QCheckBox
 from harden import config_file
 
 class Firewall(QWidget):
-    def __init__(self, config):
+    def __init__(self, config, tooltip):
         super().__init__()
         self.config = config
+        self.tooltip = tooltip
         self.toml_firewall = self.config['firewall']
+        self.firewall_tooltip = self.tooltip['firewall']
         self.init_ui()
         self.refresh_config(config)
     
@@ -31,6 +33,7 @@ class Firewall(QWidget):
         self.checkboxes = {}
         for name, state in self.toml_firewall.items():
             checkbox = QCheckBox(name.replace('_', ' ').title())
+            checkbox.setToolTip(self.firewall_tooltip[name])
             checkbox.stateChanged.connect(lambda state, name=name: self.save_checkbox_state(state, name))
             self.container_layout.addWidget(checkbox)
             self.checkboxes[name] = checkbox

@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import QToolBar, QPushButton, QFileDialog \
 from PyQt6.QtCore import pyqtSignal
 from tomlkit import TOMLDocument
 from harden import config_file
+from harden import script
 
 class ToolBar(QToolBar):
     import_signal = pyqtSignal(TOMLDocument)
@@ -44,6 +45,7 @@ class ToolBar(QToolBar):
         self.import_button.clicked.connect(self.import_button_clicked)
         self.export_button.clicked.connect(self.export_button_clicked)
         self.save_button.clicked.connect(self.save_button_clicked)
+        self.script_button.clicked.connect(self.generate_script_button_clicked)
     
     def import_button_clicked(self):
         import_dialog = QFileDialog.getOpenFileName(self, "Select Config File", filter = "Config File (*.toml)")
@@ -62,6 +64,8 @@ class ToolBar(QToolBar):
             return
 
         save_config_path = export_dialog[0]
+        if not save_config_path.endswith(".toml"):
+            save_config_path += ".toml"
         print("save config path: ", save_config_path)
 
         config_file.save(save_config_path)
@@ -83,3 +87,14 @@ class ToolBar(QToolBar):
             self.theme_changed_signal.emit("dark")
         else:
             self.theme_changed_signal.emit("light")
+    
+    def generate_script_button_clicked(self):
+        generate_dialog = QFileDialog.getSaveFileName(self, "Generate Script File", filter = "Bash Script (*.sh)")
+        if not generate_dialog[0]:
+            return
+        
+        selected_file = generate_dialog[0]
+        if not selected_file.endswith(".sh"):
+            selected_file += ".sh"
+        print("selected file: ", selected_file)
+        script.save(selected_file)

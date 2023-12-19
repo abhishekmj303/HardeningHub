@@ -4,10 +4,12 @@ from PyQt6.QtGui import QIntValidator
 from harden import config_file
 
 class GDM(QWidget):
-    def __init__(self, config):
+    def __init__(self, config, tooltip):
         super().__init__()
         self.config = config
+        self.tooltip = tooltip
         self.toml_gdm = self.config['gdm']
+        self.gdm_tooltip = self.tooltip['gdm']
         self.init_ui()
         self.refresh_config(config)
     
@@ -32,15 +34,17 @@ class GDM(QWidget):
         self.container_widget.setObjectName("container-widget")
 
         self.toml_gdm_checkboxes = {}
-        remove_checkbox = QCheckBox('Remove')
-        remove_checkbox.stateChanged.connect(lambda state, name = 'remove': self.save_checkbox_state(name, state))
-        self.toml_gdm_checkboxes['remove'] = remove_checkbox
-        self.container_layout.addWidget(remove_checkbox)
+        self.remove_checkbox = QCheckBox('Remove')
+        self.remove_checkbox.setToolTip(self.gdm_tooltip['remove'])
+        self.remove_checkbox.stateChanged.connect(lambda state, name = 'remove': self.save_checkbox_state(name, state))
+        self.toml_gdm_checkboxes['remove'] = self.remove_checkbox
+        self.container_layout.addWidget(self.remove_checkbox)
 
         hlayout = QHBoxLayout()
 
         # Lock on Idle Label
         self.lockon_lable = QLabel('Lock on Idle(seconds)')
+        self.lockon_lable.setToolTip(self.gdm_tooltip['lock_on_idle'])
         self.lockon_lable.setProperty('class', 'normal-label-for')
 
         self.time_input = QLineEdit()
@@ -58,6 +62,7 @@ class GDM(QWidget):
                 continue
             state = self.toml_gdm[name]
             checkbox = QCheckBox(f"{name.replace('_',' ').title()}")
+            checkbox.setToolTip(self.gdm_tooltip[name])
             checkbox.stateChanged.connect(lambda state, name = name: self.save_checkbox_state(name, state))
             self.toml_gdm_checkboxes[name] = checkbox
             self.container_layout.addWidget(checkbox)

@@ -154,3 +154,16 @@ QScrollArea QStackedWidget {
 	border: none;
 	background-color: #1e1e2e;
 }
+
+.in-checkbox {
+	margin-left: 30px;
+}
+
+QToolTip {
+	background-color: transparent;
+	color: white;
+	border: 1px solid #45475a;
+	border-radius: 10px;
+	font: 15px;
+	padding: 2px 5px;
+}

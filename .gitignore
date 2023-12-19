@@ -3,4 +3,5 @@ __pycache__
 .DS_Store
 venv
 .venv
+/*.sh
 temp.qss

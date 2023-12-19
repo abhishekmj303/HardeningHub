@@ -3,10 +3,12 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QCheckBox \
 from harden import config_file
 
 class Services(QWidget):
-    def __init__(self, config):
+    def __init__(self, config, tooltip):
         super().__init__()
         self.config = config
+        self.tooltip = tooltip
         self.toml_services = self.config['services']
+        self.services_tooltip = self.tooltip['services']
         self.init_ui()
         self.refresh_config(config)
     
@@ -32,6 +34,7 @@ class Services(QWidget):
         self.toml_services_checkboxes = {}
         for name, state in self.toml_services.items():
             checkbox = QCheckBox(f"{name.replace('_',' ').title()}")
+            checkbox.setToolTip(self.services_tooltip[name])
             checkbox.stateChanged.connect(lambda state, name = name: self.save_checkbox_state(name, state))
             self.toml_services_checkboxes[name] = checkbox
             self.container_layout.addWidget(checkbox)

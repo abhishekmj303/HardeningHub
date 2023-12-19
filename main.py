@@ -4,13 +4,14 @@ from PyQt6.QtCore import Qt
 from ui.sidebar import Sidebar
 from ui.page import Pages
 from ui.toolbar import ToolBar
-from harden import config_file
+from harden import config_file, tooltip_file
 import sys
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.config = config_file.init()
+        self.tooltip = tooltip_file.read()
         self.init_ui()
 
     def init_ui(self):
@@ -20,7 +21,7 @@ class MainWindow(QMainWindow):
         self.toolbar = ToolBar(self.config)
         self.addToolBar(self.toolbar)
 
-        self.pages = Pages(self.config)
+        self.pages = Pages(self.config, self.tooltip)
         self.pages.setObjectName("page")
         self.toolbar.import_signal.connect(self.pages.refresh_config)
         self.toolbar.theme_changed_signal.connect(self.change_theme)
