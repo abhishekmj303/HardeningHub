@@ -10,13 +10,12 @@ import sys
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.config = config_file.init()
         self.init_ui()
 
     def init_ui(self):
         self.setWindowTitle("HardeningHub")
         self.setGeometry(0, 0, 1920, 1000)
-
-        self.config = config_file.read()
 
         self.toolbar = ToolBar(self.config)
         self.addToolBar(self.toolbar)
@@ -42,7 +41,6 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.main_widget)
 
 def main():
-    config_file.create_copy()
     app = QApplication(sys.argv)
     app.setStyleSheet(open("ui/qss/style.qss", "r").read())
     window = MainWindow()

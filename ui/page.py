@@ -23,7 +23,8 @@ class Pages(QStackedWidget):
 
         self.setCurrentIndex(0)
     
-    def refresh_config(self):
-        self.hardware.refresh_config()
-        self.software.refresh_config()
-        self.networking.refresh_config()
+    def refresh_config(self, config):
+        self.config = config
+        self.hardware.refresh_config(config)
+        self.software.refresh_config(config)
+        self.networking.refresh_config(config)

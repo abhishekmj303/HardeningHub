@@ -10,7 +10,7 @@ class FileSystems(QWidget):
         self.config = config
         self.toml_file_systems = self.config['file-systems']
         self.init_ui()
-        self.refresh_config()
+        self.refresh_config(config)
     
     def init_ui(self):
         self.layout = QVBoxLayout()
@@ -90,7 +90,9 @@ class FileSystems(QWidget):
         self.enable_aide.stateChanged.connect(lambda state: self.save_checkbox_state(state, 'enable_aide', None))
         self.container_layout.addWidget(self.enable_aide)
 
-    def refresh_config(self):
+    def refresh_config(self, config):
+        self.config = config
+        self.toml_file_systems = self.config['file-systems']
         for name, state in self.toml_file_systems['block'].items():
             self.block_checkboxes[name].setChecked(state)
         

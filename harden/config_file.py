@@ -3,33 +3,54 @@ import os
 import shutil
 from typing import Mapping
 
-file_path = ""
-temp_file_path = ""
-
-def set_config_file(path):
-    global file_path, temp_file_path
-    file_path = path
-    temp_file_path = file_path + ".tmp"
+FILE_PATH = ""
+TEMP_FILE_PATH = ""
 
 
 def create_copy():
-    shutil.copyfile(file_path, temp_file_path)
+    shutil.copyfile(FILE_PATH, TEMP_FILE_PATH)
 
 
 def read():
-    if not os.path.exists(temp_file_path):  # Check if the copy does not exist
+    if not os.path.exists(TEMP_FILE_PATH):  # Check if the copy does not exist
         create_copy()  # Create the copy if it doesn't exist
-    with open(temp_file_path, "r") as f:
+    with open(TEMP_FILE_PATH, "r") as f:
         return tomlkit.load(f)
 
 
 def write(config: Mapping):
-    with open(temp_file_path, "w") as f:
+    with open(TEMP_FILE_PATH, "w") as f:
         tomlkit.dump(config, f)
 
 
 def save():
-    os.replace(temp_file_path, file_path)
+    os.replace(TEMP_FILE_PATH, FILE_PATH)
 
 
-set_config_file(os.path.join(os.path.dirname(__file__), "../config/sampleconfig.toml"))
+def update_toml_obj(toml_obj: tomlkit.items.Item, config: dict):
+    # Recursively update the toml object with the config dict
+    for key, value in config.items():
+        if isinstance(value, dict):
+            update_toml_obj(value, toml_obj[key])
+        elif isinstance(value, list):
+            for i in range(len(value)):
+                if i >= len(toml_obj[key]):
+                    toml_obj[key].append(tomlkit.inline_table())
+                if isinstance(value[i], dict):
+                    update_toml_obj(value[i], toml_obj[key][i])
+                else:
+                    toml_obj[key][i] = value[i]
+        else:
+            toml_obj[key] = value
+
+
+def init(file_path: str = None):
+    global FILE_PATH, TEMP_FILE_PATH
+
+    if file_path is None:
+        file_path = os.path.join(os.path.dirname(__file__), "../config/sampleconfig.toml")
+    
+    FILE_PATH = file_path
+    TEMP_FILE_PATH = FILE_PATH + ".tmp"
+    create_copy()
+    return read()

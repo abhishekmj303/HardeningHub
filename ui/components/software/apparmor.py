@@ -8,7 +8,7 @@ class AppArmor(QWidget):
         self.config = config
         self.toml_apparmor = self.config['apparmor']
         self.init_ui()
-        self.refresh_config()
+        self.refresh_config(config)
     
     def init_ui(self):
         self.layout = QVBoxLayout()
@@ -46,7 +46,9 @@ class AppArmor(QWidget):
         hlayout.addWidget(self.mode_list)
         self.container_layout.addLayout(hlayout)
     
-    def refresh_config(self):
+    def refresh_config(self, config):
+        self.config = config
+        self.toml_apparmor = self.config['apparmor']
         self.mode_list.setCurrentText(self.toml_apparmor['mode'])
         self.mode_list.setEnabled(self.toml_apparmor['enable'])
         
