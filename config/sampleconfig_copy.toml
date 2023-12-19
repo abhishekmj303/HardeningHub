@@ -1,0 +1,58 @@
+[physical-ports]
+enable = true
+device-rules = [
+    {allow = true, id = "1a2c:4c5e", name = "USB Keyboard"}, # allow only at that port
+    {allow = true, id = "04f3:0c00", name = "ELAN:ARM-M4"},
+    {allow = false, id = "1a3d:5b4e", name = "USB Mouse"}
+]
+port-rules = [
+    {allow = false, id = "1-3", name = "USB Keyboard"}, # block all devices at that port
+    {allow = true, id = "1-2", name = "USB Mouse"}
+]
+
+[file-systems]
+# Basic
+block = {udf = true, cramfs = true, squashfs = false}
+# Intermediate
+configure_fs = {tmp = true, dev_shm = true} # /tmp and /dev/shm
+tmp_size = 2 # in GB
+disable_automount = true
+# Advanced
+enable_aide = true # Advanced Intrusion Detection Environment
+
+[processes] # Process Hardening
+enable_aslr = true # Address Space Layout Randomization
+remove_prelink = true
+disable_error_reporting = true
+restrict_core_dumps = true
+
+[apparmor] # Mandatory Access Control
+enable = true
+mode = "enforce" # enforce, complain
+
+[gdm] # GNOME Display Manager
+remove = false
+disable_user_list = true
+lock_on_idle = 100 # in seconds, 0 to disable
+no_override_lockscreen = true
+disable_automount = true
+lock_automount = true
+disable_autorun = true
+no_override_autorun = true
+
+[time-sync] # Time synchronization
+enable_ntp = true
+ntp_servers = [ "time1.google.com", "time2.google.com", "time3.google.com"]
+enable_ntp_user = true
+
+[ssh]
+enable = true
+port = 22
+permit-empty-passwords = false
+password-authentication = false
+permit-root-login = false
+client-alive-interval = 300
+client-alive-count-max = 2
+allow-users = ["user1", "user2"]
+allow-groups = ["group1", "group2"]
+x11-forwarding = false
