@@ -69,14 +69,14 @@ remove_ldap = true
 remove_rpc = true
 
 [network] # Network
-disable_wireless = true # WiFi and other wireless interfaces
+disable_wireless = false # WiFi and other wireless interfaces
 disable_packet_redirects = true
 disable_ip_forwarding = true
 reject_source_routed_packets = true
 reject_icmp_redirects = true
 reject_secure_icmp_redirects = true
 log_suspicious_packets = true
-ignore_broadcasts = true
+ingore_broadcasts = true
 ignore_bogus_icmp_errors = true
 enable_rp_filter = true # Reverse Path Filtering
 enable_syn_cookies = true # TCP SYN Cookie

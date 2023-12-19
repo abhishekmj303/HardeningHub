@@ -33,6 +33,11 @@ class ToolBar(QToolBar):
         self.levels_button.setMenu(self.levels_menu)
         self.addWidget(self.levels_button)
 
+        workstation_level1_action.triggered.connect(lambda: self.import_level("w1"))
+        server_level1_action.triggered.connect(lambda: self.import_level("s1"))
+        workstation_level2_action.triggered.connect(lambda: self.import_level("w2"))
+        server_level2_action.triggered.connect(lambda: self.import_level("s2"))
+
 
 
         self.import_button = QPushButton("Import")
@@ -65,6 +70,10 @@ class ToolBar(QToolBar):
         self.export_button.clicked.connect(self.export_button_clicked)
         self.save_button.clicked.connect(self.save_button_clicked)
         self.script_button.clicked.connect(self.generate_script_button_clicked)
+    
+    def import_level(self, level: str = "w1"):
+        self.config = config_file.import_level(level)
+        self.import_signal.emit(self.config)
     
     def import_button_clicked(self):
         import_dialog = QFileDialog.getOpenFileName(self, "Select Config File", filter = "Config File (*.toml)")

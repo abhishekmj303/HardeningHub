@@ -1,35 +1,46 @@
-import subprocess
 from harden import config_file
 
 def get_script(config):
     file_systems_config = config["file-systems"]
 
-    # Start with an empty script and build it up
-    script = ""
+    script = "#!/bin/bash\n\n"  # Start with a bash shebang and a newline
 
-    if file_systems_config['block']['cramfs']:
-        # Each file system gets its own set of commands
-        script += f"""
-l_mname="cramfs" # set module name
-if ! modprobe -n -v "$l_mname" | grep -P --
-'^\h*install
-\/bin\/(true|false)'; then
-echo -e " - setting module: \"$l_mname\" to be not loadable"
-echo -e "install $l_mname /bin/false" >>
-/etc/modprobe.d/"$l_mname".conf
-fic
-if lsmod | grep "$l_mname" > /dev/null 2>&1; then
-echo -e " - unloading module \"$l_mname\""
-modprobe -r "$l_mname"
+    # Loop through each filesystem module in the configuration
+    for fs_module in file_systems_config['block']:
+        if file_systems_config['block'][fs_module]:
+            script += """
+echo "Processing module: {fs_module}..."
+
+# Check if module '{fs_module}' is set to be not loadable
+if ! modprobe -n -v "{fs_module}" | grep -q 'install /bin/true'; then
+    echo "Setting module '{fs_module}' to be not loadable"
+    echo "install {fs_module} /bin/false" | sudo tee /etc/modprobe.d/{fs_module}.conf
 fi
-if ! grep -Pq --
-"^\h*blacklist\h+$l_mname\b" /etc/modprobe.d/*; then
-echo -e " - deny listing \"$l_mname\""
-echo -e "blacklist $l_mname" >> /etc/modprobe.d/"$l_mname".conf
+
+# Unload module '{fs_module}' if it is currently loaded
+if lsmod | grep -q "{fs_module}"; then
+    echo "Unloading module '{fs_module}'"
+    sudo modprobe -r "{fs_module}"
+fi
+
+# Blacklist module '{fs_module}' if not already blacklisted
+if ! grep -q "blacklist {fs_module}" /etc/modprobe.d/*; then
+    echo "Blacklisting module '{fs_module}'"
+    echo "blacklist {fs_module}" | sudo tee -a /etc/modprobe.d/{fs_module}.conf
 fi
 """
     return script
 
 if __name__ == "__main__":
-    config = config_file.read()
-    print(get_script(config))
+    # Example configuration for demonstration
+    config = {
+        "file-systems": {
+            "block": {
+                "cramfs": True,
+                "squashfs": True,
+                "udf": True
+            }
+        }
+    }
+    generated_script = get_script(config)
+    print(generated_script)

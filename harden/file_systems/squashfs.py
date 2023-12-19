@@ -1,35 +1,58 @@
-import subprocess
 from harden import config_file
 
 def get_script(config):
     file_systems_config = config["file-systems"]
 
-    # Start with an empty script and build it up
-    script = ""
+    script = "#!/bin/bash\n\n"  # Start with a bash shebang and a newline
 
-    if 'squashfs'in file_systems_config['block']:
-        # Each file system gets its own set of commands
-        script += f"""
-l_mname="squashfs" # set module name
-if ! modprobe -n -v "$l_mname" | grep -P --
-'^\h*install
-\/bin\/(true|false)'; then
-echo -e " - setting module: \"$l_mname\" to be not loadable"
-echo -e "install $l_mname /bin/false" >>
-/etc/modprobe.d/"$l_mname".conf
+    # Check if 'squashfs' is to be blocked
+    if 'squashfs' in file_systems_config['block'] and file_systems_config['block']['squashfs']:
+        script += """
+#!/bin/bash
+
+echo "Processing module: squashfs..."
+
+# Function to check if a module is blacklisted
+is_blacklisted() {
+    local module=$1
+    grep -qrP "^\s*blacklist\s+$module\b" /etc/modprobe.d/ && return 0 || return 1
+}
+
+# Check if module 'squashfs' is set to be not loadable
+if ! modprobe -n -v squashfs | grep -q 'install /bin/true'; then
+    echo "Setting module 'squashfs' to be not loadable"
+    echo "install squashfs /bin/false" | sudo tee /etc/modprobe.d/squashfs.conf
+else
+    echo "Module 'squashfs' is already set to be not loadable."
 fi
-if lsmod | grep "$l_mname" > /dev/null 2>&1; then
-echo -e " - unloading module \"$l_mname\""
-modprobe -r "$l_mname"
+
+# Unload module 'squashfs' if it is currently loaded
+if lsmod | grep -q "squashfs"; then
+    echo "Unloading module 'squashfs'"
+    sudo modprobe -r squashfs || echo "Failed to unload module 'squashfs'. It might be in use."
+else
+    echo "Module 'squashfs' is not currently loaded."
 fi
-if ! grep -Pq --
-"^\h*blacklist\h+$l_mname\b" /etc/modprobe.d/*; then
-echo -e " - deny listing \"$l_mname\""
-echo -e "blacklist $l_mname" >> /etc/modprobe.d/"$l_mname".conf
+
+# Blacklist module 'squashfs' if not already blacklisted
+if ! is_blacklisted "squashfs"; then
+    echo "Blacklisting module 'squashfs'"
+    echo "blacklist squashfs" | sudo tee -a /etc/modprobe.d/squashfs.conf
+else
+    echo "Module 'squashfs' is already blacklisted."
 fi
+
 """
     return script
 
 if __name__ == "__main__":
-    config = config_file.read()
-    print(get_script(config))
+    # Example configuration for demonstration
+    config = {
+        "file-systems": {
+            "block": {
+                "squashfs": True
+            }
+        }
+    }
+    generated_script = get_script(config)
+    print(generated_script)

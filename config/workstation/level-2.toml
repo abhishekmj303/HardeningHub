@@ -1,5 +1,5 @@
 [physical-ports]
-enable = false
+enable = true
 device-rules = [
     {allow = true, id = "1a2c:4c5e", name = "USB Keyboard"}, # allow only at that port
     {allow = true, id = "04f3:0c00", name = "ELAN:ARM-M4"},
@@ -11,12 +11,11 @@ port-rules = [
 ]
 
 [file-systems]
-# Basic
-block = {udf = false, cramfs = true, squashfs = false}
+block = { udf = true, cramfs = true, squashfs = true }
 # Intermediate
 configure_fs = {tmp = true, dev_shm = true} # /tmp and /dev/shm
 tmp_size = 2 # in GB
-disable_automount = false
+disable_automount = true
 # Advanced
 enable_aide = true # Advanced Intrusion Detection Environment
 
@@ -28,7 +27,7 @@ restrict_core_dumps = true
 
 [apparmor] # Mandatory Access Control
 enable = true
-mode = "complain" # enforce, complain
+mode = "enforce" # enforce, complain
 
 [gdm] # GNOME Display Manager
 remove = false
@@ -47,7 +46,7 @@ enable_ntp_user = true
 
 [services] # Services
 remove_avahi = true
-remove_cups = true
+remove_cups = false
 remove_dhcp = true
 remove_ldap = true
 remove_nfs = true
@@ -69,19 +68,19 @@ remove_ldap = true
 remove_rpc = true
 
 [network] # Network
-disable_wireless = true # WiFi and other wireless interfaces
+disable_wireless = false # WiFi and other wireless interfaces
 disable_packet_redirects = true
 disable_ip_forwarding = true
 reject_source_routed_packets = true
 reject_icmp_redirects = true
 reject_secure_icmp_redirects = true
 log_suspicious_packets = true
-ignore_broadcasts = true
+ingore_broadcasts = true
 ignore_bogus_icmp_errors = true
 enable_rp_filter = true # Reverse Path Filtering
 enable_syn_cookies = true # TCP SYN Cookie
 reject_ipv6_router_adv = true # IPv6 Router Advertisement
-disable_protocols = {dccp = false, sctp = false, rds = false, tipc = false}
+disable_protocols = {dccp = true, sctp = true, rds = true, tipc = true}
 
 [firewall] # Firewall
 enable = true
@@ -103,13 +102,13 @@ disable_x11_forwarding = true
 enable_strong_ciphers = true
 enable_strong_mac_algorithms = true
 enable_strong_key_exchange_algorithms = true
-disable_tcp_forwarding = false
+disable_tcp_forwarding = true
 configure_warning_banner = true
 max_auth_tries = 4
 configure_max_startups = true
 max_sessions = 10
 login_grace_time = 60 # in seconds
-client_alive_interval = 300 # in seconds
+client_alive_interval = 45 # in seconds
 client_alive_count_max = 3
 
 [privilege_escalation] # Privilege Escalation

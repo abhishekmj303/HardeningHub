@@ -12,10 +12,12 @@ def create_copy():
     shutil.copyfile(FILE_PATH, TEMP_FILE_PATH)
 
 
-def read():
-    if not os.path.exists(TEMP_FILE_PATH):  # Check if the copy does not exist
+def read(file_path: str = None):
+    if file_path is None:
+        file_path = TEMP_FILE_PATH
+    if not os.path.exists(file_path):  # Check if the copy does not exist
         create_copy()  # Create the copy if it doesn't exist
-    with open(TEMP_FILE_PATH, "r") as f:
+    with open(file_path, "r") as f:
         return tomlkit.load(f)
 
 
@@ -32,6 +34,7 @@ def save(file_path: str = None):
 
 def update_toml_obj(toml_obj: tomlkit.items.Item, config: dict):
     # Recursively update the toml object with the config dict
+    print(config)
     for key, value in config.items():
         if isinstance(value, dict):
             update_toml_obj(value, toml_obj[key])
@@ -57,3 +60,15 @@ def init(file_path: str = None):
     TEMP_FILE_PATH = FILE_PATH + ".tmp"
     create_copy()
     return physical_ports.get_devices(read())
+
+def import_level(level: str = "w1"):
+    if level == "w1":
+        file_path = os.path.join(os.path.dirname(__file__), "../config/workstation/level-1.toml")
+    elif level == "w2":
+        file_path = os.path.join(os.path.dirname(__file__), "../config/workstation/level-2.toml")
+    elif level == "s1":
+        file_path = os.path.join(os.path.dirname(__file__), "../config/server/level-1.toml")
+    elif level == "s2":
+        file_path = os.path.join(os.path.dirname(__file__), "../config/server/level-2.toml")
+    
+    return init(file_path)
