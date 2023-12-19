@@ -89,13 +89,26 @@ configure_loopback_traffic = true # Allow loopback traffic
 enable_default_deny = true # Deny all traffic by default
 
 [ssh]
-enable = true
-port = 22
-permit-empty-passwords = false
-password-authentication = false
-permit-root-login = false
-client-alive-interval = 300
-client-alive-count-max = 2
-allow-users = ["user1", "user2"]
-allow-groups = ["group1", "group2"]
-x11-forwarding = false
+configure_permissions = {sshd_config = true, private_host_key = true, public_host_key = true}
+allow_users = ["user1", "user2"]
+allow_groups = ["group1", "group2"]
+log_level = "VERBOSE" # INFO, VERBOSE
+enable_pam = true
+disable_root_login = true
+disable_host_based_auth = true
+disable_permit_empty_passwords = true
+disable_permit_user_env = true
+enable_ingore_rhosts = true
+disable_x11_forwarding = true
+enable_strong_ciphers = true
+enable_strong_mac_algorithms = true
+enable_strong_key_exchange_algorithms = true
+disable_tcp_forwarding = false
+configure_warning_banner = true
+max_auth_tries = 4
+configure_max_startups = true
+max_sessions = 10
+login_grace_time = 60 # in seconds
+client_alive_interval = 300 # in seconds
+client_alive_count_max = 3
+
