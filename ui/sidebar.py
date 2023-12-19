@@ -15,9 +15,8 @@ class Sidebar(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.bg = "#E6C7A9"
-        self.active = "#382F27"
-        self.index = None
+        self.index = 1
+        self.theme = False
         self.init_ui()
 
     def init_ui(self):
@@ -29,21 +28,30 @@ class Sidebar(QWidget):
 
 
         self.hardware_label = ClickableLabel("Hardware")
-        self.hardware_label.clicked.connect(lambda: self.set_active(1))
+        self.hardware_label.clicked.connect(lambda: self.set_active(1, self.theme))
         self.layout.addWidget(self.hardware_label)
 
         self.software_label = ClickableLabel("Software")
-        self.software_label.clicked.connect(lambda: self.set_active(2))
+        self.software_label.clicked.connect(lambda: self.set_active(2, self.theme))
         self.layout.addWidget(self.software_label)
 
         self.networking_label = ClickableLabel("Network")
-        self.networking_label.clicked.connect(lambda: self.set_active(3))
+        self.networking_label.clicked.connect(lambda: self.set_active(3, self.theme))
         self.layout.addWidget(self.networking_label)
     
-    def set_active(self, index):
+    def set_active(self, index, theme: bool = False):
         self.index = index
         self.change_page_signal.emit(index)
         for i in range(self.layout.count()):
             self.layout.itemAt(i).widget().setStyleSheet("")
-        print(f'bg: {self.bg}, active: {self.active}')
-        self.layout.itemAt(index - 1).widget().setStyleSheet(f"background-color: {self.bg}; border-left: 4px solid {self.active};")
+        self.set_theme(theme)
+        
+    def set_theme(self, theme: bool):
+        self.theme = theme
+        if theme:
+            bg = '#313244'
+            active = '#cba6f7'
+        else:
+            bg = '#E6C7A9'
+            active = '#382F27'
+        self.layout.itemAt(self.index - 1).widget().setStyleSheet(f"background-color: {bg}; border-left: 4px solid {active};")
