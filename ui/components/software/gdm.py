@@ -69,6 +69,13 @@ class GDM(QWidget):
             if name == 'lock_on_idle':
                 continue
             self.toml_gdm_checkboxes[name].setChecked(state)
+        if self.toml_gdm['remove']:
+            self.lockon_lable.setEnabled(False)
+            self.time_input.setEnabled(False)
+            for name, checkbox in self.toml_gdm_checkboxes.items():
+                if name == 'remove':
+                    continue
+                checkbox.setEnabled(False)
 
     def save_checkbox_state(self, name, state):
         self.toml_gdm[name] = (state == 2)

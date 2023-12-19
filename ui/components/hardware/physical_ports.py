@@ -109,6 +109,9 @@ class PhysicalPorts(QWidget):
         self.config = config
         self.toml_physical_ports = self.config['physical-ports']
         self.main_checkbox.setChecked(self.toml_physical_ports['enable'])
+        if not self.toml_physical_ports['enable']:
+            self.devices_table.setEnabled(False)
+            self.ports_table.setEnabled(False)
         self.devices_table.setRowCount(0)
         self.ports_table.setRowCount(0)
         self.add_device_rows()

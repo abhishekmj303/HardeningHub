@@ -109,6 +109,14 @@ class TimeSync(QWidget):
         self.enable_ntp.setChecked(self.toml_time_sync['enable_ntp'])
         self.enable_user.setChecked(self.toml_time_sync['enable_ntp_user'])
 
+        if not self.toml_time_sync['enable_ntp']:
+            self.enable_user.setEnabled(False)
+            self.servers_table.setEnabled(False)
+            self.new_server.setEnabled(False)
+            self.add_button.setEnabled(False)
+            for i in range(self.servers_table.rowCount()):
+                self.servers_table.cellWidget(i, 1).setEnabled(False)
+
         self.servers_table.setRowCount(0)
         self.add_servers()
 
