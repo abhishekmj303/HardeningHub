@@ -4,6 +4,7 @@ from harden import config_file, physical_ports, file_systems\
 def generate():
     config = config_file.read()
     script = "#/bin/bash\n\n"
+    script += "set -e\n\n"
     script += physical_ports.get_script(config)
     script += file_systems.get_script(config)
     script += process_hardening.get_script(config)
