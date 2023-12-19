@@ -13,15 +13,26 @@ class AppArmor(QWidget):
     def init_ui(self):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
+        self.layout.setSpacing(0)
+        self.layout.setContentsMargins(0, 0, 0, 0)
 
         self.main_label = QLabel("AppArmor")
         self.layout.addWidget(self.main_label)
         self.main_label.setObjectName("component-title")
 
+        # container widget
+        self.container_widget = QWidget()
+        self.container_layout = QVBoxLayout()
+        self.container_widget.setLayout(self.container_layout)
+        self.layout.addWidget(self.container_widget)
+        self.container_layout.setSpacing(0)
+        self.container_layout.setContentsMargins(30, 30, 30, 30)
+        self.container_widget.setObjectName("container-widget")
+
         # Enable Checkbox
         checkbox = QCheckBox('Enable')
         checkbox.stateChanged.connect(self.save_checkbox_state)
-        self.layout.addWidget(checkbox)
+        self.container_layout.addWidget(checkbox)
 
         # Mode Dropdown
         hlayout = QHBoxLayout()
@@ -33,7 +44,7 @@ class AppArmor(QWidget):
 
         hlayout.addWidget(self.mode_label)
         hlayout.addWidget(self.mode_list)
-        self.layout.addLayout(hlayout)
+        self.container_layout.addLayout(hlayout)
     
     def refresh_config(self):
         self.mode_list.setCurrentText(self.toml_apparmor['mode'])

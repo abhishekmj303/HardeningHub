@@ -60,9 +60,13 @@ class FileSystems(QWidget):
         
         # configure /tmp size
         hlayout = QHBoxLayout()
-
+        hlayout.setSpacing(0)
+        hlayout.setContentsMargins(0, 0, 0, 0)
+        hlayout.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.configure_label = QLabel('Configure /tmp size (in GB):')
+        self.configure_label.setProperty('class', 'label-for')
         self.size_input = QLineEdit()
+        self.size_input.setFixedWidth(100)
         validator = QIntValidator()
         self.size_input.setValidator(validator)
         self.size_input.textChanged.connect(self.size_changed)

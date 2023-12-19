@@ -14,7 +14,7 @@ class Hardware(QWidget):
         self.setLayout(self.layout)
         self.layout.setSpacing(0)
         self.layout.setContentsMargins(0, 0, 0, 0)
-        self.layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.layout.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
 
         self.physical_ports = PhysicalPorts(self.config)
         self.file_systems = FileSystems(self.config)
