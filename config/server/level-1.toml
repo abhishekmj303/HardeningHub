@@ -111,3 +111,11 @@ max_sessions = 10
 login_grace_time = 60 # in seconds
 client_alive_interval = 300 # in seconds
 client_alive_count_max = 3
+
+[privilege_escalation] # Privilege Escalation
+use_pty = true
+enable_logfile = true
+disable_nopasswd = false
+enable_reauthentication = true
+authentication_timeout = 15 # in minutes
+restrict_su = true
