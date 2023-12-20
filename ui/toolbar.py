@@ -6,6 +6,17 @@ from tomlkit import TOMLDocument
 from harden import config_file
 from harden import script
 
+
+class ConfirmationDialog(QMessageBox):
+    def __init__(self, title: str, message: str):
+        super().__init__()
+        self.setWindowTitle(title)
+        self.setText(message)
+        self.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        self.setDefaultButton(QMessageBox.StandardButton.No)
+        self.setIcon(QMessageBox.Icon.Question)
+
+
 class ToolBar(QToolBar):
     import_signal = pyqtSignal(TOMLDocument)
     theme_changed_signal = pyqtSignal(bool)
@@ -43,11 +54,13 @@ class ToolBar(QToolBar):
         self.export_button = QPushButton("Export")
         self.save_button = QPushButton("Save")
         self.script_button = QPushButton("Generate Script")
+        self.run_button = QPushButton("Run Script")
 
         self.addWidget(self.import_button)
         self.addWidget(self.export_button)
         self.addWidget(self.save_button)
         self.addWidget(self.script_button)
+        self.addWidget(self.run_button)
 
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
@@ -72,11 +85,13 @@ class ToolBar(QToolBar):
         self.export_button.setProperty('class', ['btn', 'toolbar-btn'])
         self.save_button.setProperty('class', ['btn', 'toolbar-btn'])
         self.script_button.setProperty('class', ['btn', 'toolbar-btn'])
+        self.run_button.setProperty('class', ['btn', 'toolbar-btn'])
 
         self.import_button.clicked.connect(self.import_button_clicked)
         self.export_button.clicked.connect(self.export_button_clicked)
         self.save_button.clicked.connect(self.save_button_clicked)
-        self.script_button.clicked.connect(self.generate_script_button_clicked)
+        self.script_button.clicked.connect(self.script_button_clicked)
+        self.run_button.clicked.connect(self.run_button_clicked)
     
     def import_level(self, level: str = "w1"):
         self.config = config_file.import_level(level)
@@ -106,18 +121,18 @@ class ToolBar(QToolBar):
         config_file.save(save_config_path)
     
     def save_button_clicked(self):
-        self.message_box = QMessageBox()
-        self.message_box.setWindowTitle("Save Configurations")
-        self.message_box.setText("Are you sure you want to save?")
-        self.message_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
-        self.message_box.setDefaultButton(QMessageBox.StandardButton.No)
-        self.message_box.setIcon(QMessageBox.Icon.Question)
-
-        if self.message_box.exec() == QMessageBox.StandardButton.Yes:
+        message_box = ConfirmationDialog("Save Configurations", "Are you sure you want to save?")
+        if message_box.exec() == QMessageBox.StandardButton.Yes:
             config_file.save()
             print("saved")
     
-    def generate_script_button_clicked(self):
+    def script_button_clicked(self):
+        message_box = ConfirmationDialog("Create Backup", "Do you want to create a system backup before running the script?")
+        if message_box.exec() == QMessageBox.StandardButton.Yes:
+            backup = True
+        else:
+            backup = False
+
         generate_dialog = QFileDialog.getSaveFileName(self, "Generate Script File", filter = "Bash Script (*.sh)")
         if not generate_dialog[0]:
             return
@@ -126,7 +141,7 @@ class ToolBar(QToolBar):
         if not selected_file.endswith(".sh"):
             selected_file += ".sh"
         print("selected file: ", selected_file)
-        script.save(selected_file)
+        script.save(selected_file, backup)
 
     def theme_checkbox_clicked(self, state):
         if state == 2:
@@ -136,3 +151,12 @@ class ToolBar(QToolBar):
     
     def searchbar_text_changed(self, text):
         self.search_signal.emit(text)
+    
+    def run_button_clicked(self):
+        message_box = ConfirmationDialog("Create Backup", "Do you want to create a backup before running the script?")
+        if message_box.exec() == QMessageBox.StandardButton.Yes:
+            backup = True
+        else:
+            backup = False
+        
+        script.run(backup)
