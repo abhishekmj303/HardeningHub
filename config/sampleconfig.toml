@@ -32,14 +32,14 @@ mode = "complain" # enforce, complain
 
 [gdm] # GNOME Display Manager
 remove = false
-disable_user_list = true
-enable_lock_on_idle = true
+disable_user_list = false
+enable_lock_on_idle = false
 lock_on_idle = 100 # in seconds, 0 to disable
-no_override_lockscreen = true
+no_override_lockscreen = false
 disable_automount = false
 lock_automount = false
-disable_autorun = true
-no_override_autorun = true
+disable_autorun = false
+no_override_autorun = false
 
 [time-sync] # Time synchronization
 enable_ntp = true
