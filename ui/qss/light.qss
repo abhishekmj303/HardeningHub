@@ -68,7 +68,9 @@ QMainWindow {
 	padding: 2.5px 10px;
 	border-radius: 5px;
 	color: #382F27;
-	font: 18px;
+	font: 14px;
+	margin-right: 10px;
+	margin-bottom: 5px;
 	font-weight: 500;
 }
 .add-btn:hover {
@@ -146,7 +148,7 @@ QLineEdit {
    border-radius: 4px;
    padding: 2px 5px;
    color: #382F27;
-   background-color: #FFF6ED;
+   background-color: #ffffff;
    margin: 0px 15px 5px 0px;
    selection-background-color: #AA8F75;
 }
@@ -175,8 +177,10 @@ QComboBox {
 	border-radius: 4px;
 	padding: 2px 5px;
 	color: #382F27;
-	background-color: #FFF6ED;
+	background-color: #ffffff;
 	margin: 0px 15px 5px 0px;
+	font: 15px;
+	font-weight: 400;
 	selection-background-color: #AA8F75;
 }
 
