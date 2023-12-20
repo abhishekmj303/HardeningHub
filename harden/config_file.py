@@ -71,6 +71,7 @@ def init(file_path: str = DEFAULT_CONFIG_PATH):
 
 def init_profile(profile_name: str):
     file_path = get_profile_path(profile_name)
+    shutil.copyfile(DEFAULT_CONFIG_PATH, file_path)
     create_copy(file_path)
     return physical_ports.get_devices(read(file_path))
 
@@ -91,7 +92,6 @@ def import_level(level: str = "w1"):
 
 def update_toml_obj(toml_obj: tomlkit.items.Item, config: dict):
     # Recursively update the toml object with the config dict
-    print(config)
     for key, value in config.items():
         if isinstance(value, dict):
             update_toml_obj(value, toml_obj[key])

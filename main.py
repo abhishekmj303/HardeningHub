@@ -11,6 +11,7 @@ class MainWindow(QMainWindow):
     theme_signal = pyqtSignal(bool)
     def __init__(self):
         super().__init__()
+        config_file.init_config_dir()
         self.config = config_file.init()
         self.tooltip = tooltip_file.read()
         self.init_ui()
