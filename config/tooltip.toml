@@ -27,6 +27,7 @@ mode = "enforces the SELinux policy and denies access based on SELinux policy ru
 [gdm] # GNOME Display Manager
 remove = "Uninstalls the desktop environment "
 disable_user_list = "controls if a list of users is displayed on the login screen."
+enable_lock_on_idle = "true"
 lock_on_idle = "screen inactivity idle time interval"
 no_override_lockscreen = "override the static lock screen image with a snapshot of your current live wallpaper."
 disable_automount = "prevents Windows from automatically mounting or assigning drive letters to any new basic volumes that are visible to the system"
@@ -36,6 +37,7 @@ no_override_autorun = "The NoDriveAutoRun value disables AutoRun for specified d
 
 [time-sync] # Time synchronization
 enable_ntp = "your device contacts an NTP server to synchronize the time."
+enable_ntp_servers = "true"
 ntp_servers = "allows the synchronization of system clocks (from desktops to servers)."
 enable_ntp_user = "to automatically get the correct time from NTP servers on the Internet to set the system clock."
 
@@ -86,8 +88,11 @@ enable_default_deny = " Deny all traffic by default "
 
 [ssh]
 configure_permissions = {sshd_config = "true", private_host_key = "true", public_host_key = "true"}
+enable_allow_users = "true"
 allow_users = "users"
+enable_allow_groups = "true"
 allow_groups = "groups"
+enable_log_level = "true"
 log_level = "VERBOSE" # INFO, VERBOSE
 enable_pam = "true"
 disable_root_login = "true"
@@ -101,11 +106,16 @@ enable_strong_mac_algorithms = "true"
 enable_strong_key_exchange_algorithms = "true"
 disable_tcp_forwarding = "false"
 configure_warning_banner = "true"
+enable_max_auth_tries = "true"
 max_auth_tries = "4"
 configure_max_startups = "true"
+enable_max_sessions = "true"
 max_sessions = "10"
+enable_login_grace_time = "true"
 login_grace_time = "60" # in seconds
+enable_client_alive_interval = "true"
 client_alive_interval = "300" # in seconds
+enable_client_alive_count_max = "true"
 client_alive_count_max = "3"
 
 [privilege_escalation] # Privilege Escalation
@@ -113,5 +123,6 @@ use_pty = "true"
 enable_logfile = "true"
 disable_nopassword = "false"
 enable_reauthentication = "true"
+enable_authentication_timeout = "true"
 authentication_timeout = "15" # in minutes
 restrict_su = "true"
