@@ -375,164 +375,177 @@ done
 
     if network_config['reject_ipv6_router_adv']:
         script += '''
-{
+#!/bin/bash
+
 l_output="" l_output2=""
-l_parlist="net.ipv6.conf.all.accept_ra=0
-net.ipv6.conf.default.accept_ra=0"
-l_searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf
-/usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf
-/etc/sysctl.conf $([ -f /etc/default/ufw ] && awk -F= '/^\s*IPT_SYSCTL=/
-{print $2}' /etc/default/ufw)"
-KPF()
-{
-# comment out incorrect parameter(s) in kernel parameter file(s)
-l_fafile="$(grep -s -- "^\s*$l_kpname" $l_searchloc | grep -Pv --
-"\h*=\h*$l_kpvalue\b\h*" | awk -F: '{print $1}')"
-for l_bkpf in $l_fafile; do
-echo -e "\n - Commenting out \"$l_kpname\" in \"$l_bkpf\""
-sed -ri "/$l_kpname/s/^/# /" "$l_bkpf"
-done
-# Set correct parameter in a kernel parameter file
-if ! grep -Pslq -- "^\h*$l_kpname\h*=\h*$l_kpvalue\b\h*(#.*)?$"
-$l_searchloc; then
-echo -e "\n - Setting \"$l_kpname\" to \"$l_kpvalue\" in
-\"$l_kpfile\""
-echo "$l_kpname = $l_kpvalue" >> "$l_kpfile"
-fi
-# Set correct parameter in active kernel parameters
-l_krp="$(sysctl "$l_kpname" | awk -F= '{print $2}' | xargs)"
-if [ "$l_krp" != "$l_kpvalue" ]; then
-echo -e "\n - Updating \"$l_kpname\" to \"$l_kpvalue\" in the active
-kernel parameters"
-sysctl -w "$l_kpname=$l_kpvalue"
-sysctl -w "$(awk -F'.' '{print $1"."$2".route.flush=1"}' <<<
-"$l_kpname")"
-fi
+l_parlist="net.ipv6.conf.all.accept_ra=0 net.ipv6.conf.default.accept_ra=0"
+l_searchloc="/run/sysctl.d/*.conf /etc/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf"
+[ -f /etc/default/ufw ] && l_searchloc+=" $(awk -F= '/^\s*IPT_SYSCTL=/ {print $2}' /etc/default/ufw)"
+
+KPF() {
+    # Comment out incorrect parameter(s) in kernel parameter file(s)
+    local l_fafile="$(grep -s -- "^\s*$l_kpname" $l_searchloc | grep -Pv -- "\h*=\h*$l_kpvalue\b\h*" | awk -F: '{print $1}')"
+    for l_bkpf in $l_fafile; do
+        echo -e "\n - Commenting out \"$l_kpname\" in \"$l_bkpf\""
+        sed -ri "/$l_kpname/s/^/# /" "$l_bkpf"
+    done
+
+    # Set correct parameter in a kernel parameter file
+    if ! grep -Pslq -- "^\h*$l_kpname\h*=\h*$l_kpvalue\b\h*(#.*)?$" $l_searchloc; then
+        echo -e "\n - Setting \"$l_kpname\" to \"$l_kpvalue\" in \"$l_kpfile\""
+        echo "$l_kpname = $l_kpvalue" >> "$l_kpfile"
+    fi
+
+    # Set correct parameter in active kernel parameters
+    local l_krp="$(sysctl "$l_kpname" | awk -F= '{print $2}' | xargs)"
+    if [ "$l_krp" != "$l_kpvalue" ]; then
+        echo -e "\n - Updating \"$l_kpname\" to \"$l_kpvalue\" in the active kernel parameters"
+        sysctl -w "$l_kpname=$l_kpvalue"
+        sysctl -w "$(awk -F'.' '{print $1"."$2".route.flush=1"}' <<< "$l_kpname")"
+    fi
 }
-IPV6F_CHK()
-{
-l_ipv6s=""
-grubfile=$(find /boot -type f \( -name 'grubenv' -o -name 'grub.conf' -
-o -name 'grub.cfg' \) -exec grep -Pl -- '^\h*(kernelopts=|linux|kernel)' {}
-\;)
-if [ -s "$grubfile" ]; then
-! grep -P -- "^\h*(kernelopts=|linux|kernel)" "$grubfile" | grep -vq
--- ipv6.disable=1 && l_ipv6s="disabled"
-fi
-if grep -Pqs --
-"^\h*net\.ipv6\.conf\.all\.disable_ipv6\h*=\h*1\h*(#.*)?$" $l_searchloc && \
-grep -Pqs --
-"^\h*net\.ipv6\.conf\.default\.disable_ipv6\h*=\h*1\h*(#.*)?$" $l_searchloc
-&& \
-sysctl net.ipv6.conf.all.disable_ipv6 | grep -Pqs --
-"^\h*net\.ipv6\.conf\.all\.disable_ipv6\h*=\h*1\h*(#.*)?$" && \
-sysctl net.ipv6.conf.default.disable_ipv6 | grep -Pqs --
-"^\h*net\.ipv6\.conf\.default\.disable_ipv6\h*=\h*1\h*(#.*)?$"; then
-l_ipv6s="disabled"
-fi
-if [ -n "$l_ipv6s" ]; then
-echo -e "\n - IPv6 is disabled on the system, \"$l_kpname\" is not
-applicable"
-else
-KPF
-fi
+
+IPV6F_CHK() {
+    local l_ipv6s=""
+    local grubfile=$(find /boot -type f \( -name 'grubenv' -o -name 'grub.conf' -o -name 'grub.cfg' \) -exec grep -Pl -- '^\h*(kernelopts=|linux|kernel)' {} \;)
+
+    if [ -s "$grubfile" ] && ! grep -P -- "^\h*(kernelopts=|linux|kernel)" "$grubfile" | grep -vq -- "ipv6.disable=1"; then
+        l_ipv6s="disabled"
+    fi
+
+    if grep -Pqs -- "^\h*net.ipv6.conf.all.disable_ipv6\h*=\h*1\h*(#.*)?$" $l_searchloc && grep -Pqs -- "^\h*net.ipv6.conf.default.disable_ipv6\h*=\h*1\h*(#.*)?$" $l_searchloc && sysctl net.ipv6.conf.all.disable_ipv6 | grep -Pqs -- "^\h*net.ipv6.conf.all.disable_ipv6\h*=\h*1\h*(#.*)?$" && sysctl net.ipv6.conf.default.disable_ipv6 | grep -Pqs -- "^\h*net.ipv6.conf.default.disable_ipv6\h*=\h*1\h*(#.*)?$"; then
+        l_ipv6s="disabled"
+    fi
+
+    if [ -n "$l_ipv6s" ]; then
+        echo -e "\n - IPv6 is disabled on the system, \"$l_kpname\" is not applicable"
+    else
+        KPF
+    fi
 }
+
 for l_kpe in $l_parlist; do
-l_kpname="$(awk -F= '{print $1}' <<< "$l_kpe")"
-l_kpvalue="$(awk -F= '{print $2}' <<< "$l_kpe")"
-if grep -q '^net.ipv6.' <<< "$l_kpe"; then
-l_kpfile="/etc/sysctl.d/60-netipv6_sysctl.conf"
-IPV6F_CHK
-else
-l_kpfile="/etc/sysctl.d/60-netipv4_sysctl.conf"
-KPF
-fi
+    l_kpname="$(awk -F= '{print $1}' <<< "$l_kpe")"
+    l_kpvalue="$(awk -F= '{print $2}' <<< "$l_kpe")"
+    if grep -q '^net.ipv6.' <<< "$l_kpe"; then
+        l_kpfile="/etc/sysctl.d/60-netipv6_sysctl.conf"
+        IPV6F_CHK
+    else
+        l_kpfile="/etc/sysctl.d/60-netipv4_sysctl.conf"
+        KPF
+    fi
 done
-}
+
 '''
 
     disable_protocols = network_config['disable_protocols']
     if disable_protocols['dccp']:
         script += '''
+#!/bin/bash
+
 {
-l_mname="dccp" # set module name
-if ! modprobe -n -v "$l_mname" | grep -P -- '^\h*install
-\/bin\/(true|false)'; then
-echo -e " - setting module: \"$l_mname\" to be not loadable"
-echo -e "install $l_mname /bin/false" >>
-/etc/modprobe.d/"$l_mname".conf
-fi
-if lsmod | grep "$l_mname" > /dev/null 2>&1; then
-echo -e " - unloading module \"$l_mname\""
-modprobe -r "$l_mname"
-fi
-if ! grep -Pq -- "^\h*blacklist\h+$l_mname\b" /etc/modprobe.d/*; then
-echo -e " - deny listing \"$l_mname\""
-echo -e "blacklist $l_mname" >> /etc/modprobe.d/"$l_mname".conf
-fi
+    l_mname="dccp" # Set module name
+
+    # Check if the module is set to be not loadable and set it if not
+    if ! modprobe -n -v "$l_mname" | grep -P -- '^\h*install \/bin\/(true|false)'; then
+        echo -e " - Setting module: \"$l_mname\" to be not loadable"
+        echo "install $l_mname /bin/false" | sudo tee /etc/modprobe.d/"$l_mname".conf
+    fi
+
+    # Unload the module if it is currently loaded
+    if lsmod | grep -q "$l_mname"; then
+        echo -e " - Unloading module \"$l_mname\""
+        sudo modprobe -r "$l_mname"
+    fi
+
+    # Blacklist the module if it is not already blacklisted
+    if ! grep -Pq -- "^\h*blacklist\h+$l_mname\b" /etc/modprobe.d/*; then
+        echo -e " - Blacklisting \"$l_mname\""
+        echo "blacklist $l_mname" | sudo tee -a /etc/modprobe.d/"$l_mname".conf
+    fi
 }
 '''
 
     if disable_protocols['sctp']:
         script += '''
 {
-l_mname="sctp" # set module name
-if ! modprobe -n -v "$l_mname" | grep -P -- '^\h*install
-\/bin\/(true|false)'; then
-echo -e " - setting module: \"$l_mname\" to be not loadable"
-echo -e "install $l_mname /bin/false" >>
-/etc/modprobe.d/"$l_mname".conf
-fi
-if lsmod | grep "$l_mname" > /dev/null 2>&1; then
-echo -e " - unloading module \"$l_mname\""
-modprobe -r "$l_mname"
-fi
-if ! grep -Pq -- "^\h*blacklist\h+$l_mname\b" /etc/modprobe.d/*; then
-echo -e " - deny listing \"$l_mname\""
-echo -e "blacklist $l_mname" >> /etc/modprobe.d/"$l_mname".conf
-fi
+    l_mname="sctp" # Set module name
+
+    # Check if the module is set to be not loadable and set it if not
+    if ! modprobe -n -v "$l_mname" | grep -P -- '^\h*install \/bin\/(true|false)'; then
+        echo -e " - Setting module: \"$l_mname\" to be not loadable"
+        echo "install $l_mname /bin/false" | sudo tee /etc/modprobe.d/"$l_mname".conf
+    fi
+
+    # Unload the module if it is currently loaded
+    if lsmod | grep -q "$l_mname"; then
+        echo -e " - Unloading module \"$l_mname\""
+        sudo modprobe -r "$l_mname"
+    fi
+
+    # Blacklist the module if it is not already blacklisted
+    if ! grep -Pq -- "^\h*blacklist\h+$l_mname\b" /etc/modprobe.d/*; then
+        echo -e " - Blacklisting \"$l_mname\""
+        echo "blacklist $l_mname" | sudo tee -a /etc/modprobe.d/"$l_mname".conf
+    fi
 }
+
+
 '''
 
     if disable_protocols['rds']:
         script += '''
+#!/bin/bash
+
 {
-l_mname="rds" # set module name
-if ! modprobe -n -v "$l_mname" | grep -P -- '^\h*install
-\/bin\/(true|false)'; then
-echo -e " - setting module: \"$l_mname\" to be not loadable"
-echo -e "install $l_mname /bin/false" >>
-/etc/modprobe.d/"$l_mname".conf
-fi
-if lsmod | grep "$l_mname" > /dev/null 2>&1; then
-echo -e " - unloading module \"$l_mname\""
-modprobe -r "$l_mname"
-fi
-if ! grep -Pq -- "^\h*blacklist\h+$l_mname\b" /etc/modprobe.d/*; then
-echo -e " - deny listing \"$l_mname\""
-echo -e "blacklist $l_mname" >> /etc/modprobe.d/"$l_mname".conf
-fi
+    l_mname="rds" # Set module name
+
+    # Check if the module is set to be not loadable and set it if not
+    if ! modprobe -n -v "$l_mname" | grep -P -- '^\h*install \/bin\/(true|false)'; then
+        echo -e " - Setting module: \"$l_mname\" to be not loadable"
+        echo "install $l_mname /bin/false" | sudo tee /etc/modprobe.d/"$l_mname".conf
+    fi
+
+    # Unload the module if it is currently loaded
+    if lsmod | grep -q "$l_mname"; then
+        echo -e " - Unloading module \"$l_mname\""
+        sudo modprobe -r "$l_mname"
+    fi
+
+    # Blacklist the module if it is not already blacklisted
+    if ! grep -Pq -- "^\h*blacklist\h+$l_mname\b" /etc/modprobe.d/*; then
+        echo -e " - Blacklisting \"$l_mname\""
+        echo "blacklist $l_mname" | sudo tee -a /etc/modprobe.d/"$l_mname".conf
+    fi
 }
+
+
 '''
 
     if disable_protocols['tipc']:
         script += '''
+#!/bin/bash
+
 {
-l_mname="tipc" # set module name
-if ! modprobe -n -v "$l_mname" | grep -P -- '^\h*install
-\/bin\/(true|false)'; then
-echo -e " - setting module: \"$l_mname\" to be not loadable"
-echo -e "install $l_mname /bin/false" >>
-/etc/modprobe.d/"$l_mname".conf
-fi
-if lsmod | grep "$l_mname" > /dev/null 2>&1; then
-echo -e " - unloading module \"$l_mname\""
-modprobe -r "$l_mname"
-fi
-if ! grep -Pq -- "^\h*blacklist\h+$l_mname\b" /etc/modprobe.d/*; then
-echo -e " - deny listing \"$l_mname\""
-echo -e "blacklist $l_mname" >> /etc/modprobe.d/"$l_mname".conf
-fi
+    l_mname="tipc" # Set module name
+
+    # Check if the module is set to be not loadable and set it if not
+    if ! modprobe -n -v "$l_mname" | grep -P -- '^\h*install \/bin\/(true|false)'; then
+        echo -e " - Setting module: \"$l_mname\" to be not loadable"
+        echo "install $l_mname /bin/false" | sudo tee /etc/modprobe.d/"$l_mname".conf
+    fi
+
+    # Unload the module if it is currently loaded
+    if lsmod | grep -q "$l_mname"; then
+        echo -e " - Unloading module \"$l_mname\""
+        sudo modprobe -r "$l_mname"
+    fi
+
+    # Blacklist the module if it is not already blacklisted
+    if ! grep -Pq -- "^\h*blacklist\h+$l_mname\b" /etc/modprobe.d/*; then
+        echo -e " - Blacklisting \"$l_mname\""
+        echo "blacklist $l_mname" | sudo tee -a /etc/modprobe.d/"$l_mname".conf
+    fi
 }
 '''
 

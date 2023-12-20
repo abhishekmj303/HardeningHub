@@ -38,51 +38,56 @@ echo -e "[org/gnome/desktop/session]\nidle-delay=uint32 {t}" | dconf write /org/
 echo -e "[org/gnome/desktop/screensaver]\nlock-delay=uint32 1" | dconf write /org/gnome/desktop/screensaver/lock-delay"""
     if file_systems_config['no_override_lockscreen']:
         script += """
+#!/bin/bash
+
+# Check if GNOME Desktop Manager is installed
 l_pkgoutput=""
 if command -v dpkg-query > /dev/null 2>&1; then
     l_pq="dpkg-query -W"
 elif command -v rpm > /dev/null 2>&1; then
     l_pq="rpm -q"
+else
+    echo "Package manager not found."
+    exit 1
 fi
+
+# Space-separated list of packages to check
 l_pcl="gdm gdm3"
 for l_pn in $l_pcl; do
-    $l_pq "$l_pn" > /dev/null 2>&1 && l_pkgoutput="y" && echo -e "\n - Package: \"$l_pn\" exists on the system\n - Remediating configuration if needed"
+    if $l_pq "$l_pn" > /dev/null 2>&1; then
+        l_pkgoutput+=$'\n'"- Package: \"$l_pn\" exists on the system\n - checking configuration"
+    fi
 done
+
+# If GDM is installed, check configuration
 if [ -n "$l_pkgoutput" ]; then
-    l_kfd="/etc/dconf/db/$(grep -Psril '^\h*idle-delay\h*=\h*uint32\h+\d+\b' /etc/dconf/db/*/ | awk -F'/' '{split($(NF-1),a,".");print a[1]}').d"  # Set the directory of the key file to be locked
-    l_kfd2="/etc/dconf/db/$(grep -Psril '^\h*lock-delay\h*=\h*uint32\h+\d+\b' /etc/dconf/db/*/ | awk -F'/' '{split($(NF-1),a,".");print a[1]}').d"  # Set the directory of the key file to be locked
+    l_output="" l_output2=""
 
-    if [ -d "$l_kfd" ]; then
-        if grep -Prilq '^\h*\/org\/gnome\/desktop\/session\/idle-delay\b' "$l_kfd"; then
-            echo " - \"idle-delay\" is locked in \"$(grep -Pril'^\h*\/org\/gnome\/desktop\/session\/idle-delay\b' "$l_kfd")\""
+    # Check for automount and automount-open settings
+    for key in automount automount-open; do
+        l_kfd="/etc/dconf/db/$(grep -Psril "^\h*$key\b" /etc/dconf/db/*/ | awk -F'/' '{split($(NF-1),a,".");print a[1]}').d"
+        
+        if [ -d "$l_kfd" ]; then
+            if grep -Piq "^\h*\/org\/gnome\/desktop\/media-handling\/$key\b" "$l_kfd"; then
+                l_output+=$'\n'"- \"$key\" is locked in \"$(grep -Pil "^\h*\/org\/gnome\/desktop\/media-handling\/$key\b" "$l_kfd")\""
+            else
+                l_output2+=$'\n'"- \"$key\" is not locked"
+            fi
         else
-            echo "Creating entry to lock \"idle-delay\""
-            [ ! -d "$l_kfd"/locks ] && echo "Creating directory $l_kfd/locks" && mkdir "$l_kfd"/locks
-            {
-                echo -e '\n# Lock desktop screensaver idle-delay setting'
-                echo '/org/gnome/desktop/session/idle-delay'
-            } >> "$l_kfd"/locks/00-screensaver
+            l_output2+=$'\n'"- \"$key\" is not set so it cannot be locked"
         fi
-    else
-        echo -e " - \"idle-delay\" is not set so it cannot be locked\n - Please follow Recommendation \"Ensure GDM screen locks when the user is idle\" and follow this Recommendation again"
-    fi
-
-    if [ -d "$l_kfd2" ]; then
-        if grep -Prilq '^\h*\/org\/gnome\/desktop\/screensaver\/lock-delay\b' "$l_kfd2"; then
-            echo " - \"lock-delay\" is locked in \"$(grep -Pril'^\h*\/org\/gnome\/desktop\/screensaver\/lock-delay\b' "$l_kfd2")\""
-        else
-            echo "Creating entry to lock \"lock-delay\""
-            [ ! -d "$l_kfd2"/locks ] && echo "Creating directory $l_kfd2/locks" && mkdir "$l_kfd2"/locks
-            {
-                echo -e '\n# Lock desktop screensaver lock-delay setting'
-                echo '/org/gnome/desktop/screensaver/lock-delay'
-            } >> "$l_kfd2"/locks/00-screensaver
-        fi
-    else
-        echo -e " - \"lock-delay\" is not set so it cannot be locked\n - Please follow Recommendation \"Ensure GDM screen locks when the user is idle\" and follow this Recommendation again"
-    fi
+    done
 else
-    echo -e " - GNOME Desktop Manager package is not installed on the system\n - Recommendation is not applicable"
+    l_output+=$'\n'"- GNOME Desktop Manager package is not installed on the system\n - Recommendation is not applicable"
+fi
+
+# Report results
+[ -n "$l_pkgoutput" ] && echo -e "\n$l_pkgoutput"
+if [ -z "$l_output2" ]; then
+    echo -e "\n- Audit Result:\n ** PASS **\n$l_output\n"
+else
+    echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n"
+    [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
 fi
 """
     if file_systems_config['disable_automount']:
@@ -168,73 +173,58 @@ fi
     if file_systems_config['lock_automount']:
         script += """
 
-# Check if GNOME Desktop Manager is installed. If package isn't
-installed, recommendation is Not Applicable\n
-# determine system's package manager
+#!/bin/bash
+
+# Check if GNOME Desktop Manager is installed
 l_pkgoutput=""
 if command -v dpkg-query > /dev/null 2>&1; then
-l_pq="dpkg-query -W"
+    l_pq="dpkg-query -W"
 elif command -v rpm > /dev/null 2>&1; then
-l_pq="rpm -q"
+    l_pq="rpm -q"
+else
+    echo "Package manager not found."
+    exit 1
 fi
-# Check if GDM is installed
-l_pcl="gdm gdm3" # Space seporated list of packages to check
+
+# Space-separated list of packages to check
+l_pcl="gdm gdm3"
 for l_pn in $l_pcl; do
-$l_pq "$l_pn" > /dev/null 2>&1 && l_pkgoutput="$l_pkgoutput\n -
-Package: \"$l_pn\" exists on the system\n - checking configuration"
+    if $l_pq "$l_pn" > /dev/null 2>&1; then
+        l_pkgoutput+=$'\n'"- Package: \"$l_pn\" exists on the system\n - checking configuration"
+    fi
 done
-# Check configuration (If applicable)
+
+# If GDM is installed, check configuration
 if [ -n "$l_pkgoutput" ]; then
-l_output="" l_output2=""
-# Look for idle-delay to determine profile in use, needed for remaining
-tests
-l_kfd="/etc/dconf/db/$(grep -Psril '^\h*automount\b' /etc/dconf/db/*/ |
-awk -F'/' '{split($(NF-1),a,".");print a[1]}').d" #set directory of key file
-to be locked
-l_kfd2="/etc/dconf/db/$(grep -Psril '^\h*automount-open\b'
-/etc/dconf/db/*/ | awk -F'/' '{split($(NF-1),a,".");print a[1]}').d" #set
-directory of key file to be locked
-if [ -d "$l_kfd" ]; then # If key file directory doesn't exist, options
-can't be locked
-if grep -Piq '^\h*\/org/gnome\/desktop\/media-handling\/automount\b'
-"$l_kfd"; then
-l_output="$l_output\n - \"automount\" is locked in \"$(grep -Pil
-'^\h*\/org/gnome\/desktop\/media-handling\/automount\b' "$l_kfd")\""
+    l_output="" l_output2=""
+
+    # Check for automount and automount-open settings
+    for key in automount automount-open; do
+        l_kfd="/etc/dconf/db/$(grep -Psril "^\h*$key\b" /etc/dconf/db/*/ | awk -F'/' '{split($(NF-1),a,".");print a[1]}').d"
+        
+        if [ -d "$l_kfd" ]; then
+            if grep -Piq "^\h*\/org\/gnome\/desktop\/media-handling\/$key\b" "$l_kfd"; then
+                l_output+=$'\n'"- \"$key\" is locked in \"$(grep -Pil "^\h*\/org\/gnome\/desktop\/media-handling\/$key\b" "$l_kfd")\""
+            else
+                l_output2+=$'\n'"- \"$key\" is not locked"
+            fi
+        else
+            l_output2+=$'\n'"- \"$key\" is not set so it cannot be locked"
+        fi
+    done
 else
-l_output2="$l_output2\n - \"automount\" is not locked"
+    l_output+=$'\n'"- GNOME Desktop Manager package is not installed on the system\n - Recommendation is not applicable"
 fi
-else
-l_output2="$l_output2\n - \"automount\" is not set so it can not be
-locked"
-fi
-if [ -d "$l_kfd2" ]; then # If key file directory doesn't exist,
-options can't be locked
-if grep -Piq '^\h*\/org/gnome\/desktop\/media-handling\/automount-
-open\b' "$l_kfd2"; then
-l_output="$l_output\n - \"lautomount-open\" is locked in \"$(grep
--Pril '^\h*\/org/gnome\/desktop\/media-handling\/automount-open\b'
-"$l_kfd2")\""
-else
-l_output2="$l_output2\n - \"automount-open\" is not locked"
-fi
-else
-l_output2="$l_output2\n - \"automount-open\" is not set so it can
-not be locked"
-fi
-else
-Page 180
-l_output="$l_output\n - GNOME Desktop Manager package is not installed
-on the system\n - Recommendation is not applicable"
-fi
-# Report results. If no failures output in l_output2, we pass
+
+# Report results
 [ -n "$l_pkgoutput" ] && echo -e "\n$l_pkgoutput"
 if [ -z "$l_output2" ]; then
-echo -e "\n- Audit Result:\n ** PASS **\n$l_output\n"
+    echo -e "\n- Audit Result:\n ** PASS **\n$l_output\n"
 else
-echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit
-failure:\n$l_output2\n"
-[ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
+    echo -e "\n- Audit Result:\n ** FAIL **\n - Reason(s) for audit failure:\n$l_output2\n"
+    [ -n "$l_output" ] && echo -e "\n- Correctly set:\n$l_output\n"
 fi
+
 """
         
     if file_systems_config['disable_autorun']:
