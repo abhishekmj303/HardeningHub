@@ -120,8 +120,17 @@ client_alive_count_max = {enable = true, value = 3}
 [privilege_escalation] # Privilege Escalation
 use_pty = true
 enable_logfile = true
-disable_nopasswd = false
+disable_nopassword = false
 enable_reauthentication = true
 enable_authentication_timeout = true
 authentication_timeout = 15 # in minutes
 restrict_su = true
+
+[pam] # PAM
+enable_password_level = true
+required_password_level = "strong" # weak, medium, strong, stronger
+enable_password_length = true
+minimum_password_length = 14
+limit_password_reuse = true
+password_reuse_limit = 5
+configure_hashing_algorithm = true
