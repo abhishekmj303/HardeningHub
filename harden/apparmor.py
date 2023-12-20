@@ -4,17 +4,29 @@ from harden import config_file
 def get_script(config):
     file_systems_config = config["apparmor"]
     # Start with an empty script and build it up
-    script = ""
 
+    script = ""
     if file_systems_config['enable']:
-        # Each file system gets its own set of commands
-        script += f"sudo apt install apparmor"
-    if file_systems_config['mode'] == 'enforce':
-        script += f"aa-enforce /etc/apparmor.d/*"
-    else:
-        script += f"aa-complain /etc/apparmor.d/*"
+        # Install AppArmor
+        script += "sudo apt-get install apparmor -y\n"
+        script += "sudo apt install apparmor-utils\n"
+
+        if file_systems_config['mode'] == 'enforce':
+            # Set AppArmor profiles to enforce mode
+            script += "sudo aa-enforce /etc/apparmor.d/*\n"
+        elif file_systems_config['mode'] == 'complain':
+            # Set AppArmor profiles to complain mode
+            script += "sudo aa-complain /etc/apparmor.d/*\n"
+
     return script
 
 if __name__ == "__main__":
-    config = config_file.init()
-    print(get_script(config))
+    # Example configuration for demonstration
+    config = {
+        "apparmor": {
+            "enable": True,
+            "mode": "enforce"  # Can be "enforce" or "complain"
+        }
+    }
+    generated_script = get_script(config)
+    print(generated_script)

@@ -31,9 +31,15 @@ class Services(QWidget):
         self.container_layout.setContentsMargins(30, 10, 30, 30)
         self.container_widget.setObjectName("container-widget")
 
+        # select all checkboxes
+        self.select_all_checkbox = QCheckBox('Select All')
+        self.select_all_checkbox.stateChanged.connect(lambda state: self.select_all(state))
+        self.container_layout.addWidget(self.select_all_checkbox)
+
         self.toml_services_checkboxes = {}
         for name, state in self.toml_services.items():
             checkbox = QCheckBox(f"{name.replace('_',' ').title()}")
+            checkbox.setProperty('class', 'in-checkbox')
             checkbox.setToolTip(self.services_tooltip[name])
             checkbox.stateChanged.connect(lambda state, name = name: self.save_checkbox_state(name, state))
             self.toml_services_checkboxes[name] = checkbox
@@ -47,4 +53,14 @@ class Services(QWidget):
 
     def save_checkbox_state(self, name, state):
         self.toml_services[name] = (state == 2)
+        config_file.write(self.config)
+        if state != 2:
+            self.select_all_checkbox.blockSignals(True)
+            self.select_all_checkbox.setChecked(False)
+            self.select_all_checkbox.blockSignals(False)
+    
+    def select_all(self, state):
+        for name, checkbox in self.toml_services_checkboxes.items():
+            checkbox.setChecked(state == 2)
+            self.toml_services[name] = (state == 2)
         config_file.write(self.config)
