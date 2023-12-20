@@ -33,7 +33,8 @@ mode = "complain" # enforce, complain
 [gdm] # GNOME Display Manager
 remove = false
 disable_user_list = true
-lock_on_idle = {enable = true, value = 100} # in seconds, 0 to disable
+enable_lock_on_idle = true
+lock_on_idle = 100 # in seconds, 0 to disable
 no_override_lockscreen = true
 disable_automount = false
 lock_automount = false
@@ -42,7 +43,8 @@ no_override_autorun = true
 
 [time-sync] # Time synchronization
 enable_ntp = true
-ntp_servers = {enable = true, value = ["http://time-a-g.nist.gov/", "132.163.97.3", "http://time-d-b.nist.gov/"]}
+enable_ntp_servers = true
+ntp_servers = ["http://time-a-g.nist.gov/", "132.163.97.3", "http://time-d-b.nist.gov/"]
 enable_ntp_user = true
 
 [services] # Services
@@ -90,9 +92,12 @@ enable_default_deny = true # Deny all traffic by default
 
 [ssh]
 configure_permissions = {sshd_config = true, private_host_key = true, public_host_key = true}
-allow_users = {enable = true, value = ["user1", "user2"]}
-allow_groups = {enable = true, value = ["group1", "group2"]}
-log_level = {enable = true, value = "VERBOSE"} # INFO, VERBOSE
+enable_allow_users = true
+allow_users = ["user1", "user2"]
+enable_allow_groups = true
+allow_groups = ["group1", "group2"]
+enable_log_level = true
+log_level = "VERBOSE" # INFO, VERBOSE
 enable_pam = true
 disable_root_login = true
 disable_host_based_auth = true
@@ -117,5 +122,6 @@ use_pty = true
 enable_logfile = true
 disable_nopasswd = false
 enable_reauthentication = true
-authentication_timeout = {enable = true, value = 15} # in minutes
+enable_authentication_timeout = true
+authentication_timeout = 15 # in minutes
 restrict_su = true
