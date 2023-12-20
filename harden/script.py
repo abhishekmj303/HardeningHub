@@ -1,6 +1,6 @@
 from harden import config_file, physical_ports, file_systems\
     , process_hardening, apparmor, gdm, time_sync, firewall\
-    , network, ssh
+    , network, ssh, privilege_escalation
 
 def generate():
     config = config_file.read()
@@ -14,6 +14,7 @@ def generate():
     script += firewall.get_script(config)
     script += network.get_script(config)
     script += ssh.get_script(config)
+    script += privilege_escalation.get_script(config)
     return script
 
 def save(file_path: str):

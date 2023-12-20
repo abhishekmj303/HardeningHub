@@ -6,24 +6,80 @@ def get_script(config):
 
     if privilege_escalation_config["use_pty"]:
         script += '''
-sudoers_line="Defaults use_pty"
-visudo -c -q || { echo "Error: visudo check failed. Please fix the sudoers file manually."; exit 1; }
-echo "$sudoers_line" | sudo EDITOR='tee -a' visudo
+config_file="/etc/sudoers"
+
+cp "$config_file" "$config_file.bak"
+
+if grep -q "^Defaults[[:space:]]*use_pty" "$config_file"; then
+    echo
+else
+    echo "Defaults use_pty" >> "$config_file"
+fi
 '''
     if privilege_escalation_config["enable_logfile"]:
-        script += ''
+        script += '''
+config_file="/etc/sudoers"
 
-    if privilege_escalation_config["disable_password"]:
-        script += ''
+cp "$config_file" "$config_file.bak"
+
+if grep -q "^Defaults[[:space:]]*logfile" "$config_file"; then
+    echo
+else
+    echo "Defaults logfile=/var/log/sudo.log" >> "$config_file"
+fi
+'''
+
+    if privilege_escalation_config["disable_nopassword"]:
+        script += '''
+config_file="/etc/sudoers"
+
+cp "$config_file" "$config_file.bak"
+
+if grep -q NOPASSWD "$config_file"; then
+    sed -i 'NOPASSWD/d' "$config_file"
+fi
+'''
     
     if privilege_escalation_config["enable_reauthentication"]:
-        script += ''
+        script += '''
+config_file="/etc/sudoers"
+
+cp "$config_file" "$config_file.bak"
+
+if grep -q "!authenticate" "$config_file"; then
+    sed -i '!authenticate/d' "$config_file"
+fi
+'''
     
     if privilege_escalation_config["authentication_timeout"]:
-        script += ''
+        script += '''
+authentication_timeout = privilege_escalation_config["authentication_timeout"]
+config_file="/etc/sudoers"
+
+cp "$config_file" "$config_file.bak"
+
+if grep -q "^Defaults[[:space:]]*timestamp_timeout" "$config_file"; then
+    sed -i "s/^Defaults[[:space:]]*timestamp_timeout.*/Defaults timestamp_timeout=$authentication_timeout/" "$config_file"
+else
+    echo "Defaults timestamp_timeout=$authentication_timeout" >> "$config_file"
+fi
+
+if grep -q "^Defaults[[:space:]]*env_reset,[[:space:]]*timestamp_timeout" "$config_file"; then
+    sed -i "s/^Defaults[[:space:]]*env_reset,[[:space:]]*timestamp_timeout.*/Defaults env_reset, timestamp_timeout=$authentication_timeout/" "$config_file"
+else
+    echo "Defaults env_reset, timestamp_timeout=$authentication_timeout" >> "$config_file"
+fi
+'''
 
     if privilege_escalation_config["restrict_su"]:
-        script += ''
+        script += '''
+empty_group = "sugroup"
+
+groupadd "$empty_group"
+
+su_line = "auth required pam_wheel.so use_uid group=$empty_group"
+echo "$su_line" >> /etc/pam.d/su 
+'''
     return script
 
 if __name__ == "__main__":
