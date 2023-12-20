@@ -91,35 +91,35 @@ configure_loopback_traffic = true # Allow loopback traffic
 enable_default_deny = true # Deny all traffic by default
 
 [ssh]
-configure_permissions = {sshd_config = true, private_host_key = true, public_host_key = true}
-enable_allow_users = true # 
+configure_permissions = {sshd_config = false, private_host_key = false, public_host_key = false}
+enable_allow_users = false # 
 allow_users = ["user1", "user2"]
-enable_allow_groups = true #
+enable_allow_groups = false #
 allow_groups = ["group1", "group2"]
-enable_log_level = true #
+enable_log_level = false #
 log_level = "VERBOSE" # INFO, VERBOSE
-enable_pam = true 
-disable_root_login = true
-disable_host_based_auth = true
-disable_permit_empty_passwords = true
-disable_permit_user_env = true
-enable_ignore_rhosts = true 
-disable_x11_forwarding = true
-enable_strong_ciphers = true
-enable_strong_mac_algorithms = true
-enable_strong_key_exchange_algorithms = true
+enable_pam = false 
+disable_root_login = false
+disable_host_based_auth = false
+disable_permit_empty_passwords = false
+disable_permit_user_env = false
+enable_ignore_rhosts = false 
+disable_x11_forwarding = false
+enable_strong_ciphers = false
+enable_strong_mac_algorithms = false
+enable_strong_key_exchange_algorithms = false
 disable_tcp_forwarding = false
-configure_warning_banner = true
-configure_max_startups = true
-enable_max_auth_tries = true
+configure_warning_banner = false
+configure_max_startups = false
+enable_max_auth_tries = false
 max_auth_tries = 4
-enable_max_sessions = true
+enable_max_sessions = false
 max_sessions = 10
-enable_login_grace_time = true #
+enable_login_grace_time = false #
 login_grace_time = 60 # in seconds
-enable_client_alive_interval = true #
+enable_client_alive_interval = false #
 client_alive_interval = 300 # in seconds
-enable_client_alive_count_max = true #
+enable_client_alive_count_max = false #
 client_alive_count_max = 3
 
 [privilege_escalation] # Privilege Escalation
