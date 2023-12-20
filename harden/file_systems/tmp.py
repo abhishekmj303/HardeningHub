@@ -6,20 +6,15 @@ def get_script(config):
     # Start with an empty script and build it up
     script = "#!/bin/bash\n\n"
 
-    if file_systems_config.get('configure_fs', {}).get('tmp', False):
+    if file_systems_config['configure_fs']:
         # Unmask the tmp.mount for systemd
         script += "sudo systemctl unmask tmp.mount\n"
 
         # Check if /etc/fstab needs to be updated
-        if file_systems_config['configure_fs']['tmp'].get('update_fstab', False):
+        if file_systems_config['configure_fs']['tmp']:
             script += (
                 "# Update /etc/fstab for tmpfs configuration\n"
                 "echo 'tmpfs /tmp tmpfs defaults,rw,nosuid,nodev,noexec,relatime,size=2G 0 0' | sudo tee -a /etc/fstab\n"
-            )
-
-        # Check if tmp.mount file needs to be created/updated
-        if file_systems_config['configure_fs']['tmp'].get('update_tmp_mount', False):
-            script += (
                 "# Create/update tmp.mount file\n"
                 "echo '[Unit]\\nDescription=Temporary Directory /tmp\\n"
                 "ConditionPathIsSymbolicLink=!/tmp\\nDefaultDependencies=no\\n"
