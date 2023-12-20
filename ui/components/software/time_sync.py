@@ -54,8 +54,8 @@ class TimeSync(QWidget):
         self.add_button.clicked.connect(self.add_new_server)
         self.add_button.setProperty('class', 'add-btn')
 
-        hlayout.addWidget(self.new_server)
         hlayout.addWidget(self.add_button)
+        hlayout.addWidget(self.new_server)
 
         self.container_layout.addLayout(hlayout)
     
