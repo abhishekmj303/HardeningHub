@@ -31,7 +31,7 @@ class MainWindow(QMainWindow):
         self.sidebar = Sidebar()
         self.sidebar.setFixedWidth(200)
         self.sidebar.setObjectName("sidebarBg")
-        self.sidebar.change_page_signal.connect(self.pages.StackedWidget.setCurrentIndex)
+        self.sidebar.change_page_signal.connect(self.change_page)
 
         self.main_layout = QHBoxLayout()
         self.main_layout.setSpacing(0)
@@ -44,6 +44,10 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.main_widget)
 
         self.toolbar.search_signal.connect(self.search_items)
+    
+    def change_page(self, index):
+        self.pages.StackedWidget.setCurrentIndex(index)
+        self.pages.verticalScrollBar().setValue(0)
 
     def change_theme(self, theme):
         if theme:
