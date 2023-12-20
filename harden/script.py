@@ -36,7 +36,7 @@ def save(file_path: str, backup: bool = False):
 def run(backup: bool = False):
     save("hardening_script.sh", backup)
     subprocess.Popen(
-        shlex.split("""x-terminal-emulator -e "bash -c 'sudo bash hardening_script.sh; read -p \"Press enter to continue\"'" """)
+        shlex.split("""x-terminal-emulator -e 'bash -c "sudo bash hardening_script.sh"'""")
     )
 
 if __name__ == "__main__":
