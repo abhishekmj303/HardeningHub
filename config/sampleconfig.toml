@@ -133,4 +133,8 @@ restrict_su = true
 
 [pam] # Pluggable Authentication Modules
 required_password_level = "strong" # weak, medium, strong, stronger
+enable_password_length = true
 minimum_password_length = 14
+limit_password_reuse = true
+password_reuse_limit = 5
+configure_hashing_algorithm = true
