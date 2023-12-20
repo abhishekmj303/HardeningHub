@@ -1,7 +1,7 @@
 import subprocess
 from harden import config_file, physical_ports, file_systems\
     , process_hardening, apparmor, gdm, time_sync, firewall\
-    , network
+    , network, ssh, privilege_escalation
 
 def generate(backup: bool = False):
     config = config_file.read()
@@ -23,6 +23,8 @@ timeshift --create --comments "Harden Script Backup"
     script += time_sync.get_script(config)
     script += firewall.get_script(config)
     script += network.get_script(config)
+    script += ssh.get_script(config)
+    script += privilege_escalation.get_script(config)
     return script
 
 def save(file_path: str, backup: bool = False):
