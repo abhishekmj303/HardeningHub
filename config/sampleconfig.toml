@@ -132,10 +132,10 @@ authentication_timeout = 15 # in minutes
 restrict_su = false
 
 [pam] # Pluggable Authentication Modules
-enable_password_level = true
+enable_password_level = false
 required_password_level = "strong" # weak, medium, strong, stronger
-enable_password_length = true
+enable_password_length = false
 minimum_password_length = 14
-limit_password_reuse = true
+limit_password_reuse = false
 password_reuse_limit = 5
-configure_hashing_algorithm = true
+configure_hashing_algorithm = false
