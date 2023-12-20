@@ -43,9 +43,11 @@ def get_profiles():
         init_config_dir()
         return []
     
-    profiles = os.listdir(PROFILE_DIR)
-    for i in range(len(profiles)):
-        profiles[i] = profiles[i].replace("_config.toml", "")
+    all_files = os.listdir(PROFILE_DIR)
+    profiles = []
+    for file in all_files:
+        if file.endswith("_config.toml"):
+            profiles.append(file.replace("_config.toml", ""))
     
     return profiles
 
