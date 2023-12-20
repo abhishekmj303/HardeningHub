@@ -10,7 +10,7 @@ def get_script(config):
         # Install NTP package
         script += "sudo apt install ntp\n"
         # Add or edit the line in /etc/init.d/ntp
-        if file_systems_config['enable_ntp_server']:
+        if file_systems_config['enable_ntp_servers']:
             if file_systems_config['ntp_servers']:
                 for item in file_systems_config['ntp_servers']:
                     script += f"echo 'server {item}' iburst| sudo tee -a /etc/ntp.conf\n"

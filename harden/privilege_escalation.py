@@ -42,7 +42,7 @@ if sudo grep -q "!authenticate" "$config_file"; then
     sudo sed -i '/!authenticate/d' "$config_file"
 fi
 '''
-    if privilege_escalation_config['enable_timeout']:
+    if privilege_escalation_config['enable_authentication_timeout']:
         return script
     
     if privilege_escalation_config["authentication_timeout"]:

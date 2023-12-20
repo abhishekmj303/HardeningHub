@@ -54,7 +54,7 @@ find /etc/ssh -xdev -type f -name 'ssh_host_*_key.pub' -exec chmod u-x,go-wx {} 
 find /etc/ssh -xdev -type f -name 'ssh_host_*_key.pub' -exec chown root:root {} \;
 '''
 
-    if network_config['enable_users']:
+    if network_config['allow_users']:
         script += f'''
     user_list = {" ".join(network_config['allow_users'])}
     config_file="/etc/ssh/sshd_config"
@@ -67,7 +67,7 @@ find /etc/ssh -xdev -type f -name 'ssh_host_*_key.pub' -exec chown root:root {} 
         echo "AllowUsers $user_list" >> "$config_file"
     fi
     '''
-    if network_config['enable_groups']:
+    if network_config['allow_groups']:
         script += f'''
         group_list = {" ".join(network_config['allow_groups'])}
         config_file="/etc/ssh/sshd_config"

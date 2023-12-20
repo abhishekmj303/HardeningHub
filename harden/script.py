@@ -6,7 +6,7 @@ from harden import config_file, physical_ports, file_systems\
 
 def generate(backup: bool = False):
     config = config_file.read()
-    script = "#/bin/bash\n\n"
+    script = "#!/bin/bash\n\n"
     if backup:
         # Generate timeshift snapshot
         script += """
