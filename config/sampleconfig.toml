@@ -110,10 +110,10 @@ enable_strong_mac_algorithms = true
 enable_strong_key_exchange_algorithms = true
 disable_tcp_forwarding = false
 configure_warning_banner = true
-enable_max_auth_tries = true #
-max_auth_tries = 4
 configure_max_startups = true
-enable_max_sessions = true #
+enable_max_auth_tries = true
+max_auth_tries = 4
+enable_max_sessions = true
 max_sessions = 10
 enable_login_grace_time = true #
 login_grace_time = 60 # in seconds
@@ -132,6 +132,7 @@ authentication_timeout = 15 # in minutes
 restrict_su = true
 
 [pam] # Pluggable Authentication Modules
+enable_password_level = true
 required_password_level = "strong" # weak, medium, strong, stronger
 enable_password_length = true
 minimum_password_length = 14

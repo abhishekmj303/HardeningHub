@@ -1,4 +1,5 @@
 import subprocess
+import shlex
 from harden import config_file, physical_ports, file_systems\
     , process_hardening, apparmor, gdm, time_sync, firewall\
     , network, ssh, privilege_escalation
@@ -33,7 +34,9 @@ def save(file_path: str, backup: bool = False):
 
 def run(backup: bool = False):
     save("hardening_script.sh", backup)
-    subprocess.Popen(["x-terminal-emulator", "-e", "'bash hardening_script.sh'"])
+    subprocess.Popen(
+        shlex.split("""x-terminal-emulator -e "bash -c 'sudo bash hardening_script.sh; read -p \"Press enter to continue\"'" """)
+    )
 
 if __name__ == "__main__":
     config_file.init()

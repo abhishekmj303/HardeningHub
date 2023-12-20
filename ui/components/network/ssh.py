@@ -45,9 +45,11 @@ class SSH(QWidget):
             self.container_layout.addWidget(checkbox)
             self.configure_permissions_checkboxes[name] = checkbox
 
-        self.allow_users_label = QLabel("Allow Users")
-        self.container_layout.addWidget(self.allow_users_label)
-        self.allow_users_label.setObjectName("sub-component-title")
+        self.allow_users_checkbox = QCheckBox('Allow Users')
+        self.allow_users_checkbox.stateChanged.connect(lambda state: self.allow_users(state))
+        self.allow_users_checkbox.setProperty('class', 'in-checkbox')
+        self.container_layout.addWidget(self.allow_users_checkbox)
+
 
         hlayout = QHBoxLayout()
         self.container_layout.addLayout(hlayout)
@@ -62,9 +64,10 @@ class SSH(QWidget):
 
         self.user_table()
 
-        self.allow_groups_label = QLabel("Allow Groups")
-        self.container_layout.addWidget(self.allow_groups_label)
-        self.allow_groups_label.setObjectName("sub-component-title")
+        self.allow_groups_checkbox = QCheckBox('Allow Groups')
+        self.allow_groups_checkbox.stateChanged.connect(lambda state: self.allow_groups(state))
+        self.allow_groups_checkbox.setProperty('class', 'in-checkbox')
+        self.container_layout.addWidget(self.allow_groups_checkbox)
 
         hlayout = QHBoxLayout()
 
@@ -83,46 +86,73 @@ class SSH(QWidget):
 
         hlayout = QHBoxLayout()
 
-        self.log_level_label = QLabel('Log Level:')
-        self.log_level_label.setToolTip(self.ssh_tooltip['log_level'])
-        self.log_level_label.setProperty('class', 'normal-label-for')
+        self.log_level_check = QCheckBox('Log Level')
+        self.log_level_check.stateChanged.connect(lambda state: self.save_checkbox_state('log_level', state))
+        self.log_level_check.setProperty('class', 'in-checkbox')
 
         self.log_level_list = QComboBox()
         self.log_level_list.addItems(['VERBOSE', 'INFO'])
         self.log_level_list.currentTextChanged.connect(self.new_item_selected)
 
-        hlayout.addWidget(self.log_level_label)
+        hlayout.addWidget(self.log_level_check)
         hlayout.addWidget(self.log_level_list)
         self.container_layout.addLayout(hlayout)
 
         self.ssh_checkboxes = {}
         self.ssh_inputs = {}
         i = 0
-        for name, state in self.toml_ssh.items():
-            if i < 4:
+        self.names = list(self.toml_ssh.keys())
+        while i < len(self.names):
+            if i < 7:
                 i += 1
                 continue
-            elif i <= 17 and name != 'max_auth_tries':
+            elif i < 20:
+                name = self.names[i]
                 checkbox = QCheckBox(f"{name.replace('_',' ').title()}")
                 checkbox.setToolTip(self.ssh_tooltip[name])
                 checkbox.stateChanged.connect(lambda state, name=name: self.save_checkbox_state(name, state))
-                self.ssh_checkboxes[name] = checkbox
+                checkbox.setProperty('class', 'in-checkbox')
                 self.container_layout.addWidget(checkbox)
-            elif i > 17 or name == 'max_auth_tries':
+                self.ssh_checkboxes[name] = checkbox
+            else:
+                name = self.names[i]
                 hlayout = QHBoxLayout()
-                label = QLabel(f"{name.replace('_',' ').title()}")
-                label.setToolTip(self.ssh_tooltip[name])
-                label.setProperty('class', 'normal-label-for')
+                checkbox = QCheckBox(f"{name.replace('_',' ').title()}")
+                checkbox.setToolTip(self.ssh_tooltip[name])
+                checkbox.stateChanged.connect(lambda state, name=name: self.save_checkbox_state(name, state))
+                checkbox.setProperty('class', 'in-checkbox')
+                self.ssh_checkboxes[name] = checkbox
+                i += 1
+                name = self.names[i]
                 input = QLineEdit()
-                input.setText(str(state))
-                validator = QIntValidator()
-                input.setValidator(validator)
+                input.setValidator(QIntValidator())
                 input.textChanged.connect(lambda text, name=name: self.save_text_input(name, text))
-                hlayout.addWidget(label)
+                self.ssh_inputs[name] = input
+                hlayout.addWidget(checkbox)
                 hlayout.addWidget(input)
                 self.container_layout.addLayout(hlayout)
-                self.ssh_inputs[name] = input
             i += 1
+
+
+    def allow_users(self, state):
+        if state == 2:
+            self.new_user.setEnabled(True)
+            self.add_user_button.setEnabled(True)
+            self.users_table.setEnabled(True)
+        else:
+            self.new_user.setEnabled(False)
+            self.add_user_button.setEnabled(False)
+            self.users_table.setEnabled(False)
+
+    def allow_groups(self, state):
+        if state == 2:
+            self.new_group.setEnabled(True)
+            self.add_group_button.setEnabled(True)
+            self.groups_table.setEnabled(True)
+        else:
+            self.new_group.setEnabled(False)
+            self.add_group_button.setEnabled(False)
+            self.groups_table.setEnabled(False)
 
     def user_table(self):
         self.users_table = QTableWidget()
@@ -224,6 +254,14 @@ class SSH(QWidget):
     def save_checkbox_state(self, name, state):
         self.toml_ssh[name] = (state == 2)
         config_file.write(self.config)
+        if name == 'log_level':
+            self.log_level_list.setEnabled(state == 2)
+        for i in self.ssh_checkboxes:
+            if i == name:
+                for j in self.ssh_inputs:
+                    if name.endswith(j):
+                        self.ssh_inputs[j].setEnabled(state == 2)
+                        break
 
     def save_checkbox_state_configure(self, state, category, name):
         self.toml_ssh[category][name] = (state == 2)
@@ -241,15 +279,23 @@ class SSH(QWidget):
         self.toml_ssh = self.config['ssh']
         for name, state in self.toml_ssh['configure_permissions'].items():
             self.configure_permissions_checkboxes[name].setChecked(state)
+        self.allow_users_checkbox.setChecked(self.toml_ssh['enable_allow_users'])
+        self.allow_groups_checkbox.setChecked(self.toml_ssh['enable_allow_groups'])
+        self.log_level_check.setChecked(self.toml_ssh['enable_log_level'])
         i = 0
-        for name, state in self.toml_ssh.items():
-            if i < 4:
+        while i < len(self.names):
+            if i < 7:
                 i += 1
                 continue
-            elif i <= 17 and name != 'max_auth_tries':
-                self.ssh_checkboxes[name].setChecked(state)
-            elif i > 17 or name == 'max_auth_tries':
-                self.ssh_inputs[name].setText(str(state))
+            elif i < 20:
+                name = self.names[i]
+                self.ssh_checkboxes[name].setChecked(self.toml_ssh[name])
+            else:
+                name = self.names[i]
+                self.ssh_checkboxes[name].setChecked(self.toml_ssh[name])
+                i += 1
+                name = self.names[i]
+                self.ssh_inputs[name].setText(str(self.toml_ssh[name]))
             i += 1
 
         self.users_table.setRowCount(0)

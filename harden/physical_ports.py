@@ -39,7 +39,10 @@ def get_devices(all_config):
         else:
             ports[port_id] = {"id": port_id, "name": device_name, "allow": True}
     
-    config.update({"device-rules": list(devices.values()), "port-rules": list(ports.values())})
+    new_config = all_config.unwrap()
+    new_config["physical-ports"]["device-rules"] = list(devices.values())
+    new_config["physical-ports"]["port-rules"] = list(ports.values())
+    config_file.update_toml_obj(all_config, new_config)
     return all_config
 
 
