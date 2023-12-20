@@ -85,16 +85,28 @@ configure_loopback_traffic = "a virtual network interface that doesn't represent
 enable_default_deny = " Deny all traffic by default "
 
 [ssh]
-enable = "a network protocol that gives users, particularly system administrators, a secure way to access a computer over an unsecured network."
-port = "port number 22"
-permit-empty-passwords = "anybody may log in as that user without providing a password."
-password-authentication = "user to enter their credentials — username and password — in order to confirm their identity."
-permit-root-login = "user account for administrative purposes, and typically has the highest access rights on the system."
-client-alive-interval = "a time out interval specified in seconds "
-client-alive-count-max = "sets the number of client alive messages which may be sent without sshd receiving any messages back from the client."
-allow-users = "allow SSH access for a user "
-allow-groups = "allow SSH access for an entire group,"
-x11-forwarding = "a mechanism that allows a user to start up remote applications, and then forward the application display to their local Windows machine"
+configure_permissions = {sshd_config = "true", private_host_key = "true", public_host_key = "true"}
+allow_users = "users"
+allow_groups = "groups"
+log_level = "VERBOSE" # INFO, VERBOSE
+enable_pam = "true"
+disable_root_login = "true"
+disable_host_based_auth = "true"
+disable_permit_empty_passwords = "true"
+disable_permit_user_env = "true"
+enable_ingore_rhosts = "true"
+disable_x11_forwarding = "true"
+enable_strong_ciphers = "true"
+enable_strong_mac_algorithms = "true"
+enable_strong_key_exchange_algorithms = "true"
+disable_tcp_forwarding = "false"
+configure_warning_banner = "true"
+max_auth_tries = "4"
+configure_max_startups = "true"
+max_sessions = "10"
+login_grace_time = "60" # in seconds
+client_alive_interval = "300" # in seconds
+client_alive_count_max = "3"
 
 [privilege_escalation] # Privilege Escalation
 use_pty = "true"
