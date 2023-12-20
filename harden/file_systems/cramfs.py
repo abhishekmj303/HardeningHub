@@ -2,7 +2,7 @@ from harden import config_file
 
 def get_script(config):
     file_systems_config = config["file-systems"]
-
+    
     script = "#!/bin/bash\n\n"  # Start with a bash shebang and a newline
 
     # Loop through each filesystem module in the configuration
