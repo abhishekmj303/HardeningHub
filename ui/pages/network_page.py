@@ -17,8 +17,13 @@ class Network(QWidget):
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
 
+        # Firewall Widget
         self.firewall = Firewall(self.config, self.tooltip)
+        self.firewall.setObjectName("firewall")
+
+        # Network Widget
         self.net = Net(self.config, self.tooltip)
+        self.net.setObjectName("net")
 
         self.layout.addWidget(self.firewall)
         self.layout.addWidget(self.net)

@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow \
-    , QHBoxLayout, QWidget, QScrollArea
+    , QHBoxLayout, QWidget, QCompleter
 from PyQt6.QtCore import Qt, pyqtSignal
 from ui.sidebar import Sidebar
 from ui.page import Pages
@@ -43,6 +43,8 @@ class MainWindow(QMainWindow):
         self.main_widget.setLayout(self.main_layout)
         self.setCentralWidget(self.main_widget)
 
+        self.toolbar.search_signal.connect(self.search_items)
+
     def change_theme(self, theme):
         if theme:
             name = "dark"
@@ -50,6 +52,30 @@ class MainWindow(QMainWindow):
             name = "light"
         self.setStyleSheet(open(f"ui/qss/{name}.qss", "r").read())
         self.sidebar.set_theme(theme)
+    
+    def search_items(self, text):
+        curr_index = self.pages.StackedWidget.currentIndex()
+        if curr_index == 1:
+            widget_items = self.pages.hardware.findChildren(QWidget, options=Qt.FindChildOption.FindDirectChildrenOnly)
+        elif curr_index == 2:
+            widget_items = self.pages.software.findChildren(QWidget, options=Qt.FindChildOption.FindDirectChildrenOnly)
+        elif curr_index == 3:
+            widget_items = self.pages.network.findChildren(QWidget, options=Qt.FindChildOption.FindDirectChildrenOnly)
+        else:
+            return
+        widget_names = [item.objectName() for item in widget_items]
+        self.completer = QCompleter(widget_names)
+        self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        self.toolbar.searchbar.setCompleter(self.completer)
+
+        print(widget_names)
+        for i in range(len(widget_names)):
+            widget_name = widget_names[i]
+            widget = widget_items[i]
+            if text.lower() in widget_name.lower():
+                widget.show()
+            else:
+                widget.hide()
 
 def main():
     app = QApplication(sys.argv)
