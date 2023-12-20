@@ -118,6 +118,8 @@ class FileSystems(QWidget):
         config_file.write(self.config)
     
     def size_changed(self, new_size):
+        if new_size.startswith('0') and len(new_size) > 1:
+            self.size_input.setText(new_size[1:])
         if new_size:
             self.toml_file_systems['tmp_size'] = int(new_size)
         else:
