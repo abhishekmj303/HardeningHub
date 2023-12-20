@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow \
     , QHBoxLayout, QWidget, QCompleter
-from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtCore import Qt, pyqtSignal, QStringListModel
 from ui.sidebar import Sidebar
 from ui.page import Pages
 from ui.toolbar import ToolBar
@@ -31,7 +31,7 @@ class MainWindow(QMainWindow):
         self.sidebar = Sidebar()
         self.sidebar.setFixedWidth(200)
         self.sidebar.setObjectName("sidebarBg")
-        self.sidebar.change_page_signal.connect(self.pages.StackedWidget.setCurrentIndex)
+        self.sidebar.change_page_signal.connect(self.change_page)
 
         self.main_layout = QHBoxLayout()
         self.main_layout.setSpacing(0)
@@ -44,6 +44,14 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.main_widget)
 
         self.toolbar.search_signal.connect(self.search_items)
+        self.widget_names = QStringListModel()
+        self.completer = QCompleter(self.widget_names, self)
+        self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        self.toolbar.searchbar.setCompleter(self.completer)
+    
+    def change_page(self, index):
+        self.pages.StackedWidget.setCurrentIndex(index)
+        self.toolbar.search_signal.emit(self.toolbar.searchbar.text())
 
     def change_theme(self, theme):
         if theme:
@@ -63,12 +71,9 @@ class MainWindow(QMainWindow):
             widget_items = self.pages.network.findChildren(QWidget, options=Qt.FindChildOption.FindDirectChildrenOnly)
         else:
             return
-        widget_names = [item.objectName() for item in widget_items]
-        self.completer = QCompleter(widget_names)
-        self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-        self.toolbar.searchbar.setCompleter(self.completer)
+        widget_names = [item.objectName().replace('_', ' ').title() for item in widget_items]
+        self.widget_names.setStringList(widget_names)
 
-        print(widget_names)
         for i in range(len(widget_names)):
             widget_name = widget_names[i]
             widget = widget_items[i]
