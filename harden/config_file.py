@@ -4,19 +4,25 @@ import shutil
 from typing import Mapping
 from harden import physical_ports
 
-FILE_PATH = ""
-TEMP_FILE_PATH = ""
+# Config directory of user
+CONFIG_DIR = os.path.expanduser("~/.config/HardeningHub")
+PROFILE_DIR = os.path.join(CONFIG_DIR, "profiles")
+DEFAULT_CONFIG_PATH = os.path.expanduser("~/.config/HardeningHub/default_config.toml")
+TEMP_FILE_PATH = DEFAULT_CONFIG_PATH + ".tmp"
 
+SAMPLE_FILE_PATH = os.path.join(os.path.dirname(__file__), "../config/sampleconfig.toml")
 
-def create_copy():
-    shutil.copyfile(FILE_PATH, TEMP_FILE_PATH)
+def create_copy(file_path: str = DEFAULT_CONFIG_PATH, temp_file_path: str = None):
+    global TEMP_FILE_PATH
+    if temp_file_path is None:
+        temp_file_path = file_path + ".tmp"
+    TEMP_FILE_PATH = temp_file_path
+    shutil.copyfile(file_path, TEMP_FILE_PATH)
 
 
 def read(file_path: str = None):
     if file_path is None:
         file_path = TEMP_FILE_PATH
-    if not os.path.exists(file_path):  # Check if the copy does not exist
-        create_copy()  # Create the copy if it doesn't exist
     with open(file_path, "r") as f:
         return tomlkit.load(f)
 
@@ -28,8 +34,59 @@ def write(config: Mapping):
 
 def save(file_path: str = None):
     if file_path is None:
-        file_path = FILE_PATH
+        file_path = TEMP_FILE_PATH.replace(".tmp", "")
     shutil.copyfile(TEMP_FILE_PATH, file_path)
+
+
+def get_profiles():
+    if not os.path.exists(PROFILE_DIR):
+        init_config_dir()
+        return []
+    
+    profiles = os.listdir(PROFILE_DIR)
+    for i in range(len(profiles)):
+        profiles[i] = profiles[i].replace("_config.toml", "")
+    
+    return profiles
+
+
+def get_profile_path(profile_name: str):
+    return os.path.join(PROFILE_DIR, profile_name + "_config.toml")
+
+
+def init_config_dir():
+    # Create the config directory if it doesn't exist
+    if not os.path.exists(CONFIG_DIR):
+        os.makedirs(CONFIG_DIR)
+        os.makedirs(PROFILE_DIR)
+    # Create the default config file if it doesn't exist
+    if not os.path.exists(DEFAULT_CONFIG_PATH):
+        shutil.copyfile(SAMPLE_FILE_PATH, DEFAULT_CONFIG_PATH)
+
+
+def init(file_path: str = DEFAULT_CONFIG_PATH):
+    create_copy(file_path)
+    return physical_ports.get_devices(read(file_path))
+
+
+def init_profile(profile_name: str):
+    file_path = get_profile_path(profile_name)
+    create_copy(file_path)
+    return physical_ports.get_devices(read(file_path))
+
+
+def import_level(level: str = "w1"):
+    if level == "w1":
+        file_path = os.path.join(os.path.dirname(__file__), "../config/workstation/level-1.toml")
+    elif level == "w2":
+        file_path = os.path.join(os.path.dirname(__file__), "../config/workstation/level-2.toml")
+    elif level == "s1":
+        file_path = os.path.join(os.path.dirname(__file__), "../config/server/level-1.toml")
+    elif level == "s2":
+        file_path = os.path.join(os.path.dirname(__file__), "../config/server/level-2.toml")
+    
+    create_copy(file_path, TEMP_FILE_PATH)
+    return physical_ports.get_devices(read(file_path))
 
 
 def update_toml_obj(toml_obj: tomlkit.items.Item, config: dict):
@@ -48,27 +105,3 @@ def update_toml_obj(toml_obj: tomlkit.items.Item, config: dict):
                     toml_obj[key][i] = value[i]
         else:
             toml_obj[key] = value
-
-
-def init(file_path: str = None):
-    global FILE_PATH, TEMP_FILE_PATH
-
-    if file_path is None:
-        file_path = os.path.join(os.path.dirname(__file__), "../config/sampleconfig.toml")
-    
-    FILE_PATH = file_path
-    TEMP_FILE_PATH = FILE_PATH + ".tmp"
-    create_copy()
-    return physical_ports.get_devices(read())
-
-def import_level(level: str = "w1"):
-    if level == "w1":
-        file_path = os.path.join(os.path.dirname(__file__), "../config/workstation/level-1.toml")
-    elif level == "w2":
-        file_path = os.path.join(os.path.dirname(__file__), "../config/workstation/level-2.toml")
-    elif level == "s1":
-        file_path = os.path.join(os.path.dirname(__file__), "../config/server/level-1.toml")
-    elif level == "s2":
-        file_path = os.path.join(os.path.dirname(__file__), "../config/server/level-2.toml")
-    
-    return init(file_path)
