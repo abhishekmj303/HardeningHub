@@ -186,3 +186,16 @@ QComboBox {
 QTableWidget QCheckBox {
 	margin-left: 40px;
 }
+
+QToolBar QLineEdit {
+	border-radius: 4px;	
+	padding: 4px 6px;
+	color: rgb(221, 221, 221);
+	background-color: rgb(39, 40, 58);
+	margin: 0px 15px 5px 0px;
+	font: 15px;
+	selection-background-color: #BFDFFF;
+}
+QToolBar QLineEdit:focus {
+   	border: 1px solid #7B66FF;
+}

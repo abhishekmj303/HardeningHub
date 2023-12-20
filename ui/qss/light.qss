@@ -49,7 +49,7 @@ QMainWindow {
 }
 
 .btn {
-	background-color: #AA8F75;
+	background-color: #C6A788;
 	padding: 4px 13px;
 	border-radius: 5px;
 	border: 1px solid #382F27;
@@ -64,7 +64,7 @@ QMainWindow {
 }
 
 .add-btn {
-	background-color: #AA8F75;
+	background-color: #C6A788;
 	padding: 2.5px 10px;
 	border-radius: 5px;
 	color: #382F27;
@@ -76,7 +76,7 @@ QMainWindow {
 }
 
 .remove-btn {
-	background-color: #AA8F75;
+	background-color: #C6A788;
 	padding: 1.5px 5px;
 	border-radius: 5px;
 	color: #382F27;
@@ -186,4 +186,17 @@ QComboBox {
 
 QTableWidget QCheckBox {
 	margin-left: 40px;
+}
+
+QToolBar QLineEdit {
+	border-radius: 4px;	
+	padding: 4px 6px;
+	color: #382F27;
+	background-color: #FFF1E4;
+	margin: 0px 15px 5px 0px;
+	font: 15px;
+	selection-background-color: #AA8F75;
+}
+QToolBar QLineEdit:focus {
+   	border: 1px solid #AA8F75;
 }
