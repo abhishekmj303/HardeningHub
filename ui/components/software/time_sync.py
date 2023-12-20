@@ -42,10 +42,10 @@ class TimeSync(QWidget):
         self.enable_user.stateChanged.connect(lambda state, name = 'enable_ntp_user': self.save_checkbox_state(name, state))
         self.container_layout.addWidget(self.enable_user)
 
-        ntp_server_lable = QLabel('NTP Servers')
-        ntp_server_lable.setToolTip(self.time_sync_tooltip['ntp_servers'])
-        ntp_server_lable.setProperty('class', 'normal-label-for')
-        self.container_layout.addWidget(ntp_server_lable)
+        self.ntp_server_checkbox = QCheckBox('Enable NTP Servers')
+        self.ntp_server_checkbox.setToolTip(self.time_sync_tooltip['enable_ntp_servers'])
+        self.ntp_server_checkbox.stateChanged.connect(self.enable_ntp_servers_changed)
+        self.container_layout.addWidget(self.ntp_server_checkbox)
 
         hlayout = QHBoxLayout()
 
@@ -121,7 +121,7 @@ class TimeSync(QWidget):
         self.toml_time_sync = self.config['time-sync']
         self.enable_ntp.setChecked(self.toml_time_sync['enable_ntp'])
         self.enable_user.setChecked(self.toml_time_sync['enable_ntp_user'])
-
+        self.ntp_server_checkbox.setChecked(self.toml_time_sync['enable_ntp_servers'])
         if not self.toml_time_sync['enable_ntp']:
             self.enable_user.setEnabled(False)
             self.servers_table.setEnabled(False)
@@ -143,4 +143,18 @@ class TimeSync(QWidget):
             self.add_button.setEnabled(state == 2)
             for i in range(self.servers_table.rowCount()):
                 self.servers_table.cellWidget(i, 1).setEnabled(state == 2)
+        config_file.write(self.config)
+    
+    def enable_ntp_servers_changed(self, state):
+        self.toml_time_sync['enable_ntp_servers'] = (state == 2)
+        if state == 2:
+            self.new_server.setEnabled(True)
+            self.add_button.setEnabled(True)
+            for i in range(self.servers_table.rowCount()):
+                self.servers_table.cellWidget(i, 1).setEnabled(True)
+        else:
+            self.new_server.setEnabled(False)
+            self.add_button.setEnabled(False)
+            for i in range(self.servers_table.rowCount()):
+                self.servers_table.cellWidget(i, 1).setEnabled(False)
         config_file.write(self.config)
