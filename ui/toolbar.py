@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QToolBar, QPushButton, QFileDialog \
-    , QMessageBox, QCheckBox, QWidget, QSizePolicy, QMenu, QLineEdit
+    , QMessageBox, QCheckBox, QWidget, QSizePolicy, QMenu, QLineEdit, QDialog, QVBoxLayout
 from PyQt6.QtGui import QAction
 from PyQt6.QtCore import pyqtSignal
 from tomlkit import TOMLDocument
@@ -28,7 +28,21 @@ class ToolBar(QToolBar):
         self.init_ui()
     
     def init_ui(self):
-        self.setMovable(False)  
+        self.setMovable(False)
+
+        self.profiles_button = QPushButton("Default Profile")
+        self.profiles_button.setProperty('class', ['btn', 'toolbar-btn'])
+        self.profiles_menu = QMenu(self.profiles_button)
+        self.profiles_menu.addAction("Default", lambda: self.switch_profile("default"))
+        self.profiles = config_file.get_profiles()
+        for profile in self.profiles:
+            self.profiles_menu.addAction(profile.title(), lambda p = profile: self.switch_profile(p))
+        self.profiles_menu.addAction("Add New Profile", lambda: self.add_new_profile())
+        self.profiles_button.setMenu(self.profiles_menu)
+        self.addWidget(self.profiles_button)
+
+
+
 
         self.levels_button = QPushButton("Levels")
         self.levels_button.setProperty('class', ['btn', 'toolbar-btn'])
@@ -92,6 +106,48 @@ class ToolBar(QToolBar):
         self.save_button.clicked.connect(self.save_button_clicked)
         self.script_button.clicked.connect(self.script_button_clicked)
         self.run_button.clicked.connect(self.run_button_clicked)
+
+    def switch_profile(self, profile: str):
+        if profile == "default":
+            self.config = config_file.init()
+            self.import_signal.emit(self.config)
+            self.profiles_button.setText("Default Profile")
+            return
+        profile_file = config_file.get_profile_path(profile)
+        self.config = config_file.init(profile_file)
+        self.import_signal.emit(self.config)
+        self.profiles_button.setText(f"Profile: {profile.title()}")
+
+    def add_new_profile(self):
+        # take input from user using a dialog
+        add_new_profile_dialog = QDialog()
+        add_new_profile_dialog.setWindowTitle("Add New Profile")
+        add_new_profile_dialog.setModal(True)
+        add_new_profile_dialog.resize(300, 100)
+        add_new_profile_dialog.setFixedSize(add_new_profile_dialog.size())
+
+        profile_name_input = QLineEdit()
+        profile_name_input.setPlaceholderText("Profile Name")
+        profile_name_input.setProperty('class', 'searchbar')
+
+        add_button = QPushButton("Add")
+        add_button.setProperty('class', ['btn', 'toolbar-btn'])
+        add_button.clicked.connect(add_new_profile_dialog.accept)
+
+        # add input and button to dialog
+        layout = QVBoxLayout()
+        add_new_profile_dialog.setLayout(layout)
+        layout.addWidget(profile_name_input)
+        layout.addWidget(add_button)
+
+        if add_new_profile_dialog.exec():
+            profile_name = profile_name_input.text()
+            self.config = config_file.init_profile(profile_name)
+            self.import_signal.emit(self.config)
+            #add action at last but before add new profile
+            self.profiles_menu.insertAction(self.profiles_menu.actions()[-1], QAction(profile_name.title(), self.profiles_menu, triggered = lambda p = profile_name: self.switch_profile(p)))
+            self.profiles_button.setText(f"Profile: {profile_name.title()}")
+
     
     def import_level(self, level: str = "w1"):
         self.config = config_file.import_level(level)
