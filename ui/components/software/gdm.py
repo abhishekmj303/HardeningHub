@@ -43,9 +43,9 @@ class GDM(QWidget):
         hlayout = QHBoxLayout()
 
         # Lock on Idle Label
-        self.lockon_lable = QLabel('Lock on Idle(seconds)')
-        self.lockon_lable.setToolTip(self.gdm_tooltip['lock_on_idle'])
-        self.lockon_lable.setProperty('class', 'normal-label-for')
+        self.lockon_lable = QCheckBox('Enable Lock on Idle (seconds): ')
+        self.lockon_lable.setToolTip(self.gdm_tooltip['enable_lock_on_idle'])
+        self.lockon_lable.stateChanged.connect(self.enable_lock_on_idle_changed)
 
         self.time_input = QLineEdit()
         self.time_input.setText(str(self.toml_gdm['lock_on_idle']))
@@ -70,6 +70,7 @@ class GDM(QWidget):
     def refresh_config(self, config):
         self.config = config
         self.toml_gdm = self.config['gdm']
+        self.lockon_lable.setChecked(self.toml_gdm['enable_lock_on_idle'])
         for name, state in self.toml_gdm.items():
             if name == 'lock_on_idle':
                 continue
@@ -100,4 +101,12 @@ class GDM(QWidget):
             self.toml_gdm['lock_on_idle'] = int(new_size)
         else:
             self.time_input.setText('0')
+        config_file.write(self.config)
+    
+    def enable_lock_on_idle_changed(self, state):
+        self.toml_gdm['enable_lock_on_idle'] = (state == 2)
+        if state == 2:
+            self.time_input.setEnabled(True)
+        else:
+            self.time_input.setEnabled(False)
         config_file.write(self.config)

@@ -6,6 +6,7 @@ from ui.components.software.time_sync import TimeSync
 from ui.components.software.services import Services
 from ui.components.software.service_clients import ServiceClients
 from ui.components.software.privilege_escalation import PrivilegeEscalation
+from ui.components.software.pam import PAM
 from PyQt6.QtCore import Qt
 
 
@@ -51,6 +52,10 @@ class Software(QWidget):
         self.privilege_escalation = PrivilegeEscalation(self.config, self.tooltip)
         self.privilege_escalation.setObjectName("privilege_escalation")
 
+        # PAM Widget
+        self.pam = PAM(self.config, self.tooltip)
+        self.pam.setObjectName("pam")
+
         self.layout.addWidget(self.process_hardening)
         self.layout.addWidget(self.apparmor)
         self.layout.addWidget(self.gdm)
@@ -58,6 +63,7 @@ class Software(QWidget):
         self.layout.addWidget(self.services)
         self.layout.addWidget(self.service_clients)
         self.layout.addWidget(self.privilege_escalation)
+        self.layout.addWidget(self.pam)
     
     def refresh_config(self, config):
         self.config = config
@@ -68,3 +74,4 @@ class Software(QWidget):
         self.services.refresh_config(config)
         self.service_clients.refresh_config(config)
         self.privilege_escalation.refresh_config(config)
+        self.pam.refresh_config(config)
