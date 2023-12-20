@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QToolBar, QPushButton, QFileDialog \
-    , QMessageBox, QCheckBox, QWidget, QSizePolicy, QMenu
+    , QMessageBox, QCheckBox, QWidget, QSizePolicy, QMenu, QLineEdit
 from PyQt6.QtGui import QAction
 from PyQt6.QtCore import pyqtSignal
 from tomlkit import TOMLDocument
@@ -20,7 +20,7 @@ class ConfirmationDialog(QMessageBox):
 class ToolBar(QToolBar):
     import_signal = pyqtSignal(TOMLDocument)
     theme_changed_signal = pyqtSignal(bool)
-
+    search_signal = pyqtSignal(str)
 
     def __init__(self, config):
         super().__init__()
@@ -50,7 +50,6 @@ class ToolBar(QToolBar):
         server_level2_action.triggered.connect(lambda: self.import_level("s2"))
 
 
-
         self.import_button = QPushButton("Import")
         self.export_button = QPushButton("Export")
         self.save_button = QPushButton("Save")
@@ -67,6 +66,14 @@ class ToolBar(QToolBar):
         spacer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.addWidget(spacer)
 
+        # Search Bar
+        self.searchbar = QLineEdit()
+        self.searchbar.setPlaceholderText("Search")
+        self.searchbar.setProperty('class', 'searchbar')
+        self.searchbar.textChanged.connect(self.searchbar_text_changed)
+        self.addWidget(self.searchbar)
+
+        # Toggle Theme
         self.theme_checkbox = QCheckBox("Dark Mode")
         self.theme_checkbox.setChecked(False)
         self.theme_checkbox.stateChanged.connect(self.theme_checkbox_clicked)
@@ -118,12 +125,6 @@ class ToolBar(QToolBar):
         if message_box.exec() == QMessageBox.StandardButton.Yes:
             config_file.save()
             print("saved")
-
-    def theme_checkbox_clicked(self, state):
-        if state == 2:
-            self.theme_changed_signal.emit(True)
-        else:
-            self.theme_changed_signal.emit(False)
     
     def script_button_clicked(self):
         message_box = ConfirmationDialog("Create Backup", "Do you want to create a system backup before running the script?")
@@ -141,6 +142,15 @@ class ToolBar(QToolBar):
             selected_file += ".sh"
         print("selected file: ", selected_file)
         script.save(selected_file, backup)
+
+    def theme_checkbox_clicked(self, state):
+        if state == 2:
+            self.theme_changed_signal.emit(True)
+        else:
+            self.theme_changed_signal.emit(False)
+    
+    def searchbar_text_changed(self, text):
+        self.search_signal.emit(text)
     
     def run_button_clicked(self):
         message_box = ConfirmationDialog("Create Backup", "Do you want to create a backup before running the script?")

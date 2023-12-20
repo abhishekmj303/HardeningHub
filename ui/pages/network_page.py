@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel
 from PyQt6.QtCore import Qt
 from ui.components.network.firewall import Firewall
 from ui.components.network.network import Net
+from ui.components.network.ssh import SSH
 
 class Network(QWidget):
     def __init__(self, config, tooltip):
@@ -17,13 +18,24 @@ class Network(QWidget):
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
 
+        # Firewall Widget
         self.firewall = Firewall(self.config, self.tooltip)
+        self.firewall.setObjectName("firewall")
+
+        # Network Widget
         self.net = Net(self.config, self.tooltip)
+        self.net.setObjectName("net")
+
+        # SSH Widget
+        self.ssh = SSH(self.config, self.tooltip)
+        self.ssh.setObjectName("ssh")
 
         self.layout.addWidget(self.firewall)
         self.layout.addWidget(self.net)
+        self.layout.addWidget(self.ssh)
     
     def refresh_config(self, config):
         self.config = config
         self.firewall.refresh_config(config)
         self.net.refresh_config(config)
+        self.ssh.refresh_config(config)

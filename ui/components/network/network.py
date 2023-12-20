@@ -30,6 +30,11 @@ class Net(QWidget):
         self.container_layout.setContentsMargins(30, 10, 30, 30)
         self.container_widget.setObjectName("container-widget")
 
+        # select all checkboxes
+        self.select_all_checkbox = QCheckBox('Select All')
+        self.select_all_checkbox.stateChanged.connect(lambda state: self.select_all(state))
+        self.container_layout.addWidget(self.select_all_checkbox)
+
         self.toml_net_checkboxes = {}
         for name, state in self.toml_net.items():
             if name == "disable_protocols":
@@ -37,6 +42,7 @@ class Net(QWidget):
             checkbox = QCheckBox(f"{name.replace('_',' ').title()}")
             checkbox.setToolTip(self.net_tooltip[name])
             checkbox.stateChanged.connect(lambda state, name = name: self.save_checkbox_state(name, state))
+            checkbox.setProperty('class', 'in-checkbox')
             self.toml_net_checkboxes[name] = checkbox
             self.container_layout.addWidget(checkbox)
 
@@ -70,4 +76,18 @@ class Net(QWidget):
 
     def save_checkbox_state_protocols(self, state, category, name):
         self.toml_net[category][name] = (state == 2)
+        config_file.write(self.config)
+    
+    def save_checkbox_state(self, name, state):
+        self.toml_net[name] = (state == 2)
+        config_file.write(self.config)
+        if state != 2:
+            self.select_all_checkbox.blockSignals(True)
+            self.select_all_checkbox.setChecked(False)
+            self.select_all_checkbox.blockSignals(False)
+    
+    def select_all(self, state):
+        for name, checkbox in self.toml_net_checkboxes.items():
+            checkbox.setChecked(state == 2)
+            self.toml_net[name] = (state == 2)
         config_file.write(self.config)

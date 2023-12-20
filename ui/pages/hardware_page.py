@@ -17,8 +17,13 @@ class Hardware(QWidget):
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
 
+        # Physical Ports Widget
         self.physical_ports = PhysicalPorts(self.config, self.tooltip)
+        self.physical_ports.setObjectName("physical_ports")
+
+        # File Systems Widget
         self.file_systems = FileSystems(self.config, self.tooltip)
+        self.file_systems.setObjectName("file_systems")
 
         self.layout.addWidget(self.physical_ports)
         self.layout.addWidget(self.file_systems)

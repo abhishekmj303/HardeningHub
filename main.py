@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow \
-    , QHBoxLayout, QWidget, QScrollArea
-from PyQt6.QtCore import Qt, pyqtSignal
+    , QHBoxLayout, QWidget, QCompleter
+from PyQt6.QtCore import Qt, pyqtSignal, QStringListModel
 from ui.sidebar import Sidebar
 from ui.page import Pages
 from ui.toolbar import ToolBar
@@ -31,7 +31,7 @@ class MainWindow(QMainWindow):
         self.sidebar = Sidebar()
         self.sidebar.setFixedWidth(200)
         self.sidebar.setObjectName("sidebarBg")
-        self.sidebar.change_page_signal.connect(self.pages.StackedWidget.setCurrentIndex)
+        self.sidebar.change_page_signal.connect(self.change_page)
 
         self.main_layout = QHBoxLayout()
         self.main_layout.setSpacing(0)
@@ -43,6 +43,17 @@ class MainWindow(QMainWindow):
         self.main_widget.setLayout(self.main_layout)
         self.setCentralWidget(self.main_widget)
 
+        self.toolbar.search_signal.connect(self.search_items)
+        self.widget_names = QStringListModel()
+        self.completer = QCompleter(self.widget_names, self)
+        self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        self.toolbar.searchbar.setCompleter(self.completer)
+    
+    def change_page(self, index):
+        self.pages.StackedWidget.setCurrentIndex(index)
+        self.pages.verticalScrollBar().setValue(0)
+        self.toolbar.searchbar.setText("")
+
     def change_theme(self, theme):
         if theme:
             name = "dark"
@@ -50,6 +61,27 @@ class MainWindow(QMainWindow):
             name = "light"
         self.setStyleSheet(open(f"ui/qss/{name}.qss", "r").read())
         self.sidebar.set_theme(theme)
+    
+    def search_items(self, text):
+        curr_index = self.pages.StackedWidget.currentIndex()
+        if curr_index == 1:
+            widget_items = self.pages.hardware.findChildren(QWidget, options=Qt.FindChildOption.FindDirectChildrenOnly)
+        elif curr_index == 2:
+            widget_items = self.pages.software.findChildren(QWidget, options=Qt.FindChildOption.FindDirectChildrenOnly)
+        elif curr_index == 3:
+            widget_items = self.pages.network.findChildren(QWidget, options=Qt.FindChildOption.FindDirectChildrenOnly)
+        else:
+            return
+        widget_names = [item.objectName().replace('_', ' ').title() for item in widget_items]
+        self.widget_names.setStringList(widget_names)
+
+        for i in range(len(widget_names)):
+            widget_name = widget_names[i]
+            widget = widget_items[i]
+            if text.lower() in widget_name.lower():
+                widget.show()
+            else:
+                widget.hide()
 
 def main():
     app = QApplication(sys.argv)

@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QStackedWidget, QScrollArea
+from PyQt6.QtWidgets import QStackedWidget, QScrollArea, QWidget
 from PyQt6.QtCore import Qt
 from ui.pages.hardware_page import Hardware
 from ui.pages.software_page import Software
@@ -36,3 +36,19 @@ class Pages(QScrollArea):
         self.hardware.refresh_config(config)
         self.software.refresh_config(config)
         self.network.refresh_config(config)
+    
+    # def search_items(self, text):
+    #     print('page')
+    #     curr_index = self.StackedWidget.currentIndex()
+    #     if curr_index == 1:
+    #         widget_items = self.hardware.findChildren(QWidget, options=Qt.FindChildOption.FindDirectChildrenOnly)
+    #     elif curr_index == 2:
+    #         widget_items = self.software.findChildren(QWidget, options=Qt.FindChildOption.FindDirectChildrenOnly)
+    #     elif curr_index == 3:
+    #         widget_items = self.network.findChildren(QWidget, options=Qt.FindChildOption.FindDirectChildrenOnly)
+    #     else:
+    #         return
+    #     widget_names = [item.objectName() for item in widget_items]
+    #     print(widget_names)
+    #     self.completer = QCompleter(widget_names)
+    #     self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)

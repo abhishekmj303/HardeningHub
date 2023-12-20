@@ -23,13 +23,33 @@ class Software(QWidget):
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
 
+        # Processes Widget
         self.process_hardening = Processes(self.config, self.tooltip)
+        self.process_hardening.setObjectName("process_hardening")
+
+        # AppArmor Widget
         self.apparmor = AppArmor(self.config, self.tooltip)
+        self.apparmor.setObjectName("apparmor")
+
+        # GDM Widget
         self.gdm = GDM(self.config, self.tooltip)
+        self.gdm.setObjectName("gdm")
+
+        # Time Sync Widget
         self.time_sync =TimeSync(self.config, self.tooltip)
+        self.time_sync.setObjectName("time_sync")
+
+        # Services Widget
         self.services = Services(self.config, self.tooltip)
+        self.services.setObjectName("services")
+
+        # Service Clients Widget
         self.service_clients = ServiceClients(self.config, self.tooltip)
+        self.service_clients.setObjectName("service_clients")
+
+        # Privilege Escalation Widget
         self.privilege_escalation = PrivilegeEscalation(self.config, self.tooltip)
+        self.privilege_escalation.setObjectName("privilege_escalation")
 
         self.layout.addWidget(self.process_hardening)
         self.layout.addWidget(self.apparmor)
