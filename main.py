@@ -52,7 +52,7 @@ class MainWindow(QMainWindow):
     def change_page(self, index):
         self.pages.StackedWidget.setCurrentIndex(index)
         self.pages.verticalScrollBar().setValue(0)
-        self.toolbar.search_signal.emit(self.toolbar.searchbar.text())
+        self.toolbar.searchbar.setText("")
 
     def change_theme(self, theme):
         if theme:
