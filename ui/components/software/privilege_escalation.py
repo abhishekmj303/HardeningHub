@@ -35,9 +35,9 @@ class PrivilegeEscalation(QWidget):
 
         self.checkboxes = {}
         for name, state in self.toml_privilege_escalation.items():
-            if name == 'authentication_timeout':
+            if name == 'authentication_timeout' or name == 'enable_authentication_timeout':
                 continue
-            checkbox = QCheckBox(name)
+            checkbox = QCheckBox(name.replace('_', ' ').title())
             self.checkboxes[name] = checkbox
             checkbox.setToolTip(self.privilege_escalation_tooltip[name])
             checkbox.stateChanged.connect(lambda state, name=name: self.save_checkbox_state(state, name))
@@ -48,15 +48,15 @@ class PrivilegeEscalation(QWidget):
         hlayout.setSpacing(0)
         hlayout.setContentsMargins(0, 0, 0, 0)
         hlayout.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        self.configure_label = QLabel('Authentication Timeout (minutes): ')
-        self.configure_label.setToolTip(self.privilege_escalation_tooltip['authentication_timeout'])
+        self.configure_checkbox = QCheckBox("Authentication Timeout")
+        self.configure_checkbox.stateChanged.connect(lambda state, name='enable_authentication_timeout': self.save_checkbox_state(state, name))
+        self.configure_checkbox.setToolTip(self.privilege_escalation_tooltip['authentication_timeout'])
         self.time_input = QLineEdit()
         validator = QIntValidator()
         self.time_input.setValidator(validator)
         self.time_input.textChanged.connect(self.time_changed)
-        self.configure_label.setProperty('class', 'normal-label-for')
 
-        hlayout.addWidget(self.configure_label)
+        hlayout.addWidget(self.configure_checkbox)
         hlayout.addWidget(self.time_input)
         self.container_layout.addLayout(hlayout)
 
@@ -64,16 +64,19 @@ class PrivilegeEscalation(QWidget):
         self.config = config
         self.toml_privilege_escalation = self.config['privilege_escalation']
         for name, state in self.toml_privilege_escalation.items():
-            if name == 'authentication_timeout':
+            if name == 'authentication_timeout' or name == 'enable_authentication_timeout':
                 continue
             checkbox = self.checkboxes[name]
             checkbox.setChecked(state)
+        self.configure_checkbox.setChecked(self.toml_privilege_escalation['enable_authentication_timeout'])
         self.time_input.setText(str(self.toml_privilege_escalation['authentication_timeout']))
         
         
     def save_checkbox_state(self, state, name):
         self.toml_privilege_escalation[name] = (state == 2)
         config_file.write(self.config)
+        if name == 'enable_authentication_timeout':
+            self.time_input.setEnabled(state == 2)
 
     def time_changed(self, new_size):
         if new_size.startswith('0') and len(new_size) > 1:
