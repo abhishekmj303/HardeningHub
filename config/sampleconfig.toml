@@ -12,7 +12,7 @@ port-rules = [
 
 [file-systems]
 # Basic
-block = {udf = false, cramfs = true, squashfs = false}
+block = {udf = true, cramfs = true, squashfs = true}
 # Intermediate
 configure_fs = {tmp = true, dev_shm = true} # /tmp and /dev/shm
 tmp_size = 2 # in GB
@@ -71,24 +71,24 @@ remove_ldap = true
 remove_rpc = true
 
 [network] # Network
-disable_wireless = true # WiFi and other wireless interfaces
-disable_packet_redirects = true
-disable_ip_forwarding = true
-reject_source_routed_packets = true
-reject_icmp_redirects = true
-reject_secure_icmp_redirects = true
-log_suspicious_packets = true
-ignore_broadcasts = true
-ignore_bogus_icmp_errors = true
-enable_rp_filter = true # Reverse Path Filtering
-enable_syn_cookies = true # TCP SYN Cookie
-reject_ipv6_router_adv = true # IPv6 Router Advertisement
+disable_wireless = false # WiFi and other wireless interfaces
+disable_packet_redirects = false
+disable_ip_forwarding = false
+reject_source_routed_packets = false
+reject_icmp_redirects = false
+reject_secure_icmp_redirects = false
+log_suspicious_packets = false
+ignore_broadcasts = false
+ignore_bogus_icmp_errors = false
+enable_rp_filter = false # Reverse Path Filtering
+enable_syn_cookies = false # TCP SYN Cookie
+reject_ipv6_router_adv = false # IPv6 Router Advertisement
 disable_protocols = {dccp = false, sctp = false, rds = false, tipc = false}
 
 [firewall] # Firewall
 enable = true
 configure_loopback_traffic = true # Allow loopback traffic
-enable_default_deny = true # Deny all traffic by default
+enable_default_deny = false # Deny all traffic by default
 
 [ssh]
 configure_permissions = {sshd_config = false, private_host_key = false, public_host_key = false}
