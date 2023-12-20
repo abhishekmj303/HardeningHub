@@ -2,7 +2,7 @@ import subprocess
 import shlex
 from harden import config_file, physical_ports, file_systems\
     , process_hardening, apparmor, gdm, time_sync, firewall\
-    , network, ssh, privilege_escalation
+    , network, ssh, privilege_escalation, pam
 
 def generate(backup: bool = False):
     config = config_file.read()
@@ -26,6 +26,7 @@ timeshift --create --comments "Harden Script Backup"
     script += network.get_script(config)
     script += ssh.get_script(config)
     script += privilege_escalation.get_script(config)
+    script += pam.get_script(config)
     return script
 
 def save(file_path: str, backup: bool = False):
