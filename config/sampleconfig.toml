@@ -12,7 +12,7 @@ port-rules = [
 
 [file-systems]
 # Basic
-block = {udf = false, cramfs = true, squashfs = false}
+block = {udf = true, cramfs = true, squashfs = true}
 # Intermediate
 configure_fs = {tmp = true, dev_shm = true} # /tmp and /dev/shm
 tmp_size = 2 # in GB
@@ -32,14 +32,14 @@ mode = "complain" # enforce, complain
 
 [gdm] # GNOME Display Manager
 remove = false
-disable_user_list = true
-enable_lock_on_idle = true
+disable_user_list = false
+enable_lock_on_idle = false
 lock_on_idle = 100 # in seconds, 0 to disable
-no_override_lockscreen = true
+no_override_lockscreen = false
 disable_automount = false
 lock_automount = false
-disable_autorun = true
-no_override_autorun = true
+disable_autorun = false
+no_override_autorun = false
 
 [time-sync] # Time synchronization
 enable_ntp = true
@@ -71,70 +71,71 @@ remove_ldap = true
 remove_rpc = true
 
 [network] # Network
-disable_wireless = true # WiFi and other wireless interfaces
-disable_packet_redirects = true
-disable_ip_forwarding = true
-reject_source_routed_packets = true
-reject_icmp_redirects = true
-reject_secure_icmp_redirects = true
-log_suspicious_packets = true
-ignore_broadcasts = true
-ignore_bogus_icmp_errors = true
-enable_rp_filter = true # Reverse Path Filtering
-enable_syn_cookies = true # TCP SYN Cookie
-reject_ipv6_router_adv = true # IPv6 Router Advertisement
+disable_wireless = false # WiFi and other wireless interfaces
+disable_packet_redirects = false
+disable_ip_forwarding = false
+reject_source_routed_packets = false
+reject_icmp_redirects = false
+reject_secure_icmp_redirects = false
+log_suspicious_packets = false
+ignore_broadcasts = false
+ignore_bogus_icmp_errors = false
+enable_rp_filter = false # Reverse Path Filtering
+enable_syn_cookies = false # TCP SYN Cookie
+reject_ipv6_router_adv = false # IPv6 Router Advertisement
 disable_protocols = {dccp = false, sctp = false, rds = false, tipc = false}
 
 [firewall] # Firewall
 enable = true
 configure_loopback_traffic = true # Allow loopback traffic
-enable_default_deny = true # Deny all traffic by default
+enable_default_deny = false # Deny all traffic by default
 
 [ssh]
-configure_permissions = {sshd_config = true, private_host_key = true, public_host_key = true}
-enable_allow_users = true # 
+configure_permissions = {sshd_config = false, private_host_key = false, public_host_key = false}
+enable_allow_users = false # 
 allow_users = ["user1", "user2"]
-enable_allow_groups = true #
+enable_allow_groups = false #
 allow_groups = ["group1", "group2"]
-enable_log_level = true #
+enable_log_level = false #
 log_level = "VERBOSE" # INFO, VERBOSE
-enable_pam = true 
-disable_root_login = true
-disable_host_based_auth = true
-disable_permit_empty_passwords = true
-disable_permit_user_env = true
-enable_ignore_rhosts = true 
-disable_x11_forwarding = true
-enable_strong_ciphers = true
-enable_strong_mac_algorithms = true
-enable_strong_key_exchange_algorithms = true
+enable_pam = false 
+disable_root_login = false
+disable_host_based_auth = false
+disable_permit_empty_passwords = false
+disable_permit_user_env = false
+enable_ignore_rhosts = false 
+disable_x11_forwarding = false
+enable_strong_ciphers = false
+enable_strong_mac_algorithms = false
+enable_strong_key_exchange_algorithms = false
 disable_tcp_forwarding = false
-configure_warning_banner = true
-enable_max_auth_tries = true #
+configure_warning_banner = false
+configure_max_startups = false
+enable_max_auth_tries = false
 max_auth_tries = 4
-configure_max_startups = true
-enable_max_sessions = true #
+enable_max_sessions = false
 max_sessions = 10
-enable_login_grace_time = true #
+enable_login_grace_time = false #
 login_grace_time = 60 # in seconds
-enable_client_alive_interval = true #
+enable_client_alive_interval = false #
 client_alive_interval = 300 # in seconds
-enable_client_alive_count_max = true #
+enable_client_alive_count_max = false #
 client_alive_count_max = 3
 
 [privilege_escalation] # Privilege Escalation
-use_pty = true
-enable_logfile = true
+use_pty = false
+enable_logfile = false
 disable_nopassword = false
-enable_reauthentication = true
-enable_authentication_timeout = true
+enable_reauthentication = false
+enable_authentication_timeout = false
 authentication_timeout = 15 # in minutes
-restrict_su = true
+restrict_su = false
 
 [pam] # Pluggable Authentication Modules
+enable_password_level = false
 required_password_level = "strong" # weak, medium, strong, stronger
-enable_password_length = true
+enable_password_length = false
 minimum_password_length = 14
-limit_password_reuse = true
+limit_password_reuse = false
 password_reuse_limit = 5
-configure_hashing_algorithm = true
+configure_hashing_algorithm = false
